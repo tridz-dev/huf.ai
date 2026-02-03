@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "install:docs": "cd docs && yarn install",
+        "build:docs": "cd docs && yarn build",
+        "dev:docs": "cd docs && yarn dev"
+    }
+}

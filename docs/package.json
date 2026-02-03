@@ -1,0 +1,27 @@
+{
+  "name": "huf-docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "postbuild": "npx pagefind --site out --output-subdir _pagefind",
+    "build": "next build && npx pagefind --site out --output-subdir _pagefind",
+    "build:pages": "next build && npx pagefind --site out --output-subdir _pagefind",
+    "start": "npx serve@latest out"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "nextra": "^4.0.0",
+    "nextra-theme-docs": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "pagefind": "^1.0.0",
+    "typescript": "^5.0.0"
+  }
+}
