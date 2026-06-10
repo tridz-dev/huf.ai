@@ -1,0 +1,183 @@
+# Voice Settings (STT & TTS)
+
+HUF supports speech-to-text (STT) and text-to-speech (TTS) through configurable provider Settings DocTypes. This page covers setting up each supported voice provider.
+
+## Architecture Overview
+
+```
+Voice Input (webm)
+    ↓
+huf.ai.transcription_handler.handle_speech_to_text()
+    ↓
+execute_provider_capability(provider, "transcribe_audio")
+    ↓
+{Provider} Settings.transcribe_audio(file_doc)
+    ↓
+Transcript text → run_agent_sync(prompt=transcript)
+    ↓
+Agent response text
+    ↓
+generate_audio tool → TTS provider
+    ↓
+Audio file → chat UI playback
+```
+
+HUF dispatches to provider-specific Settings singletons using `execute_provider_capability()`. This generic dispatcher loads `{Provider} Settings` and calls the specified method. Adding a new STT provider means creating a Settings DocType with a `transcribe_audio()` method.
+
+---
+
+## OpenAI Settings (STT)
+
+**DocType:** `OpenAI Settings` (singleton)  
+**Menu:** HUF Settings → OpenAI Settings
+
+| Field | Value / Notes |
+|---|---|
+| `provider` | Link to your OpenAI AI Provider record |
+| `api_url` | `https://api.openai.com/v1/audio/transcriptions` |
+| `model` | `whisper-1` |
+| `method` | `POST` |
+| `auth_type` | `Bearer Token` |
+| `file_param` | `file` |
+| `response_path` | `text` (path into the JSON response for the transcript) |
+| `enabled` | Check this to activate (defaults to enabled) |
+
+**Setup:**
+1. Create an AI Provider for OpenAI with your API key.
+2. Open **OpenAI Settings**, link your AI Provider, fill in the URL and model.
+3. Check **Enabled**.
+
+---
+
+## Groq Settings (STT)
+
+**DocType:** `Groq Settings` (singleton)  
+**Menu:** HUF Settings → Groq Settings
+
+Groq offers Whisper-large-v3 transcription with very fast inference:
+
+| Field | Value / Notes |
+|---|---|
+| `provider` | Link to your Groq AI Provider record |
+| `api_url` | `https://api.groq.com/openai/v1/audio/transcriptions` |
+| `model` | `whisper-large-v3` |
+| `method` | `POST` |
+| `auth_type` | `Bearer Token` |
+| `file_param` | `file` |
+| `response_path` | `text` |
+| `enabled` | Must check to activate (defaults to disabled) |
+
+**Setup:**
+1. Create an AI Provider for Groq with your Groq API key from [console.groq.com](https://console.groq.com).
+2. Open **Groq Settings** and fill in all fields.
+3. Check **Enabled**.
+
+> [!TIP]
+> Groq's Whisper-large-v3 is one of the fastest STT options. Use it for low-latency voice chat applications where transcription speed matters.
+
+---
+
+## ElevenLabs Settings (TTS & Conversational AI)
+
+**DocType:** `ElevenLabs Settings` (singleton)  
+**Menu:** HUF Settings → ElevenLabs Settings
+
+| Field | Description |
+|---|---|
+| `provider` | Link to your ElevenLabs AI Provider record |
+| `agent_id` | Your ElevenLabs Conversational AI agent ID (for bidirectional audio) |
+| `webhook_secret` | HMAC secret for validating ElevenLabs webhook signatures |
+
+**Setup for TTS:**
+1. Create an AI Provider for ElevenLabs with your ElevenLabs API key from the ElevenLabs dashboard.
+2. Open **ElevenLabs Settings** and link the provider.
+3. On the Agent, set `tts_model` to an AI Model linked to your ElevenLabs provider.
+4. Set `tts_voice` to a voice ID from your ElevenLabs account (e.g. `21m00Tcm4TlvDq8ikWAM`).
+
+**Setup for Conversational AI:**
+1. Create a Conversational AI agent in the ElevenLabs dashboard.
+2. Copy the Agent ID from the ElevenLabs dashboard.
+3. Paste it into `agent_id` in ElevenLabs Settings.
+
+---
+
+## TTS on an Agent
+
+Configure TTS on the Agent form:
+
+| Field | Description |
+|---|---|
+| `tts_model` | Link to an AI Model whose provider is the TTS service (e.g. ElevenLabs or OpenAI TTS) |
+| `tts_voice` | Default voice identifier for the configured model |
+
+The `tts_model` field allows cross-provider TTS: your main LLM can be GPT-4o while TTS uses ElevenLabs. The API key for TTS is sourced from the `tts_model`'s own provider, not the main provider.
+
+**Example: OpenAI TTS**
+```
+tts_model: gpt-4o-audio-preview (or tts-1 / tts-1-hd)  [linked to OpenAI provider]
+tts_voice: alloy    (options: alloy, echo, fable, onyx, nova, shimmer)
+```
+
+**Example: ElevenLabs TTS**
+```
+tts_model: eleven_turbo_v2  [linked to ElevenLabs provider]
+tts_voice: 21m00Tcm4TlvDq8ikWAM    (replace with your voice ID)
+```
+
+---
+
+## Transcription Endpoint Reference
+
+### Desk Chat
+```
+POST /api/method/huf.ai.agent_chat.upload_audio_and_transcribe
+{
+  "filename": "recording.webm",
+  "b64data": "<base64 audio>",
+  "agent": "My Agent",
+  "conversation_id": "CONV-00001"
+}
+```
+
+### Web / External
+```
+POST /api/method/huf.ai.agent_chat.upload_audio_and_transcribe_web
+{
+  "filename": "recording.webm",
+  "b64data": "<base64 audio>",
+  "agent": "My Agent",
+  "conversation_id": "CONV-00001",
+  "transcribe_only": false    // true = return transcript, skip agent run
+}
+```
+
+### Direct Transcription (Internal)
+```python
+from huf.ai.transcription_handler import handle_speech_to_text
+
+result = handle_speech_to_text(
+    file_id="FILE-001",
+    provider="Groq",
+    conversation="CONV-00001",
+)
+# → { "success": True, "text": "...", "file_id": "...", "message_id": "..." }
+```
+
+---
+
+## Adding a Custom STT Provider
+
+To add support for a new STT provider:
+
+1. Create a new singleton DocType `{Provider} Settings` with at minimum:
+   - `provider` (Link to AI Provider)
+   - `api_url`, `model`, `enabled` fields
+
+2. Implement a `transcribe_audio(self, file_doc, kwargs)` method on the controller that returns:
+   ```python
+   { "success": True, "result": "<transcript text>" }
+   # or
+   { "success": False, "error": "<error message>" }
+   ```
+
+3. The `execute_provider_capability()` dispatcher will automatically route to your DocType when `provider = "YourProvider"` is passed.

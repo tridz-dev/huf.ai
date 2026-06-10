@@ -1,0 +1,214 @@
+# Building on HUF
+
+This page covers how to extend HUF as a Frappe app developer: providing tools to agents, seeding configuration, and using app hooks.
+
+## App Seeding (Bundling Agents with Your App)
+
+HUF provides an **app seeding** system that lets you bundle agent definitions, tools, prompts, knowledge sources, and triggers with your Frappe app. When your app is installed, HUF automatically seeds these definitions into the database.
+
+### Directory Structure
+
+In your Frappe app, create a `huf/` directory at the app root:
+
+```
+my_app/
+└── huf/
+    ├── agents/         ← Agent JSON files
+    ├── tools/          ← Agent Tool Function JSON files
+    ├── prompts/        ← Agent Prompt JSON files
+    ├── knowledge/      ← Knowledge Source JSON files
+    └── triggers/       ← Agent Trigger JSON files
+```
+
+### Seed File Format
+
+Each `.json` file in a subdirectory contains either a single object or an array of objects. Fields match the DocType schema (fieldnames as keys).
+
+**Example: `huf/agents/support_bot.json`**
+```json
+{
+  "agent_name": "Support Bot",
+  "description": "Handles support queries",
+  "instructions": "You are a helpful support agent...",
+  "allow_chat": 1,
+  "persist_conversation": 1,
+  "temperature": 0.7,
+  "agent_tool": [
+    { "tool": "Get Sales Order" }
+  ]
+}
+```
+
+### Load Order
+
+HUF processes seed directories in dependency order:
+
+1. `prompts/` — Prompt templates (no dependencies)
+2. `tools/` — Agent Tool Functions
+3. `knowledge/` — Knowledge Sources
+4. `agents/` — Agents (may reference prompts, tools, knowledge)
+5. `triggers/` — Agent Triggers (reference agents)
+
+### Seeding on Install
+
+HUF's `after_app_install` hook calls `seed_app()` automatically. You can also trigger seeding manually:
+
+```bash
+bench execute huf.ai.app_seeding.seeder.seed_all
+```
+
+Or via API (System Manager only):
+```
+POST /api/method/huf.ai.app_seeding.seeder.seed_all_apps
+```
+
+### Exporting to Seed Format
+
+Use the exporter endpoints to generate seed JSON from existing records:
+
+```bash
+# Export an agent
+curl .../api/method/huf.ai.app_seeding.exporter.export_agent_to_seed \
+  -d '{"agent_name": "My Agent"}'
+
+# Export a tool
+curl .../api/method/huf.ai.app_seeding.exporter.export_tool_to_seed \
+  -d '{"tool_name": "Get Sales Order"}'
+```
+
+---
+
+## App-Provided Tools
+
+Beyond seeded JSON, apps can register **live Python tools** that agents can discover and use. This is ideal for tools that need access to app-specific functions, DocTypes, or business logic.
+
+### Registering a Tool via Hooks
+
+In your app's `hooks.py`:
+
+```python
+# hooks.py
+huf_tool_providers = [
+    "my_app.huf_tools.get_my_app_tools"
+]
+```
+
+### Tool Provider Function
+
+The function receives no arguments and returns a list of tool definitions:
+
+```python
+# my_app/huf_tools.py
+
+def get_my_app_tools():
+    return [
+        {
+            "tool_name": "get_order_status",
+            "description": "Get the status of a customer order",
+            "types": "Custom Function",
+            "function_path": "my_app.api.tools.get_order_status",
+            "parameters": [
+                {
+                    "param_name": "order_id",
+                    "param_type": "String",
+                    "description": "The Sales Order ID",
+                    "required": 1,
+                }
+            ],
+        }
+    ]
+```
+
+### Syncing Discovered Tools
+
+After updating `hooks.py`, sync tools into the database:
+
+```bash
+bench execute huf.ai.tool_registry.sync_discovered_tools
+```
+
+Or via API:
+```
+POST /api/method/huf.ai.tool_registry.sync_discovered_tools
+```
+
+This creates/updates `Agent Tool Function` records with `tool_type = App Provided` and `provider_app = <your_app>`.
+
+---
+
+## Custom Function Tools
+
+Register any Python function as a tool using the `Custom Function` type in `Agent Tool Function`:
+
+| Field | Value |
+|---|---|
+| `types` | `Custom Function` |
+| `function_path` | `my_app.module.function_name` |
+| `pass_parameters_as_json` | 0 (pass as keyword args) or 1 (pass as a single JSON string) |
+
+The function must accept keyword arguments matching the tool's `parameters` and return a serializable value:
+
+```python
+# my_app/module.py
+import frappe
+
+def get_order_status(order_id: str) -> dict:
+    doc = frappe.get_doc("Sales Order", order_id)
+    frappe.has_permission("Sales Order", doc=doc, throw=True)
+    return {
+        "order_id": order_id,
+        "status": doc.status,
+        "delivery_date": str(doc.delivery_date),
+    }
+```
+
+> [!IMPORTANT]
+> Custom functions run with the permissions of the **currently authenticated user**. Always perform your own `frappe.has_permission()` checks inside the function. Never assume the caller has access to the data you're fetching.
+
+---
+
+## Webhook Triggers
+
+HUF agents can be triggered by external webhooks via the `Webhook` trigger type in `Agent Trigger`:
+
+| Field | Description |
+|---|---|
+| `trigger_type` | `Webhook` |
+| `webhook_slug` | URL slug for the webhook endpoint |
+| `webhook_key` | Authentication key for validating requests |
+
+The webhook endpoint receives a POST request and runs the linked agent with the request payload as the prompt context.
+
+---
+
+## App Event Triggers
+
+Trigger agents in response to events fired by other Frappe apps using `App Event` triggers:
+
+| Field | Description |
+|---|---|
+| `trigger_type` | `App Event` |
+| `app_name` | Name of the app firing the event |
+| `event_name` | Event identifier string |
+
+Your app fires an event with:
+```python
+frappe.publish_realtime("huf_event", {
+    "app_name": "my_app",
+    "event_name": "order_completed",
+    "data": {"order_id": "SO-001"}
+})
+```
+
+HUF listens for `huf_event` realtime events and runs any matching `App Event` triggers.
+
+---
+
+## Frappe Hooks Reference
+
+| Hook | Description |
+|---|---|
+| `huf_tool_providers` | List of dotted paths to functions that return tool definitions |
+| `after_app_install` → `huf.ai.app_seeding.seeder.on_app_installed` | Called when your app is installed to seed HUF definitions |
+
+These hooks are defined in HUF's own `hooks.py` and discovered automatically when your app is installed alongside HUF.

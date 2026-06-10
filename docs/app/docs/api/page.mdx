@@ -1,0 +1,161 @@
+# API Overview
+
+HUF exposes its functionality through standard **Frappe whitelisted REST endpoints**. Any Python function decorated with `@frappe.whitelist()` is automatically available at a predictable URL. No custom routing or API gateway is required.
+
+## Base URL Pattern
+
+```
+POST /api/method/<dotted.python.path>
+```
+
+All endpoints accept `application/x-www-form-urlencoded` or `application/json` POST bodies, and respond with JSON.
+
+**Examples:**
+```
+POST /api/method/huf.ai.agent_integration.run_agent_sync
+POST /api/method/huf.ai.chat_api.run_agent_sync_chat
+GET  /api/method/huf.ai.agent_chat.get_history?conversation_id=CONV-001
+```
+
+## Authentication
+
+Frappe supports multiple authentication schemes:
+
+### Session Cookie (Browser)
+
+Logging into the Frappe desk sets a `sid` session cookie. API requests from the same browser session are automatically authenticated.
+
+### API Key + Secret (Programmatic)
+
+Generate an API Key and Secret for a Frappe user:
+1. Open the User document in Frappe desk.
+2. Click **Generate Keys** in the API Access section.
+
+Pass them as request headers:
+```http
+Authorization: token <api_key>:<api_secret>
+```
+
+```bash
+curl -X POST https://your-site.example.com/api/method/huf.ai.agent_integration.run_agent_sync \
+  -H "Authorization: token abc123:xyz789" \
+  -H "Content-Type: application/json" \
+  -d '{"agent_name": "My Agent", "prompt": "Hello"}'
+```
+
+### Guest Access
+
+Some HUF endpoints accept unauthenticated requests when the Agent has `allow_guest = 1`. These endpoints are decorated with `@frappe.whitelist(allow_guest=True)`. No authentication header is required.
+
+See the [Running Agents via API](./run-agent) page for guest-access examples.
+
+## Key Endpoints
+
+### Agent Execution
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.agent_integration.run_agent_sync` | Run an agent synchronously, returns full response |
+| `huf.ai.chat_api.run_agent_sync_chat` | Chat-aware run with `create_new` conversation support |
+| `huf.ai.agent_integration.run_agent_sync` | (also whitelisted `allow_guest=True` for guest agents) |
+
+### Streaming
+
+| Endpoint | Description |
+|---|---|
+| `GET/POST /huf/stream/<agent_name>` | SSE stream endpoint — tokens arrive in real-time |
+
+### Chat
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.agent_chat.get_history` | Fetch conversation message history |
+| `huf.ai.agent_chat.send_message` | Send message via Agent Chat docname |
+| `huf.ai.agent_chat.send_message_to_conversation` | Send message to a conversation by ID |
+| `huf.ai.agent_chat.create_conversation` | Create a new conversation pre-run |
+| `huf.ai.agent_chat.new_conversation` | Create + send first message atomically |
+| `huf.ai.agent_chat.upload_audio_and_transcribe` | Upload audio, transcribe, and run agent |
+| `huf.ai.agent_chat.upload_audio_and_transcribe_web` | Web variant with `transcribe_only` option |
+| `huf.ai.agent_chat.render_markdown` | Server-side markdown → HTML |
+
+### Prompt Templates
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.prompt_api.create_new_version` | Create a new immutable version of a prompt |
+| `huf.ai.prompt_api.fork_prompt` | Fork a prompt into an independent lineage |
+| `huf.ai.prompt_api.detach_from_template` | Detach agent from template, copy prompt inline |
+| `huf.ai.prompt_api.save_as_template` | Save agent's local prompt as a new template |
+| `huf.ai.prompt_api.attach_template` | Attach a prompt template to an agent |
+| `huf.ai.prompt_api.get_version_history` | Get version history for a prompt lineage |
+
+### App Seeding (Export/Import)
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.app_seeding.exporter.export_agent_to_seed` | Export agent as seed JSON |
+| `huf.ai.app_seeding.exporter.export_tool_to_seed` | Export tool as seed JSON |
+| `huf.ai.app_seeding.exporter.export_prompt_to_seed` | Export prompt as seed JSON |
+| `huf.ai.app_seeding.exporter.export_knowledge_to_seed` | Export knowledge source as seed JSON |
+| `huf.ai.app_seeding.exporter.export_trigger_to_seed` | Export trigger as seed JSON |
+| `huf.ai.app_seeding.seeder.seed_all_apps` | Trigger manual seeding of all installed apps |
+
+### Permissions
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.permissions_api.get_users` | List all HUF User Role records |
+| `huf.ai.permissions_api.invite_user` | Create user + assign HUF role |
+| `huf.ai.permissions_api.update_user_role` | Change a user's HUF role |
+| `huf.ai.permissions_api.set_user_enabled` | Enable/disable a user's HUF access |
+| `huf.ai.permissions_api.get_huf_roles` | List all HUF Roles with capabilities |
+| `huf.ai.permissions_api.create_huf_role` | Create a new custom HUF Role |
+| `huf.ai.permissions_api.update_huf_role` | Update a role's capability set |
+
+### Scheduler
+
+| Endpoint | Description |
+|---|---|
+| `huf.ai.agent_scheduler.run_scheduled_agents` | Manually trigger all due scheduled agents |
+| `huf.ai.tool_registry.sync_discovered_tools` | Re-sync App Provided tools from hooks |
+
+## Guest Access
+
+Mark an agent with `allow_guest = 1` to allow unauthenticated API calls:
+
+```bash
+curl -X POST https://your-site.example.com/api/method/huf.ai.agent_integration.run_agent_sync \
+  -H "Content-Type: application/json" \
+  -d '{"agent_name": "Public FAQ Bot", "prompt": "What are your hours?"}'
+```
+
+> [!CAUTION]
+> Guest agents have mutating tools blocked by `PermissionAwareToolRegistry` unless the specific tool has `allowed_for_guest = 1`. Read-only access is safe; write access requires explicit configuration. See [Permissions & Security](/docs/permissions) for details.
+
+## Rate Limiting
+
+HUF endpoints use the standard Frappe rate limiting system. Default limits apply per IP and per user. Configure rate limits in the Frappe site config:
+
+```python
+# site_config.json
+{
+  "rate_limit": {
+    "limit": 1000,
+    "window": 3600
+  }
+}
+```
+
+## Error Responses
+
+All errors follow the Frappe error format:
+
+```json
+{
+  "exc_type": "ValidationError",
+  "exc": "...",
+  "_server_messages": "[{\"message\": \"Agent Name is required\"}]"
+}
+```
+
+HTTP status codes: `200 OK`, `403 Forbidden`, `404 Not Found`, `417 Expectation Failed` (Frappe validation errors).

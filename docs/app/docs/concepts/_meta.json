@@ -3,7 +3,11 @@
   "agents": "Agents",
   "providers-models": "Providers & Models",
   "tools": "Tools",
-  "conversations": "Conversations",
-  "triggers": "Triggers"
+  "conversations": "Conversations & Memory",
+  "triggers": "Triggers",
+  "knowledge": "Knowledge & RAG",
+  "orchestration": "Agent Orchestration",
+  "data-tables": "Data Tables",
+  "permissions": "Permissions"
 }
 

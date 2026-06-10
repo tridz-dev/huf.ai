@@ -1,0 +1,317 @@
+---
+title: Audio, Voice & Vision
+description: Text-to-speech, speech-to-text, image generation, and vision input for HUF agents.
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components'
+
+# Audio, Voice & Vision
+
+HUF agents can generate speech, transcribe audio, generate images, and accept image inputs — all powered by LiteLLM's unified provider interface.
+
+---
+
+## Text-to-Speech (TTS)
+
+HUF's TTS capability is surfaced as the `generate_audio` tool (`handle_generate_audio` in `sdk_tools.py`). When called, the agent converts text to speech, saves the audio file as a Frappe file attachment, and creates an `Agent Message` with `kind = "Audio"` so the chat UI can render an audio player.
+
+### The `generate_audio` Tool
+
+**Function:** `huf.ai.sdk_tools.handle_generate_audio`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `input` | string | ✅ | Text to convert to speech |
+| `voice` | string | ❌ | Voice identifier (e.g., `alloy`, `nova`, `echo`; or ElevenLabs voice ID) |
+| `model` | string | ❌ | Override the TTS model (e.g., `tts-1-hd`, `gemini-2.5-flash-preview-tts`) |
+| `speed` | float | ❌ | Speech speed from 0.25 to 4.0 (default: 1.0) |
+| `response_format` | string | ❌ | Audio format: `mp3`, `opus`, `aac`, `flac`, `wav`, `pcm` (default: `mp3`) |
+
+`agent_name` and `conversation_id` are injected automatically from the run context.
+
+### TTS Model Resolution
+
+The TTS model is resolved in priority order:
+
+1. **Tool-call `model` parameter** — highest precedence; lets the agent override per call
+2. **Agent's `tts_model` field** — the `AI Model` linked to the Agent DocType's **TTS Model** field; API key is sourced from that model's own provider (cross-provider TTS)
+3. **Provider default** — auto-detected from the agent's main provider
+
+### Default TTS Models by Provider
+
+| Provider | Default Model |
+|---|---|
+| OpenAI | `tts-1` |
+| Azure | `tts-1` |
+| Google / Gemini | `gemini/gemini-2.5-flash-preview-tts` |
+| Vertex AI | `vertex_ai/gemini-2.5-flash-preview-tts` |
+| ElevenLabs | `elevenlabs/eleven_multilingual_v2` |
+| AWS | `aws/polly` |
+| MiniMax | `minimax/speech-01` |
+
+### Cross-Provider TTS Configuration
+
+You can run the main agent on one provider (e.g., Anthropic Claude for reasoning) and use a completely different provider for TTS (e.g., ElevenLabs for high-quality voice):
+
+1. Create an **AI Provider** document for ElevenLabs with its API key
+2. Create an **AI Model** document (e.g., `eleven_multilingual_v2`) linked to that provider
+3. On your Agent document, set **TTS Model** to that AI Model document
+4. Set **TTS Voice** to your preferred ElevenLabs voice ID
+
+The `generate_audio` tool will automatically use the ElevenLabs API key, regardless of the agent's main provider.
+
+### Agent DocType TTS Fields
+
+| Field | Fieldname | Description |
+|---|---|---|
+| **TTS Model** | `tts_model` | Link to an `AI Model` document for dedicated TTS. When set, API key comes from this model's own provider. |
+| **TTS Voice** | `tts_voice` | Default voice identifier for the configured TTS model. Overridden by `voice` parameter passed to `generate_audio`. |
+
+### Supported TTS Voices
+
+Each provider uses its own voice naming scheme:
+
+- **OpenAI:** `alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`
+- **Google Gemini:** `Aoede`, `Charon`, `Fenrir`, `Kore`, `Puck` (and others — check Gemini docs)
+- **ElevenLabs:** Use voice IDs from your ElevenLabs account (e.g., `21m00Tcm4TlvDq8ikWAM`)
+
+### Audio Player in Chat
+
+When `generate_audio` runs inside a chat conversation, it creates an `Agent Message` with `kind = "Audio"`. The chat frontend (`audio-player.tsx`) renders a native audio player for these messages, allowing users to play the generated audio inline.
+
+---
+
+## Speech-to-Text (STT)
+
+HUF supports speech-to-text transcription via the `handle_speech_to_text` function in `transcription_handler.py`. This is used to transcribe audio uploaded by users in the chat interface.
+
+### How STT Works
+
+STT in HUF is **provider-driven**: it dispatches to the `transcribe_audio()` method on a `*Settings` singleton DocType (e.g., `OpenAI Settings`, `Groq Settings`). The flow is:
+
+1. User uploads an audio file (e.g., `.webm` recorded in browser)
+2. Frontend calls `handle_speech_to_text` with the Frappe `file_id`
+3. The function determines the provider from the conversation's agent
+4. It loads the corresponding `<Provider> Settings` document
+5. Calls `settings_doc.transcribe_audio(file_doc, kwargs)`
+6. The transcribed text is saved as an `Agent Message` with `role = "user"`
+
+### `handle_speech_to_text` Parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file_id` | string | Frappe File document name of the uploaded audio |
+| `file_url` | string | Alternative: URL of the audio file |
+| `language` | string | Language code (optional; provider-dependent) |
+| `translate` | boolean | Whether to translate to English (optional) |
+| `provider` | string | Override provider (auto-detected from conversation if not set) |
+| `conversation` | string | `Agent Conversation` name (used to auto-detect provider) |
+| `message_id` | string | If set, updates an existing message; otherwise creates a new one |
+
+### STT Model Resolution
+
+Similar to TTS, the STT model follows a priority order:
+
+1. **Tool-call `model` parameter**
+2. **Agent's `stt_model` field** (if configured)
+3. **Provider default** — auto-detected from the agent's main provider
+
+### Default STT Models by Provider
+
+| Provider | Default Model |
+|---|---|
+| OpenAI | `whisper-1` |
+| Azure | `whisper-1` |
+| Groq | `groq/whisper-large-v3` |
+| Deepgram | `deepgram/nova-2` |
+
+If no STT model is available for the provider, HUF falls back to `whisper-1`.
+
+---
+
+## ElevenLabs Settings
+
+`Elevenlabs Settings` is a singleton DocType (`issingle: 1`) used for ElevenLabs integration configuration.
+
+| Field | Fieldname | Type | Description |
+|---|---|---|---|
+| **Provider** | `provider` | Link (AI Provider) | Link to the ElevenLabs `AI Provider` document (API key is fetched from here) |
+| **Agent ID** | `agent_id` | Data | ElevenLabs conversational AI agent ID (for ElevenLabs voice agent integration) |
+| **Webhook Secret** | `webhook_secret` | Password | Secret for verifying ElevenLabs webhook payloads |
+
+Access via: **HUF → Elevenlabs Settings**
+
+---
+
+## Groq Settings
+
+`Groq Settings` is a singleton DocType for configuring the Groq STT endpoint.
+
+| Field | Fieldname | Type | Description |
+|---|---|---|---|
+| **Provider** | `provider` | Link (AI Provider) | Link to the Groq `AI Provider` document |
+| **API URL** | `api_url` | Data | Groq transcription API endpoint |
+| **Method** | `method` | Select | `POST` or `GET` |
+| **Auth Type** | `auth_type` | Select | `Bearer Token`, `API Key Header`, or `None` |
+| **File Param** | `file_param` | Data | Multipart form field name for the audio file |
+| **Model** | `model` | Data | Groq model to use for transcription (e.g., `whisper-large-v3`) |
+| **Enabled** | `enabled` | Check | Whether this Groq STT configuration is active (default: off) |
+| **API Key** | `api_key` | Password | Fetched from the linked AI Provider (read-only) |
+| **Response Path** | `response_path` | Data | Dot-path to extract transcript from response JSON (e.g., `text`) |
+
+Access via: **HUF → Groq Settings**
+
+---
+
+## OpenAI Settings
+
+`OpenAI Settings` is a singleton DocType for configuring the OpenAI STT endpoint (Whisper).
+
+| Field | Fieldname | Type | Description |
+|---|---|---|---|
+| **Provider** | `provider` | Link (AI Provider) | Link to the OpenAI `AI Provider` document |
+| **API URL** | `api_url` | Data | OpenAI transcription API endpoint (default: `https://api.openai.com/v1/audio/transcriptions`) |
+| **Method** | `method` | Select | `POST` or `GET` |
+| **Auth Type** | `auth_type` | Select | `Bearer Token`, `API Key Header`, or `None` |
+| **File Param** | `file_param` | Data | Multipart form field name for the audio file (e.g., `file`) |
+| **Model** | `model` | Data | Whisper model to use (e.g., `whisper-1`) |
+| **Enabled** | `enabled` | Check | Whether this OpenAI STT configuration is active (default: on) |
+| **API Key** | `api_key` | Password | Fetched from the linked AI Provider (read-only) |
+| **Response Path** | `response_path` | Data | Dot-path to extract transcript from response JSON (e.g., `text`) |
+
+Access via: **HUF → OpenAI Settings**
+
+---
+
+## Image Generation
+
+HUF agents can generate images using the `generate_image` tool (`handle_generate_image` in `sdk_tools.py`). Generated images are saved as Frappe file attachments and linked to the conversation.
+
+### The `generate_image` Tool
+
+**Function:** `huf.ai.sdk_tools.handle_generate_image`
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `prompt` | string | ✅ | Text description of the image to generate |
+| `size` | string | ❌ | Image dimensions: `1024x1024`, `1792x1024`, `1024x1792`, etc. (default: `1024x1024`) |
+| `quality` | string | ❌ | Image quality: `standard`, `hd`, `high`, `medium`, `low` (default: `standard`) |
+| `n` | integer | ❌ | Number of images to generate (1–10; default: 1) |
+
+`agent_name` and `conversation_id` are injected automatically from context.
+
+### Image Model Resolution
+
+The image generation model is resolved in priority order:
+
+1. **Agent's `image_generation_model` field** — link to a specific `AI Model` document
+2. **Provider default** — auto-detected from the agent's main provider
+
+### Default Image Models by Provider
+
+| Provider | Default Model |
+|---|---|
+| OpenAI | `dall-e-3` |
+| Azure | `dall-e-3` |
+| OpenRouter | `dall-e-3` |
+| Google | `google/gemini-2.5-flash-image` |
+| Vertex AI | `vertex_ai/imagegeneration@006` |
+| AWS Bedrock | `bedrock/stability.stable-diffusion-xl-v0` |
+| Recraft | `recraft/recraftv3` |
+
+### How Generated Images Are Stored
+
+Each generated image is:
+1. Downloaded (URL) or decoded (base64) from the provider response
+2. Saved as a Frappe `File` document (attached to the `Agent Message`)
+3. An `Agent Message` is created with `kind = "Image"` pointing to the file
+4. The image URL is returned to the agent in the tool response
+
+### Agent `image_generation_model` Field
+
+Set this on the **Agent** document (Advanced Settings section) to pin the agent to a specific image model:
+
+1. Create an **AI Model** document for your image model (e.g., `dall-e-3` linked to OpenAI provider)
+2. On the Agent, set **Image Generation Model** to that AI Model
+3. The agent will use that model for all `generate_image` calls
+
+---
+
+## Vision / Image Input
+
+HUF agents can process images passed as part of conversation messages. Vision is handled natively through LiteLLM's `image_url` message format — no special tool is needed.
+
+### Supported Vision Models
+
+Any model that supports vision through LiteLLM works automatically:
+
+- **OpenAI:** `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`
+- **Anthropic:** `claude-3-5-sonnet-20241022`, `claude-3-opus`, `claude-3-haiku`
+- **Google:** `gemini-1.5-pro`, `gemini-1.5-flash`, `gemini-2.0-flash`
+
+### How Image Input Works
+
+When a user uploads an image in the chat, the frontend:
+1. Uploads the file to Frappe and gets a file URL
+2. Includes the image in the message content as an `image_url` object in LiteLLM's format:
+```json
+{
+  "role": "user",
+  "content": [
+    {"type": "text", "text": "What is in this image?"},
+    {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64,..."}}
+  ]
+}
+```
+3. The agent's vision-capable model processes the image and responds
+
+### File Attachment Triggers
+
+The Agent Trigger system supports `after_insert` and other doc events on the `File` DocType. You can configure an agent to automatically process uploaded files using a **Doc Event** trigger on `File`.
+
+---
+
+## Audio Message Kind
+
+Agent messages in a conversation can have a `kind` field that determines how the chat UI renders them:
+
+| `kind` Value | Rendering |
+|---|---|
+| `Message` | Standard text bubble |
+| `Tool Call` | Collapsible tool call display |
+| `Tool Result` | Collapsible tool result display |
+| `Audio` | Audio player (rendered by `audio-player.tsx`) |
+| `Image` | Inline image display |
+| `Error` | Error message display |
+
+Audio messages (`kind = "Audio"`) created by `handle_generate_audio` are displayed with a native HTML5 audio player in the HUF chat interface. The audio file URL is fetched from the Frappe File attachment linked to the message.
+
+---
+
+## Setup Checklist
+
+<Steps>
+
+### Configure your AI Provider
+
+Go to **HUF → AI Provider** and ensure the provider you want to use for TTS/STT/image generation has its **API Key** set.
+
+### Set up provider-specific Settings
+
+For OpenAI STT: **HUF → OpenAI Settings** → link to your OpenAI provider, set API URL and model.
+
+For Groq STT: **HUF → Groq Settings** → link to your Groq provider, enable it.
+
+For ElevenLabs TTS: **HUF → Elevenlabs Settings** → link to your ElevenLabs provider.
+
+### Configure the Agent
+
+On your **Agent** document:
+- Set **TTS Model** and **TTS Voice** for cross-provider TTS (optional)
+- Set **Image Generation Model** to pin to a specific image model (optional)
+
+### Add audio/vision tools
+
+Create `Agent Tool Function` documents pointing to `huf.ai.sdk_tools.handle_generate_audio` and/or `huf.ai.sdk_tools.handle_generate_image`, then add them to your agent's tool list.
+
+</Steps>

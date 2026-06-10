@@ -1,0 +1,192 @@
+export const metadata = {
+  sidebarTitle: "Knowledge & RAG",
+};
+
+# Knowledge & RAG
+
+Huf's Knowledge system lets agents retrieve relevant information from your documents, databases, and web pages at query time — a technique known as **Retrieval-Augmented Generation (RAG)**. Instead of fitting all knowledge into the system prompt, the agent searches the knowledge base and injects only the most relevant chunks.
+
+---
+
+## Knowledge Source DocType
+
+A **Knowledge Source** is a named, indexed collection of content. All retrieval happens through a knowledge source.
+
+### Core Fields
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Source Name | `source_name` | Unique name. Auto-names the document. |
+| Description | `description` | Describes what this source contains. Used in Optional mode tool descriptions. |
+| Knowledge Type | `knowledge_type` | Storage backend: `sqlite_fts`, `sqlite_vec`, or `chroma` |
+| Scope | `scope` | `Site`, `Workspace`, `Agent`, or `Global` — controls which agents can access this source |
+| Disabled | `disabled` | If checked, the source is excluded from all retrieval |
+
+### Storage Backends
+
+| Type | Description |
+|---|---|
+| `sqlite_fts` | Full-text search using SQLite FTS5. No embedding required. Fast setup, good for keyword-heavy queries. |
+| `sqlite_vec` | Vector similarity search stored in a SQLite file via `sqlite-vec`. Requires an embedding model. Best for semantic search. |
+| `chroma` | External Chroma vector database. Supports both local file mode and remote Chroma server. Best for large collections. |
+
+### Vector Settings (for sqlite_vec and chroma)
+
+| Field | Notes |
+|---|---|
+| `embedding_model` | LiteLLM model identifier for generating embeddings (e.g. `openai/text-embedding-3-small`). |
+| `vector_dimension` | Embedding output size. Must match the model (e.g. `1536` for text-embedding-3-small). |
+| `embedding_provider` | AI Provider to use for API key resolution. |
+
+### Chroma Connection Settings (for chroma type)
+
+| Field | Notes |
+|---|---|
+| `chroma_mode` | `File` (local disk) or `Server` (remote Chroma instance) |
+| `chroma_host` | Hostname of the Chroma server (Server mode only). Default: `localhost` |
+| `chroma_port` | Port of the Chroma server. Default: `8000` |
+| `chroma_ssl` | Enable HTTPS for Chroma connection |
+
+### Chunking Settings
+
+| Field | Default | Notes |
+|---|---|---|
+| `chunk_size` | 512 | Maximum number of tokens per chunk when splitting documents |
+| `chunk_overlap` | 50 | Number of tokens that overlap between adjacent chunks for context continuity |
+
+### Status Fields
+
+| Field | Notes |
+|---|---|
+| `status` | `Pending` → `Indexing` → `Ready` / `Error` / `Rebuilding` |
+| `last_indexed_at` | When the source was last successfully indexed |
+| `total_chunks` | Number of chunks currently in the index |
+| `total_inputs` | Number of source documents indexed |
+| `index_size_bytes` | Storage used by the index |
+
+---
+
+## Knowledge Inputs
+
+Each Knowledge Source has a collection of **Knowledge Input** documents that define *what* to index. Supported input types include:
+
+| Input Type | Description |
+|---|---|
+| Document | A Frappe document (any DocType). Specified fields are extracted and indexed. |
+| File | An uploaded file (PDF, DOCX, TXT, etc.). Text is extracted before indexing. |
+| URL | A web page. Content is fetched and cleaned before indexing. |
+| Text | Raw text entered directly. |
+| Huf Data Table | A Huf Data Table (custom structured data). Rows and columns are indexed as text. |
+
+When you add or update a Knowledge Input, the source re-indexes automatically in the background.
+
+---
+
+## Attaching Knowledge to Agents
+
+Link knowledge sources to an agent via the **Agent Knowledge** child table on the Agent form.
+
+Each row in `agent_knowledge` has:
+
+| Field | Default | Notes |
+|---|---|---|
+| `knowledge_source` | — | Which source to use |
+| `mode` | `Optional` | `Mandatory` or `Optional` |
+| `priority` | 0 | Lower = higher priority in context ordering |
+| `max_chunks` | 5 | Maximum chunks retrieved from this source per query |
+| `token_budget` | 2000 | Maximum tokens this source can contribute to context |
+
+### Mandatory Mode
+
+The source is automatically queried on **every agent run**. The query is derived from the user's current prompt. Up to `max_chunks` chunks (within `token_budget` tokens) are injected into the system context before the agent processes the prompt.
+
+Use Mandatory mode for:
+- Company policies and procedures the agent always needs.
+- Product catalogues or price lists.
+- Glossaries and definitions.
+
+### Optional Mode
+
+The source is exposed to the agent as a **tool** called `knowledge_search_{source_name}`. The agent decides when to call this tool based on the conversation context.
+
+Use Optional mode for:
+- Large reference databases (the agent searches only when relevant).
+- Sources that apply to some queries but not others.
+- Reducing token usage by not always injecting context.
+
+---
+
+## Retrieval at Runtime
+
+When an agent runs with knowledge attached:
+
+1. **Mandatory sources** are queried using the user prompt as the search query.
+2. Huf retrieves the top-N chunks up to `max_chunks`, filtered to fit within `token_budget` tokens.
+3. Chunks are sorted by relevance score and injected into the system message as:
+   ```
+   [Knowledge: {source_name}]
+   Chunk 1: ...
+   Chunk 2: ...
+   ```
+4. The **Agent Run** records `knowledge_sources_used` (JSON list of sources queried) and `chunks_injected` (total chunk count) for observability.
+
+For **Optional** sources, the agent calls `knowledge_search_{source_name}(query="...")` when it needs information. The tool retrieves and returns relevant chunks in the tool result, which the agent uses to formulate its response.
+
+---
+
+## Full-Text Search (sqlite_fts)
+
+The `sqlite_fts` backend uses SQLite's FTS5 extension for keyword-based retrieval. It does not require an embedding model.
+
+- **Strengths:** Zero cost, fast setup, works offline.
+- **Best for:** Exact keyword matches, technical documentation with specific terms, structured data queries.
+- **Limitations:** No semantic understanding — "purchase order" won't match "PO" unless both are in the text.
+
+---
+
+## Vector Search (sqlite_vec)
+
+The `sqlite_vec` backend stores dense vector embeddings in a SQLite file using the `sqlite-vec` extension.
+
+- **Strengths:** Semantic understanding — finds conceptually related content even with different wording.
+- **Best for:** Natural language queries, FAQs, policies written in prose.
+- **Requires:** An embedding model (e.g. `openai/text-embedding-3-small`).
+- **Cost:** Each document chunk requires an embedding API call on first index. Searches require one embedding call per query.
+
+---
+
+## Chroma Vector Database
+
+The `chroma` backend connects to a [Chroma](https://www.trychroma.com/) vector database.
+
+- **Strengths:** Scales to millions of documents, supports persistent server-based storage.
+- **Best for:** Enterprise knowledge bases, large document collections.
+- **Setup:** Either run Chroma locally (File mode) or connect to a running Chroma server.
+
+---
+
+## Indexing
+
+### Triggering a Re-Index
+
+- **Automatic:** Adding or updating a Knowledge Input triggers background indexing.
+- **Manual:** Click **Re-Index** on the Knowledge Source form to rebuild the index from scratch (status changes to `Rebuilding`).
+- **API:**
+  ```bash
+  POST /api/method/huf.ai.knowledge_api.reindex_source
+  {"source_name": "My Knowledge Source"}
+  ```
+
+### Monitoring
+
+Watch the `status` field on the Knowledge Source — it cycles through `Indexing` → `Ready` when complete. Any errors are captured in `error_message`.
+
+---
+
+## Best Practices
+
+- **Keep chunks focused** — smaller `chunk_size` (256–512 tokens) gives more precise retrieval but requires more chunks to cover a document. Larger chunks (1024+) preserve more context per chunk.
+- **Add meaningful descriptions** — for Optional-mode sources, the description becomes the tool description the LLM reads. Make it specific: *"Internal HR policies including leave, benefits, and code of conduct"* is better than *"HR docs"*.
+- **Use FTS for exact data, vector for natural language** — a product SKU list benefits from FTS; a policy document benefits from vector search.
+- **Monitor `chunks_injected`** — if it's consistently at `max_chunks`, consider increasing the limit or splitting into more focused sources.
+- **Set `token_budget` conservatively** — the knowledge context competes with conversation history and tool results for the model's context window.

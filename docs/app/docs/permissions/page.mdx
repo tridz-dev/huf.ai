@@ -1,0 +1,165 @@
+# Permissions & Security Overview
+
+HUF uses a **capability-based permission layer** layered on top of Frappe's built-in role system. Access to HUF features is controlled by assigning users a **Huf Role**, which grants a defined set of fine-grained capabilities.
+
+## Architecture
+
+```
+Frappe User
+    ↓
+Huf User Role  →  Huf Role  →  set of capabilities
+                                  (e.g. "agent.create", "chat.use")
+    ↓
+Frappe Role  ←  used for DocType-level enforcement
+```
+
+HUF's capability system (`huf/permissions.py`) runs on top of Frappe's standard DocType permissions. Frappe permissions control database access (who can read/write which records). HUF capabilities control UI visibility and API endpoint access.
+
+## Default HUF Roles
+
+Four system roles are installed with HUF:
+
+| Role | Description |
+|---|---|
+| **Huf Admin** | All capabilities. Maps to Frappe `System Manager`. |
+| **Huf Manager** | Full agent, chat, knowledge, tools, and flows management. |
+| **Huf User** | Can use agents, chat, knowledge, tools, and flows. Cannot create/delete. |
+| **Huf Viewer** | Can use agents and view their own chat history only. |
+
+## Capability Catalogue
+
+All capabilities are declared in `CAPABILITIES` dict in `huf/permissions.py`:
+
+| Capability | Label | Granted by Default to |
+|---|---|---|
+| `agent.use` | Use Agents | User, Manager, Admin |
+| `agent.create` | Create Agents | Manager, Admin |
+| `agent.edit` | Edit Agents | Manager, Admin |
+| `agent.delete` | Delete Agents | Manager, Admin |
+| `agent.view_all` | View All Agents | Manager, Admin |
+| `chat.use` | Use Chat | User, Manager, Admin |
+| `chat.view_own` | View Own Conversations | User, Viewer, Manager, Admin |
+| `chat.view_all` | View All Conversations | Manager, Admin |
+| `knowledge.use` | Use Knowledge | User, Manager, Admin |
+| `knowledge.create` | Create Knowledge | Manager, Admin |
+| `knowledge.manage` | Manage Knowledge | Manager, Admin |
+| `tools.use` | Use Tools | User, Manager, Admin |
+| `tools.create` | Create Tools | Manager, Admin |
+| `tools.manage` | Manage Tools | Manager, Admin |
+| `flows.use` | Use Flows | User, Manager, Admin |
+| `flows.create` | Create Flows | Manager, Admin |
+| `flows.manage` | Manage Flows | Manager, Admin |
+| `system.providers.manage` | Manage AI Providers | Admin |
+| `system.models.manage` | Manage AI Models | Admin |
+| `system.mcp.manage` | Manage MCP Servers | Admin |
+| `system.settings.manage` | Manage Settings | Admin |
+| `users.invite` | Invite Users | Admin |
+| `users.manage` | Manage Users | Admin |
+| `roles.manage` | Manage Roles | Admin |
+
+## Permission Checks
+
+HUF provides a clean API for checking capabilities in Python:
+
+```python
+from huf.permissions import has_capability, get_user_capabilities
+
+# Check a single capability
+if not has_capability(frappe.session.user, "agent.create"):
+    frappe.throw("Not permitted", frappe.PermissionError)
+
+# Get all capabilities for a user
+caps = get_user_capabilities(frappe.session.user)
+# → ["agent.use", "agent.create", "chat.use", ...]
+```
+
+`get_user_capabilities()` is cached per user (5-minute TTL via Frappe's cache). The cache is busted when a user's role is changed via `update_user_role` or `set_user_enabled`.
+
+## Frontend Capability Exposure
+
+The React frontend calls `huf.permissions.get_me` on app load to determine which modules and actions to show:
+
+```
+GET /api/method/huf.permissions.get_me
+→ {
+    "user": "jane@example.com",
+    "full_name": "Jane Doe",
+    "huf_role": "Huf Manager",
+    "capabilities": ["agent.use", "agent.create", "chat.use", ...]
+  }
+```
+
+This drives conditional rendering of navigation items, buttons, and settings panels.
+
+## Tool-Level Security
+
+When an agent executes tools, the `PermissionAwareToolRegistry` (`huf/ai/tool_registry.py`) enforces additional checks **before** the tool function is invoked.
+
+### Guest Restrictions
+
+For `allow_guest = true` agents:
+- All **mutating tools** are **blocked by default** unless `allowed_for_guest = 1` is set on the `Agent Tool Function`.
+- Read-only tools (Get Document, Get List) are also blocked unless explicitly allowed.
+
+```python
+MUTATING_TOOL_TYPES = {
+    "Create Document", "Create Multiple Documents",
+    "Update Document", "Update Multiple Documents",
+    "Delete Document", "Delete Multiple Documents",
+    "Submit Document", "Cancel Document",
+    "Set Value", "POST", "Run Agent",
+    "Attach File to Document"
+}
+```
+
+> [!CAUTION]
+> Never set `allow_guest = 1` on an agent that has mutating tools without carefully reviewing which tools also have `allowed_for_guest = 1`. A misconfigured guest agent could allow unauthenticated users to create or delete data.
+
+### DocType Permission Enforcement
+
+For tools with a `reference_doctype`:
+
+| Tool Type | Required Frappe Permission |
+|---|---|
+| Get Document, Get List | `read` |
+| Create Document, Create Multiple | `create` |
+| Update Document, Update Multiple | `write` |
+| Delete Document, Delete Multiple | `delete` |
+| Submit Document | `submit` |
+| Cancel Document | `cancel` |
+| Attach File to Document | `create` |
+
+The `required_permission` field on `Agent Tool Function` overrides the default for explicit control.
+
+Tools always run with the **authenticated user's Frappe permissions**. If the user doesn't have `write` on `Sales Order`, the agent cannot update Sales Orders on their behalf.
+
+### Custom Function Security
+
+Custom Function tools (`function_path`) run arbitrary Python in the Frappe context. Always implement permission checks inside the function:
+
+```python
+def my_tool_function(order_id: str) -> dict:
+    # Always check permissions inside custom functions!
+    frappe.has_permission("Sales Order", doc=order_id, throw=True)
+    ...
+```
+
+## App Screen Visibility
+
+HUF controls its own tile in the Frappe app switcher via:
+
+```python
+def check_app_permission() -> bool:
+    # Returns True if user is Administrator, System Manager,
+    # or has any active Huf User Role record
+```
+
+This is called by the Frappe `add_to_apps_screen` hook. Users without any HUF role will not see the HUF tile in the app switcher.
+
+## Security Best Practices
+
+- **Least privilege** — Assign `Huf User` by default; only elevate to `Huf Manager` when needed.
+- **Guest agents** — Keep them read-only. Block all mutating tools for Guest access.
+- **Custom tools** — Always validate inputs and check Frappe permissions inside custom functions.
+- **API keys** — API keys for AI providers are stored in Password fields (encrypted in the database). Never log them or pass them to the frontend.
+- **Prompt templates** — System prompts (`is_system = 1`) cannot be versioned by non-admin users.

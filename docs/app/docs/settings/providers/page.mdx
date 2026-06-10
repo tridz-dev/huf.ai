@@ -1,0 +1,172 @@
+# AI Providers & Models
+
+HUF uses [LiteLLM](https://docs.litellm.ai/) as a unified gateway to 100+ LLM providers. This means a single configuration pattern covers OpenAI, Anthropic, Google Gemini, OpenRouter, xAI (Grok), Mistral, and many others.
+
+## AI Provider DocType
+
+Create one **AI Provider** record per service you use:
+
+| Field | Description |
+|---|---|
+| `provider_name` | Unique name (e.g. `OpenAI`, `Anthropic`, `Google`) |
+| `api_key` | API key — stored encrypted (Frappe Password field type) |
+
+Navigate to **HUF → AI Provider → New** to add a provider.
+
+## AI Model DocType
+
+Create one **AI Model** record per model you use:
+
+| Field | Description |
+|---|---|
+| `model_name` | Model identifier (e.g. `gpt-4o`, `claude-3-5-sonnet-20241022`) |
+| `provider` | Link to the AI Provider |
+
+## Model Name Normalization
+
+HUF automatically normalizes model names to LiteLLM format. You can use either:
+
+| Input Format | Result |
+|---|---|
+| `gpt-4-turbo` (with OpenAI provider) | `openai/gpt-4-turbo` |
+| `claude-3-5-sonnet-20241022` (with Anthropic) | `anthropic/claude-3-5-sonnet-20241022` |
+| `gemini-1.5-pro` (with Google) | `gemini/gemini-1.5-pro` |
+| `openai/gpt-4-turbo` (already normalized) | `openai/gpt-4-turbo` (used as-is) |
+
+**Provider prefix map:**
+
+| Provider Name | LiteLLM Prefix |
+|---|---|
+| `OpenAI` | `openai` |
+| `Anthropic` | `anthropic` |
+| `Google` | `gemini` |
+| `xAI` / `Grok` | `xai` |
+| `Mistral` | `mistral` |
+| `OpenRouter` | `openrouter` |
+| `Cohere` | `cohere` |
+| `Perplexity` | `perplexity` |
+| `Alibaba` / `Dashscope` | `dashscope` |
+| `Meta` | `meta-llama` |
+| Others | `<provider_name_lowercase>` |
+
+For OpenRouter, all models are prefixed with `openrouter/` regardless of the underlying provider.
+
+## Supported Providers
+
+### OpenAI
+
+1. Create **AI Provider** with `provider_name = OpenAI`.
+2. Paste your OpenAI API key from [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
+3. Create **AI Model** with `model_name = gpt-4o` (or `gpt-4-turbo`, `gpt-3.5-turbo`, etc.).
+
+```
+Provider: OpenAI
+API Key: sk-...
+Model: gpt-4o
+```
+
+### Anthropic
+
+1. Create **AI Provider** with `provider_name = Anthropic`.
+2. Paste your Anthropic API key from the Anthropic console.
+3. Create **AI Model** with `model_name = claude-3-5-sonnet-20241022`.
+
+### Google Gemini
+
+1. Create **AI Provider** with `provider_name = Google`.
+2. Paste your Google AI Studio API key.
+3. Create **AI Model** with `model_name = gemini-1.5-pro`.
+
+> [!NOTE]
+> The `GEMINI_API_KEY` environment variable is set automatically from the AI Provider record. No manual environment setup is needed.
+
+### OpenRouter
+
+OpenRouter gives access to 500+ models from one API key:
+
+1. Create **AI Provider** with `provider_name = OpenRouter`.
+2. Paste your OpenRouter API key from [openrouter.ai/keys](https://openrouter.ai/keys).
+3. Create **AI Model** with `model_name` in OpenRouter format: `meta-llama/llama-3.1-8b-instruct` or `anthropic/claude-3-haiku`.
+
+All OpenRouter models are prefixed with `openrouter/` automatically.
+
+### xAI (Grok)
+
+1. Create **AI Provider** with `provider_name = xAI`.
+2. Paste your xAI API key.
+3. Create **AI Model** with `model_name = grok-3-mini`.
+
+The `XAI_API_KEY` env var is set automatically.
+
+### Mistral
+
+1. Create **AI Provider** with `provider_name = Mistral`.
+2. Paste your Mistral API key.
+3. Create **AI Model** with `model_name = mistral-large-latest`.
+
+### Custom / Unsupported Providers
+
+For providers not in the standard map, use full LiteLLM format in the model name:
+
+```
+provider_name: MyProvider
+model_name: myprovider/my-custom-model
+```
+
+## API Key Security
+
+API keys are stored using Frappe's `Password` field type, which encrypts the value at rest using the site's `encryption_key`. Keys are never exposed in API responses or the frontend.
+
+In Python code, retrieve a key with:
+```python
+provider_doc = frappe.get_doc("AI Provider", "OpenAI")
+api_key = provider_doc.get_password("api_key")
+```
+
+## Prompt Caching
+
+HUF supports provider-native prompt caching to reduce latency and cost for repeated system prompts.
+
+Enable on an Agent with:
+
+| Field | Description |
+|---|---|
+| `enable_prompt_caching` | Master toggle for this agent |
+| `cache_system_message` | Cache the system instructions (reused across turns) |
+| `cache_conversation_history` | Cache the conversation history messages |
+| `cache_control_type` | `ephemeral` (default) for Anthropic cache_control |
+
+**Supported backends:**
+
+| Provider | Mechanism |
+|---|---|
+| Anthropic | `cache_control: {type: "ephemeral"}` on message content |
+| OpenAI | `prompt_cache_retention` via `huf_prompt_cache_defaults` in site config |
+| Google Gemini | `cached_content` parameter for Gemini's context caching API |
+
+Site-wide defaults can be configured per-channel in `site_config.json`:
+
+```json
+{
+  "huf_prompt_cache_defaults": {
+    "default": { "openai_prompt_cache_retention": "24h" },
+    "channels": {
+      "api": { "openai_prompt_cache_retention": "6h" }
+    }
+  }
+}
+```
+
+## Cost Tracking
+
+LiteLLM's `completion_cost()` function calculates the cost of each agent run based on token usage. The result is stored in:
+- `Agent Run.total_cost` (Currency field)
+- `Agent Run.input_tokens`, `.output_tokens`, `.total_tokens`
+
+HUF also tracks `cached_tokens` (tokens served from cache) for supported models, visible in the Agent Run record.
+
+## Context Window Management
+
+When conversation history grows, messages are automatically trimmed to fit the model's context window using LiteLLM's `trim_messages()` utility. If trimming fails, the untrimmed messages are used and an error is logged.
+
+For long-running conversations, enable **history summarization** on the Agent (`summary_model` + background summarization) to compress old messages into a rolling summary before they're trimmed.

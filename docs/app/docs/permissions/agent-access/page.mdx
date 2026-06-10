@@ -1,0 +1,115 @@
+# Agent Access Control
+
+Beyond HUF's role system, individual agents have their own access control settings that determine who can run them, whether guest users can access them, and how their tools are filtered per-user.
+
+## Agent-Level Access Fields
+
+| Field | Type | Description |
+|---|---|---|
+| `allow_chat` | Check | Enables the Agent Chat interface for this agent |
+| `allow_guest` | Check | Allows unauthenticated (Guest) users to call this agent via API |
+| `allowed_users` | Table | Explicit list of users permitted to run this agent (`Agent Allowed User`) |
+| `allowed_roles` | Table | Explicit list of Frappe roles permitted to run this agent (`Agent Allowed Role`) |
+
+## Access Logic
+
+```python
+def _is_user_allowed(agent_doc, user: str) -> bool:
+    # Guest users need allow_guest = 1
+    if user == "Guest":
+        return agent_doc.allow_guest
+
+    # If allowed_users is specified, user must be in the list
+    if agent_doc.allowed_users:
+        allowed_user_names = [u.user for u in agent_doc.allowed_users]
+        if user in allowed_user_names:
+            return True
+
+    # If allowed_roles is specified, user must have one of those roles
+    if agent_doc.allowed_roles:
+        allowed_role_names = [r.role for r in agent_doc.allowed_roles]
+        user_roles = frappe.get_roles(user)
+        if any(role in user_roles for role in allowed_role_names):
+            return True
+
+    # If NO restrictions configured, all logged-in users can run
+    if not agent_doc.allowed_users and not agent_doc.allowed_roles:
+        return True
+
+    return False
+```
+
+This is called at the start of every `run_agent_sync` call. Unauthorized access throws a `PermissionError`.
+
+## Guest Agents
+
+Enable `allow_guest = 1` to allow unauthenticated API calls. This is useful for:
+- Public chatbots on websites
+- Customer-facing support bots
+- Embedded agents in public portals
+
+> [!CAUTION]
+> Guest agents should **never** have mutating tools unless `allowed_for_guest = 1` is explicitly set on each tool. The `PermissionAwareToolRegistry` blocks all mutating operations for Guest by default. See the [Permissions Overview](/docs/permissions) for the full list of mutating tool types.
+
+## Restricting to Specific Users
+
+Add users to the `allowed_users` child table:
+
+```
+Agent → allowed_users:
+  - user: alice@example.com
+  - user: bob@example.com
+```
+
+Only Alice and Bob can run this agent. All other authenticated users receive a `PermissionError`.
+
+## Restricting to Specific Roles
+
+Add Frappe roles to the `allowed_roles` child table:
+
+```
+Agent → allowed_roles:
+  - role: Sales Team
+  - role: Support Agent
+```
+
+Any user with at least one of the listed Frappe roles can run the agent.
+
+> [!NOTE]
+> `allowed_users` and `allowed_roles` are checked independently. If both are configured, a user is allowed if they appear in `allowed_users` **OR** have any of the `allowed_roles`. If either list is empty, only the non-empty list is checked.
+
+## Open Access (No Restrictions)
+
+If both `allowed_users` and `allowed_roles` are empty, **any authenticated user** can run the agent. This is the default for new agents.
+
+## Tool Filtering per User
+
+Even when a user is permitted to run an agent, individual tool calls are filtered by `PermissionAwareToolRegistry` based on the user's Frappe permissions:
+
+| Tool Type | Required Permission |
+|---|---|
+| Get Document, Get List | `read` on `reference_doctype` |
+| Create Document | `create` on `reference_doctype` |
+| Update Document | `write` on `reference_doctype` |
+| Delete Document | `delete` on `reference_doctype` |
+| Submit Document | `submit` on `reference_doctype` |
+| Cancel Document | `cancel` on `reference_doctype` |
+
+A Sales Rep with read-only permission on Purchase Orders cannot use a tool that creates them, even if the agent has that tool configured.
+
+## Read-Only Agents
+
+Setting `is_read_only = 1` on an `Agent Tool Function` prevents it from being used even when the tool type is mutating. This is useful for creating safe "demo" versions of tools.
+
+## Disabled Agents
+
+Set `disabled = 1` on an Agent to prevent it from running. The `run_agent_sync` function checks this flag and throws a `ValidationError` if the agent is disabled. Disabled agents do not appear in the chat interface.
+
+## Per-User Conversation History
+
+The `persist_user_history` flag (default: on) controls how conversation history is scoped for Doc Event and Schedule triggers:
+
+- **On** — Each user who triggers the agent gets their own conversation history. Doc events triggered by different users are independent.
+- **Off** — All users share a single conversation history for this agent+channel.
+
+For chat-based agents, conversation history is always per-user (keyed by user + channel + agent).

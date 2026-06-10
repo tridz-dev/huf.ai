@@ -1,0 +1,243 @@
+export const metadata = {
+  sidebarTitle: "Flows",
+};
+
+# Flows
+
+Flows are visual, multi-step AI workflows that orchestrate agents, tools, conditions, HTTP calls, and human approval steps in a directed graph. Each node represents an action; edges define how control passes between nodes.
+
+---
+
+## Key Concepts
+
+| Term | Meaning |
+|---|---|
+| **Flow Definition** | The saved blueprint of a flow (nodes + edges stored as JSON) |
+| **Flow Run** | A live execution instance of a Flow Definition |
+| **Node** | A single step in the flow (agent call, condition, HTTP request, etc.) |
+| **Edge** | A directed connection between two nodes; can be conditional |
+| **Context** | A shared JSON dictionary passed between nodes as data flows through the graph |
+| **Hop** | One node execution. Flows have a configurable `max_hops` limit (default: 100) to prevent infinite loops |
+
+---
+
+## Flow Definition DocType
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Flow ID | `flow_id` | Unique identifier. Auto-names the document. |
+| Flow Name | `flow_name` | Human-readable name shown in the flow list |
+| Status | `status` | `Draft`, `Active`, or `Archived`. Only `Active` flows can be executed. |
+| Version | `version` | Read-only. Incremented on each save. |
+| Schema Version | `schema_version` | Internal schema version for migration compatibility |
+| Definition JSON | `definition_json` | The full flow graph serialized as JSON. Edited visually in the flow builder. |
+| Is System | `is_system` | Read-only. Marks flows created programmatically by Huf itself. |
+
+---
+
+## Flow Run DocType
+
+Each time a flow executes, a **Flow Run** document tracks the live state:
+
+| Field | Notes |
+|---|---|
+| `flow_definition` | The Flow Definition being run |
+| `status` | `Queued` → `Running` → `Success` / `Failed` / `Waiting Approval` / `Waiting User` |
+| `mode` | `Normal` (sequential tool calls) or `Agentic` (agent decides what to do next) |
+| `trigger_type` | How this run was initiated: `Manual`, `Webhook`, `Schedule`, `Doc Event` |
+| `current_node_id` | The node currently being executed |
+| `hop_count` | How many nodes have been executed so far |
+| `max_hops` | Safety limit on total nodes (from flow settings, default 100) |
+| `context_json` | The shared data dictionary — updated by each node and read by the next |
+| `trigger_payload` | The initial data payload that triggered the flow |
+| `conversation` | Linked Agent Conversation (if the flow shares a conversation across agent nodes) |
+| `last_error` | Error message if status = Failed |
+| `started_at` / `completed_at` | Timing information |
+
+---
+
+## Node Types
+
+The flow engine dispatches to different executors based on `node.type`:
+
+### Trigger Nodes
+
+These are the starting points of a flow. They receive external inputs and set up the initial context.
+
+| Node Type | Description |
+|---|---|
+| `trigger.webhook` | Started by an HTTP POST to a webhook URL. The request body is in context. |
+| `trigger.schedule` | Started by a Frappe Scheduler tick. Adds `_schedule_trigger` metadata to context. |
+| `trigger.doc-event` | Started when a Frappe document event fires. The triggering document's data is in context. |
+
+### Action Nodes
+
+| Node Type | Description |
+|---|---|
+| `agent.run` | Runs a Huf agent. The agent's response is stored in context under a configurable key. |
+| `tool.call` | Directly calls an Agent Tool Function without going through an agent's reasoning loop. Useful for deterministic operations. |
+| `http_request` | Makes an HTTP GET or POST call to an external URL. Response stored in context. |
+
+### Control Flow Nodes
+
+| Node Type | Description |
+|---|---|
+| `condition` | Evaluates a Python/jinja expression against the context. Routes to different edges based on the result (`true`/`false`). |
+| `router.llm` | Uses an LLM to choose the next step based on the conversation and context. The LLM picks from a list of labelled routes. |
+| `transform` | Reads fields from context, applies a transformation (mapping, template, expression), and writes results back to context. |
+| `loop` | Iterates over a list in context, executing a sub-flow for each item. |
+| `human.approval` | Pauses the flow and sends a notification to designated approvers. Resumes after `approved` or `rejected`. |
+| `end` | Terminates the flow and sets status to `Success`. |
+
+---
+
+## Edges
+
+Edges connect nodes and carry conditions that determine whether control flows along them.
+
+| Edge kind | Behaviour |
+|---|---|
+| `always` | Always taken (default for unconditional transitions) |
+| `on_success` | Taken when the previous node returns `status: success` |
+| `on_failure` | Taken when the previous node returns `status: failed` |
+| `expression` | Taken when a Python expression evaluates to `true` against the context |
+| `outcome` | Used by `human.approval` — routes by decision: `approved` or `rejected` |
+
+Edge expressions have access to the full `context` dict:
+
+```python
+# Example: route based on an agent's extracted field
+context.get("customer_tier") == "Enterprise"
+
+# Example: route based on HTTP status code
+context.get("http_response", {}).get("status_code") == 200
+```
+
+---
+
+## Context Dictionary
+
+The context is the data backpack that travels through the flow. Every node can read from and write to it.
+
+**Built-in context keys (set automatically):**
+
+| Key | Set by | Contains |
+|---|---|---|
+| `trigger_payload` | Flow creation | The original input payload |
+| `_schedule_trigger` | `trigger.schedule` | Schedule metadata |
+| `_doc_event_trigger` | `trigger.doc-event` | Doc event metadata (doctype, docname, event) |
+| `doc` | `trigger.doc-event` | The triggering document's JSON |
+| `{agent_output_key}` | `agent.run` | Agent's text response |
+| `{tool_output_key}` | `tool.call` | Tool's return value |
+| `{http_output_key}` | `http_request` | HTTP response (status_code, data, headers) |
+| `approval` | `human.approval` | Approval decision, comment, approver, timestamp |
+
+---
+
+## Execution Modes
+
+### Normal Mode
+
+The flow engine executes nodes sequentially. Each node is called with the current context and returns an output dict. The engine evaluates outgoing edges and moves to the next node. This is the default mode.
+
+### Agentic Mode
+
+An agent acts as the flow orchestrator. Instead of the engine deterministically choosing the next node based on edge conditions, it asks an agent to look at the current context and decide which node to execute next. The agent uses the flow definition as a "menu" of available actions.
+
+Use Agentic mode for:
+- Flexible multi-step tasks where the order depends on the data
+- Conversational flows where the agent needs to ask clarifying questions
+- Tasks requiring judgment that rigid conditions can't capture
+
+---
+
+## Human Approval Step
+
+The `human.approval` node pauses the flow and notifies one or more users to review and decide.
+
+**Configuration:**
+
+| Field | Notes |
+|---|---|
+| `title` | Notification title |
+| `message` | Instructions for the approver |
+| `approvers` | List of user emails or a context expression |
+| `allowed_roles` | Frappe roles that can approve |
+| `store_decision_in_context` | Context key where the approval decision is stored. Default: `approval` |
+
+**After the approval node pauses:**
+
+```json
+{
+  "approval": {
+    "decision": "approved",
+    "comment": "Looks good",
+    "approved_by": "manager@example.com",
+    "approved_at": "2025-10-01 12:00:00"
+  }
+}
+```
+
+The flow then routes via the edge matching the decision outcome (`approved` or `rejected`).
+
+**API for approving/rejecting:**
+
+```bash
+POST /api/method/huf.ai.flow_engine.approve_flow_run
+{
+  "flow_run_name": "FLOW-RUN-0001",
+  "decision": "approved",
+  "comment": "Approved after review"
+}
+```
+
+---
+
+## Building Flows
+
+### Using the Visual Flow Builder
+
+1. Navigate to **Huf → Flows → New Flow**.
+2. Drag node types from the palette onto the canvas.
+3. Connect nodes by dragging from one node's output handle to another's input handle.
+4. Click a node to configure it (set agent name, tool name, expression, etc.).
+5. Set the flow's **status** to `Active` to enable execution.
+6. Click **Run** to execute the flow manually with a test payload.
+
+### Using the Flow Builder API
+
+Flows can also be created programmatically by posting a `definition_json` directly to the `Flow Definition` DocType.
+
+---
+
+## Running Flows
+
+### Manual
+
+```bash
+POST /api/method/huf.ai.flow_api.run_flow
+{
+  "flow_id": "my-flow-id",
+  "payload": {"input": "Hello World"}
+}
+```
+
+### Via Agent Trigger
+
+A flow can be associated with an `Agent Trigger` of type `Doc Event`, `Schedule`, or `Webhook`. When the trigger fires, it creates a Flow Run automatically.
+
+### Resuming Paused Flows (Waiting User)
+
+```bash
+POST /api/method/huf.ai.flow_engine.resume_flow_run
+{
+  "flow_run_name": "FLOW-RUN-0001",
+  "user_input": {"user_choice": "option_a"}
+}
+```
+
+---
+
+## Real-Time Updates
+
+The flow engine publishes Frappe Realtime events as nodes execute. The `/huf` Flows UI listens to these events to show live execution progress — active nodes light up as they run, completed nodes show their status, and errors are displayed in-place.

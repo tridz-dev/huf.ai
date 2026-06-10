@@ -1,6 +1,8 @@
 {
-  "built-in": "Built-in Tools",
-  "custom": "Creating Custom Tools",
-  "publishing": "Publishing Tools"
+  "built-in": "Built-in Integration Tools",
+  "frappe-data": "Frappe Data Tools",
+  "mcp": "MCP (Model Context Protocol)",
+  "custom": "Custom Tools",
+  "publishing": "Publishing Tools (App Provided)"
 }
 

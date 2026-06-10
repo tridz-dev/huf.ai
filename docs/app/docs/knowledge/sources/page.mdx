@@ -1,0 +1,212 @@
+# Knowledge Sources Guide
+
+This page walks through creating Knowledge Sources, adding content, understanding the indexing pipeline, and attaching sources to agents.
+
+## Creating a Knowledge Source
+
+In the HUF UI, navigate to **Knowledge** and click **New Knowledge Source**. Fill in:
+
+| Field | Notes |
+|---|---|
+| **Source Name** | Unique identifier, used for the database filename |
+| **Description** | Human description of what this source contains |
+| **Knowledge Type** | `sqlite_fts` (default), `sqlite_vec`, or `chroma` |
+| **Scope** | Who can access: `Site`, `Workspace`, `Agent`, or `Global` |
+| **Chunk Size** | Characters per chunk (default 512) |
+| **Chunk Overlap** | Overlap between consecutive chunks (default 50) |
+
+For `sqlite_vec` and `chroma`, additional **Vector Settings** appear:
+- **Embedding Model** — LiteLLM identifier, e.g. `openai/text-embedding-3-small`
+- **Vector Dimension** — Must match the model output (e.g. 1536)
+- **Embedding Provider** — AI Provider record whose API key is used for embeddings
+
+Save the document. The source starts in **Pending** status.
+
+---
+
+## Adding Knowledge Inputs
+
+Open a Knowledge Source and add child **Knowledge Input** records. Three input types are supported:
+
+### File Upload
+
+Set `input_type = File` and attach a file. Supported formats:
+
+| Extension / MIME | Extractor Used |
+|---|---|
+| `.pdf` / `application/pdf` | `PDFExtractor` (extracts text from PDF pages) |
+| `.docx` / `application/vnd.openxmlformats-officedocument...` | `DocxExtractor` (python-docx) |
+| `.txt`, `.md` / `text/plain`, `text/markdown` | `TextExtractor` (reads as UTF-8) |
+| `.html`, `.htm` / `text/html` | `HTMLExtractor` (strips tags, extracts body text) |
+
+### Plain Text
+
+Set `input_type = Text` and paste content directly into the `text` field. Useful for:
+- FAQ entries written inline
+- Terms and conditions
+- Any structured text you want to maintain directly in HUF
+
+### URL Crawl
+
+Set `input_type = URL` and provide a web URL. The `URLExtractor` fetches the page, parses HTML with BeautifulSoup, and extracts the readable body text. Useful for documentation sites, product pages, or knowledge bases that live on the web.
+
+---
+
+## Indexing Pipeline
+
+When a Knowledge Input is saved, it is queued for processing. The `indexer.py` module handles the pipeline:
+
+```
+Knowledge Input (File/Text/URL)
+        ↓
+   TextExtractor   ← chooses extractor by file type or input_type
+        ↓
+  ExtractedText    ← { text, title, metadata, character_count }
+        ↓
+   chunk_text()    ← SentenceSplitter (LlamaIndex) or simple fallback
+        ↓
+  List[Chunk]      ← { text, chunk_index, char_start, char_end }
+        ↓
+  backend.add_chunks()   ← writes to SQLite FTS / sqlite-vec / Chroma
+        ↓
+  Knowledge Input status → "Indexed"
+  Knowledge Source stats updated (total_chunks, index_size_bytes)
+```
+
+Processing runs in a background job to avoid blocking the request. The Knowledge Input status progresses: `Pending → Processing → Indexed` (or `Error`).
+
+---
+
+## Extractors
+
+Extractors live in `huf/ai/knowledge/extractors/` and all extend the `TextExtractor` abstract class. Each returns an `ExtractedText` dataclass:
+
+```python
+@dataclass
+class ExtractedText:
+    text: str
+    title: Optional[str] = None
+    metadata: Optional[dict] = None
+    character_count: int = 0
+```
+
+| Extractor | File | Notes |
+|---|---|---|
+| `PDFExtractor` | `extractors/pdf.py` | Reads PDF with pypdf or pdfminer |
+| `DocxExtractor` | `extractors/docx.py` | Reads DOCX with python-docx |
+| `TextExtractor` | `extractors/text.py` | Plain UTF-8 read, supports TXT/MD |
+| `HTMLExtractor` | `extractors/html.py` | Strips HTML tags, extracts body text |
+| `URLExtractor` | `extractors/url.py` | HTTP fetch + HTML extraction |
+
+The factory method `TextExtractor.get_extractor(file_type)` resolves the correct class based on MIME type or extension. Unknown types fall back to `TextExtractor`.
+
+---
+
+## Chunking
+
+The chunker (`huf/ai/knowledge/chunkers/sentence.py`) splits extracted text into overlapping chunks:
+
+1. **Primary strategy** — Uses `llama_index.core.node_parser.SentenceSplitter`, which splits at sentence boundaries while respecting the `chunk_size` target.
+2. **Fallback strategy** — If LlamaIndex is not available, a simple sliding-window chunker splits at the nearest sentence boundary within the window.
+
+Each chunk is a `Chunk` dataclass: `{ text, chunk_index, char_start, char_end }`.
+
+Default settings from the Knowledge Source:
+- `chunk_size = 512` characters
+- `chunk_overlap = 50` characters
+
+Adjust these based on your content:
+- Shorter chunks (256–512) → more precise retrieval, more chunks
+- Longer chunks (1024–2048) → more context per result, fewer chunks
+
+---
+
+## Context Builder
+
+`huf/ai/knowledge/context_builder.py` is called before every agent run to inject **mandatory** knowledge:
+
+```python
+def build_knowledge_context(
+    agent_name: str,
+    user_query: str,
+    max_tokens: int = 4000,
+) -> Dict[str, Any]:
+```
+
+It:
+1. Looks up all mandatory knowledge sources linked to the agent.
+2. Searches each source with `knowledge_search(query=user_query, top_k=max_chunks)`.
+3. Assembles retrieved chunks into a `## Relevant Knowledge` block with source headings.
+4. Respects the `max_tokens` budget (estimated at 4 chars/token) — truncates if over budget.
+5. Returns `{ context_text, sources_used, chunks_used }`.
+
+The context is then prepended to the user prompt via `inject_knowledge_context()`.
+
+---
+
+## Embedding Configuration
+
+`huf/ai/knowledge/embedding.py` wraps LiteLLM's embedding API:
+
+```python
+def get_embeddings(
+    texts: List[str],
+    model: str,             # e.g. "openai/text-embedding-3-small"
+    api_key: Optional[str],
+    api_base: Optional[str],
+    batch_size: int = 100,  # batched to respect API limits
+) -> List[List[float]]:
+```
+
+`resolve_embedding_config(knowledge_source)` reads the `embedding_model`, `vector_dimension`, and `embedding_provider` fields from the Knowledge Source and returns the resolved API key.
+
+Any LiteLLM-compatible embedding provider works: OpenAI, Cohere, HuggingFace Inference, custom endpoints, etc.
+
+---
+
+## Maintenance
+
+`huf/ai/knowledge/maintenance.py` provides two utilities:
+
+### `cleanup_orphaned_files()`
+
+Scans `{site}/private/files/knowledge/` and removes `.sqlite3` files that no longer have a corresponding Knowledge Source document. Also removes WAL (`.sqlite3-wal`) and SHM (`.sqlite3-shm`) companion files.
+
+### `optimize_indexes()`
+
+Runs `PRAGMA optimize` and `VACUUM` on all SQLite-based knowledge indexes whose Knowledge Source is `Ready` and not disabled. Reduces file size and keeps FTS5 indexes efficient.
+
+These are available as scheduled tasks or can be called manually from Python.
+
+---
+
+## Re-Indexing
+
+To re-index an individual input:
+1. Set the Knowledge Input status back to `Pending`.
+2. Save — the controller re-queues the background job.
+
+To rebuild the entire index for a Knowledge Source:
+1. Open the Knowledge Source.
+2. Click **Rebuild Index** (server action).
+
+This calls `rebuild_knowledge_index()` which clears the backend, resets all input statuses to `Pending`, then processes each one sequentially.
+
+---
+
+## Attaching Knowledge to Agents
+
+In the Agent form, under the **Agent Knowledge** tab, add rows:
+
+```
+Agent Knowledge child table:
+  knowledge_source → link to Knowledge Source
+  access_type      → "Mandatory" or "Optional"
+  max_chunks       → int (how many chunks to retrieve per mandatory injection)
+```
+
+- **Mandatory** — Automatically injected into every agent run via `context_builder.py`.
+- **Optional** — The agent receives a `knowledge_search(query, knowledge_source, top_k)` tool it can call at will. Ideal for large bases where the agent should decide when to look things up.
+
+> [!TIP]
+> Start with **Optional** for large, diverse knowledge bases and switch to **Mandatory** for small, always-relevant reference material like system configuration or product specifications.

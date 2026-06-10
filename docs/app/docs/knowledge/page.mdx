@@ -1,0 +1,120 @@
+# Knowledge Base Overview
+
+HUF's Knowledge Base system enables agents to ground their responses in your own documents, web pages, and text data using Retrieval-Augmented Generation (RAG). Instead of relying solely on the LLM's training data, agents can search and retrieve relevant chunks from a curated knowledge index before formulating their answer.
+
+## How It Works
+
+When an agent has knowledge sources attached:
+
+1. **Mandatory sources** — Before the agent runs, HUF automatically searches relevant chunks from those sources and prepends them to the conversation context (`context_builder.py`).
+2. **Optional sources** — The agent receives a `knowledge_search` tool it can call at its own discretion, retrieving chunks on demand for specific queries.
+
+This gives you fine-grained control: always inject product specs into every reply, or let the agent decide when to search a large FAQ database.
+
+```
+User prompt
+     ↓
+context_builder.py   ← mandatory knowledge injected here
+     ↓
+Agent (LLM) + knowledge_search tool   ← optional knowledge on demand
+     ↓
+Response
+```
+
+## DocTypes
+
+### Knowledge Source
+
+A **Knowledge Source** (`huf/huf/doctype/knowledge_source`) is the top-level container for a body of knowledge. Each source has its own storage backend and chunking configuration.
+
+| Field | Description |
+|---|---|
+| `source_name` | Unique name (auto-named by this field) |
+| `description` | Human-readable description |
+| `knowledge_type` | Backend: `sqlite_fts`, `sqlite_vec`, or `chroma` |
+| `scope` | Visibility: `Site`, `Workspace`, `Agent`, or `Global` |
+| `chunk_size` | Characters per chunk (default: 512) |
+| `chunk_overlap` | Overlap between chunks (default: 50) |
+| `embedding_model` | LiteLLM model ID for vector backends (e.g. `openai/text-embedding-3-small`) |
+| `vector_dimension` | Embedding output dimension (default: 1536) |
+| `embedding_provider` | AI Provider link for resolving the embedding API key |
+| `status` | `Pending` / `Indexing` / `Ready` / `Error` / `Rebuilding` (read-only) |
+| `total_chunks` | Count of indexed chunks (read-only) |
+| `last_indexed_at` | Timestamp of last successful index (read-only) |
+
+For ChromaDB sources, additional connection fields appear: `chroma_mode` (File or Server), `chroma_host`, `chroma_port`, `chroma_ssl`.
+
+### Knowledge Input
+
+Each piece of content added to a Knowledge Source is a **Knowledge Input** record (`huf/huf/doctype/knowledge_input`).
+
+| Field | Description |
+|---|---|
+| `knowledge_source` | Parent Knowledge Source |
+| `input_type` | `File`, `Text`, or `URL` |
+| `file` | Attach a file (PDF, DOCX, TXT, HTML, MD) |
+| `text` | Paste raw text directly |
+| `url` | A web URL to crawl and extract |
+| `status` | `Pending` / `Processing` / `Indexed` / `Error` (read-only) |
+| `chunks_created` | Number of chunks produced (read-only) |
+| `character_count` | Characters extracted (read-only) |
+| `processed_at` | When indexing completed (read-only) |
+| `error_message` | Error detail if indexing failed (read-only) |
+
+## Supported Input Types
+
+| Type | How it works |
+|---|---|
+| **File** | Upload a PDF, DOCX, TXT, HTML, or Markdown file. The appropriate extractor parses the file and passes text to the chunker. |
+| **Text** | Paste plain text directly into the `text` field. Useful for FAQs, terms, or any freeform content. |
+| **URL** | Provide a web URL. The URL extractor fetches the page and strips HTML to extract readable text. |
+
+> [!NOTE]
+> Data Tables and custom tables can be fed into Knowledge Sources by exporting them as CSV/text and adding them as a Text or File input.
+
+## Attaching Knowledge to Agents
+
+Open an Agent and add rows to the **Agent Knowledge** child table (`agent_knowledge`):
+
+| Field | Description |
+|---|---|
+| `knowledge_source` | Link to a Knowledge Source |
+| `access_type` | `Mandatory` or `Optional` |
+| `max_chunks` | Maximum chunks to retrieve per query (for mandatory injection) |
+
+- **Mandatory** — HUF automatically retrieves relevant chunks and injects them into the agent's context before every run. The agent always has access to this knowledge without making a tool call.
+- **Optional** — HUF adds a `knowledge_search` tool to the agent. The agent decides when to search and what query to use. Ideal for large knowledge bases where not every message needs them.
+
+```python
+# Mandatory knowledge is injected by context_builder.py:
+knowledge_context = build_knowledge_context(
+    agent_name=agent_name,
+    user_query=prompt,
+    max_tokens=agent_doc.max_knowledge_tokens or 4000,
+)
+# Context is prepended to the prompt before the LLM call
+```
+
+## How Knowledge Integrates with Conversation Context
+
+For mandatory sources, retrieved chunks are formatted as:
+
+```
+## Relevant Knowledge
+
+### <source title>
+<chunk text>
+
+---
+
+<original user prompt>
+```
+
+This section is inserted before the user's message in each call, giving the LLM factual grounding without consuming conversation history tokens. The `max_knowledge_tokens` field on the Agent controls the maximum context budget (default 4000 tokens, roughly estimated at 4 chars/token).
+
+For optional sources, the `knowledge_search` tool returns JSON-formatted chunk results the agent can reference in its reasoning.
+
+## See Also
+
+- [Storage Backends](./backends) — SQLite FTS5, SQLite-vec, and ChromaDB backend details
+- [Knowledge Sources Guide](./sources) — Creating sources, adding inputs, and triggering indexing

@@ -1,0 +1,254 @@
+# Running Agents via API
+
+This page provides reference examples for calling HUF agents via the REST API.
+
+## Primary Endpoint: `run_agent_sync`
+
+The `run_agent_sync` function is the main entry point for executing agents programmatically.
+
+```
+POST /api/method/huf.ai.agent_integration.run_agent_sync
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `agent_name` | string | ✅ | Name of the Agent to run |
+| `prompt` | string | — | User message / input |
+| `conversation_id` | string | — | Existing conversation ID; creates new if omitted |
+| `channel_id` | string | — | Channel identifier (default: `api`). Used for conversation namespacing. |
+| `external_id` | string | — | Caller-provided external session ID for conversation lookup |
+| `parent_run_id` | string | — | Parent `Agent Run` name, for linking child runs |
+| `orchestration_id` | string | — | Link to an `Agent Orchestration` document |
+| `response_format` | any | — | Passed to LiteLLM for structured output (e.g. `json_object`) |
+| `flow_run_id` | string | — | Link to a Flow Run |
+| `flow_node_id` | string | — | Flow node identifier |
+| `run_kind` | string | — | Custom run label (stored on the Agent Run record) |
+| `prompt_template` | string | — | Override the agent's prompt template for this run |
+| `prompt_version` | int/string | — | Specific prompt version to use |
+| `parent_conversation_id` | string | — | Parent conversation for sub-agent invocations |
+| `invoked_by_agent` | string | — | Agent name that invoked this agent (for multi-agent tracking) |
+| `prompt_cache_options` | dict/str | — | Override prompt caching behavior |
+| `files` | list | — | File attachments for vision/document processing |
+
+### Response
+
+```json
+{
+  "success": true,
+  "response": "Here is the information you requested...",
+  "conversation_id": "CONV-00001",
+  "run_name": "AGR-00042",
+  "tokens": {
+    "input": 250,
+    "output": 180,
+    "total": 430
+  },
+  "cost": 0.000065,
+  "mode": "sync"
+}
+```
+
+If `enable_multi_run` is on for the agent, the response instead returns orchestration info:
+```json
+{
+  "success": true,
+  "response": "Orchestration started: AGO-00001",
+  "orchestration_id": "AGO-00001",
+  "mode": "multi_run",
+  "agent_run_id": "AGR-00042"
+}
+```
+
+---
+
+## Examples
+
+### Basic API Call (Authenticated)
+
+```bash
+curl -X POST https://your-site.example.com/api/method/huf.ai.agent_integration.run_agent_sync \
+  -H "Authorization: token <api_key>:<api_secret>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_name": "Support Bot",
+    "prompt": "How do I reset my password?"
+  }'
+```
+
+### Maintaining Conversation Context
+
+Use the returned `conversation_id` in subsequent calls:
+
+```bash
+# First message
+CONV=$(curl -s -X POST .../run_agent_sync \
+  -H "Authorization: token ..." \
+  -d '{"agent_name":"My Agent","prompt":"Hello, my name is Alice"}' | \
+  python3 -c "import sys,json; print(json.load(sys.stdin)['message']['conversation_id'])")
+
+# Follow-up message
+curl -X POST .../run_agent_sync \
+  -H "Authorization: token ..." \
+  -d "{\"agent_name\":\"My Agent\",\"prompt\":\"What is my name?\",\"conversation_id\":\"$CONV\"}"
+```
+
+### Python Client
+
+```python
+import requests
+
+BASE_URL = "https://your-site.example.com"
+HEADERS = {"Authorization": "token abc123:xyz789", "Content-Type": "application/json"}
+
+def run_agent(agent_name: str, prompt: str, conversation_id: str = None) -> dict:
+    payload = {"agent_name": agent_name, "prompt": prompt}
+    if conversation_id:
+        payload["conversation_id"] = conversation_id
+    
+    resp = requests.post(
+        f"{BASE_URL}/api/method/huf.ai.agent_integration.run_agent_sync",
+        json=payload,
+        headers=HEADERS,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data.get("message", {})
+
+# Start a conversation
+result = run_agent("Support Bot", "What are your operating hours?")
+print(result["response"])
+
+# Continue the conversation
+result2 = run_agent("Support Bot", "Can I contact you on weekends?", result["conversation_id"])
+print(result2["response"])
+```
+
+### Guest Access (No Auth)
+
+For agents with `allow_guest = 1`:
+
+```bash
+curl -X POST https://your-site.example.com/api/method/huf.ai.agent_integration.run_agent_sync \
+  -H "Content-Type: application/json" \
+  -d '{"agent_name": "Public FAQ Bot", "prompt": "What is your return policy?"}'
+```
+
+### Override Provider or Model
+
+Pass `provider` and `model` to override the agent's configured defaults for a single run:
+
+```bash
+curl -X POST .../run_agent_sync \
+  -H "Authorization: token ..." \
+  -d '{
+    "agent_name": "My Agent",
+    "prompt": "Analyze this complex document",
+    "model": "gpt-4o",
+    "channel_id": "api"
+  }'
+```
+
+---
+
+## Chat Endpoint: `run_agent_sync_chat`
+
+Wraps `run_agent_sync` with chat-specific behavior like `create_new` conversation support.
+
+```
+POST /api/method/huf.ai.chat_api.run_agent_sync_chat
+```
+
+Additional parameters (beyond `run_agent_sync`):
+
+| Parameter | Type | Description |
+|---|---|---|
+| `create_new` | bool | If `true`, forces a new conversation even if one exists |
+
+```bash
+curl -X POST .../run_agent_sync_chat \
+  -H "Authorization: token ..." \
+  -d '{"agent_name":"My Agent","prompt":"New topic","create_new":true}'
+```
+
+---
+
+## Streaming Endpoint
+
+For real-time token streaming:
+
+```
+GET /huf/stream/<agent_name>?prompt=<text>&conversation_id=<id>
+```
+
+Or via POST with a JSON body. The response is a Server-Sent Events stream.
+
+```javascript
+const source = new EventSource(
+  `/huf/stream/MyAgent?prompt=${encodeURIComponent("Hello")}` +
+  `&conversation_id=${convId}`
+);
+
+source.onmessage = (e) => {
+  const event = JSON.parse(e.data);
+  switch (event.type) {
+    case "delta":   appendToken(event.delta); break;
+    case "complete": source.close(); break;
+    case "error":   handleError(event.error); break;
+  }
+};
+```
+
+> [!NOTE]
+> The streaming endpoint requires the user to be authenticated via session cookie. For external API access, use the non-streaming `run_agent_sync` endpoint with an API token.
+
+---
+
+## Response Format: Structured Output
+
+Request JSON-mode responses using `response_format`:
+
+```bash
+curl -X POST .../run_agent_sync \
+  -H "Authorization: token ..." \
+  -d '{
+    "agent_name": "Data Extractor",
+    "prompt": "Extract all dates from: Meeting on June 15th and July 4th",
+    "response_format": {"type": "json_object"}
+  }'
+```
+
+This passes `response_format` directly to LiteLLM's completion call. Supported by providers that accept JSON mode (OpenAI, some Anthropic models, etc.).
+
+---
+
+## Checking Run Status
+
+Each call creates an `Agent Run` record. Check its status:
+
+```bash
+curl https://your-site.example.com/api/resource/Agent%20Run/AGR-00042 \
+  -H "Authorization: token ..."
+```
+
+Fields of interest: `status` (`Started` / `Success` / `Failed`), `response`, `input_tokens`, `output_tokens`, `total_cost`, `error_message`.
+
+---
+
+## Prompt Template Override
+
+Run an agent with a specific prompt template or version instead of its configured instructions:
+
+```bash
+curl -X POST .../run_agent_sync \
+  -H "Authorization: token ..." \
+  -d '{
+    "agent_name": "My Agent",
+    "prompt": "Summarize my task list",
+    "prompt_template": "AGP-00005",
+    "prompt_version": 3
+  }'
+```
+
+This applies `Agent Prompt` `AGP-00005` at version 3 for this run only, without modifying the agent's settings.

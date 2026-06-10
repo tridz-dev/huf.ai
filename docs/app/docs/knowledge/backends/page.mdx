@@ -1,0 +1,201 @@
+# Storage Backends
+
+HUF supports three pluggable storage backends for Knowledge Sources. Each backend is a concrete implementation of the `KnowledgeBackend` abstract class (`huf/ai/knowledge/backends/__init__.py`) and is selected via the `knowledge_type` field on a Knowledge Source.
+
+The backend registry maps type names to class paths:
+
+```python
+backends = {
+    "sqlite_fts": "huf.ai.knowledge.backends.sqlite_fts.SQLiteFTSBackend",
+    "sqlite_vec": "huf.ai.knowledge.backends.sqlite_vec_backend.SQLiteVecBackend",
+    "chroma":     "huf.ai.knowledge.backends.chroma_backend.ChromaBackend",
+}
+```
+
+All backends implement the same interface: `initialize`, `add_chunks`, `delete_chunks`, `search`, `clear`, and `get_stats`.
+
+---
+
+## SQLite FTS5 (Default)
+
+**Type key:** `sqlite_fts`  
+**File:** `huf/ai/knowledge/backends/sqlite_fts.py`
+
+The default backend. Uses SQLite's built-in [FTS5](https://www.sqlite.org/fts5.html) extension for full-text keyword search with **BM25 ranking**. No external services, no embeddings model required — just a local `.sqlite3` file stored in Frappe's private files directory.
+
+### How It Works
+
+- A per-Knowledge-Source SQLite database is created at `{site}/private/files/knowledge/{source_name}.sqlite3`.
+- Two tables: `chunks` (canonical data) and `chunks_fts` (FTS5 virtual table with porter-stemmed tokenizer).
+- Automatic triggers keep the FTS index in sync with `chunks` inserts, updates, and deletes.
+- WAL journal mode and `PRAGMA optimize` keep the file performant under concurrent reads.
+- Search uses `bm25(chunks_fts, 1.0, 0.75)` for relevance-ranked results.
+
+### Schema Summary
+
+```sql
+CREATE TABLE chunks (
+    chunk_id TEXT PRIMARY KEY,
+    input_id TEXT NOT NULL,    -- Knowledge Input name
+    input_type TEXT NOT NULL,
+    source_title TEXT,
+    chunk_index INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    char_start INTEGER,
+    char_end INTEGER,
+    metadata TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE VIRTUAL TABLE chunks_fts USING fts5(
+    text, source_title,
+    content='chunks', content_rowid='rowid',
+    tokenize='porter unicode61'
+);
+```
+
+### When to Use
+
+- ✅ Development environments and small-to-medium knowledge bases
+- ✅ No external infra budget or Docker requirements
+- ✅ Keyword/terminology-heavy content (product catalogs, policy docs)
+- ❌ Semantic similarity search ("find things *like* this idea") — use `sqlite_vec` or `chroma` instead
+
+### Configuration
+
+No extra fields needed beyond `chunk_size` and `chunk_overlap`. SQLite FTS5 is available in Python's standard `sqlite3` module.
+
+---
+
+## SQLite-vec (Portable Vector Search)
+
+**Type key:** `sqlite_vec`  
+**File:** `huf/ai/knowledge/backends/sqlite_vec_backend.py`
+
+Uses the [sqlite-vec](https://github.com/asg017/sqlite-vec) extension to add a native vector similarity index to an SQLite database. Gives you semantic search with zero external services — only a single `.sqlite3` file plus the `sqlite-vec` Python package.
+
+### How It Works
+
+- Same file-per-source layout as SQLite FTS.
+- Two tables: `chunks` (text/metadata) and `chunks_vec` (virtual table backed by the sqlite-vec extension, storing float embeddings).
+- Embeddings are generated via LiteLLM using the configured `embedding_model` and `embedding_provider`.
+- Search encodes the query with the same model, then uses `vec0` KNN matching with L2 distance.
+
+### Schema Summary
+
+```sql
+CREATE VIRTUAL TABLE chunks_vec USING vec0(
+    embedding FLOAT[{dimension}]
+);
+```
+
+### Required Dependencies
+
+```bash
+pip install sqlite-vec pysqlite3-binary
+```
+
+> [!WARNING]
+> Python's standard `sqlite3` module does not support loadable extensions on all platforms. If you see an error about `enable_load_extension`, install `pysqlite3-binary` which provides a build of SQLite with extension loading enabled.
+
+### Configuration Fields
+
+| Field | Description |
+|---|---|
+| `embedding_model` | LiteLLM model ID, e.g. `openai/text-embedding-3-small` |
+| `vector_dimension` | Must match the model's output (e.g. 1536 for `text-embedding-3-small`) |
+| `embedding_provider` | AI Provider record supplying the API key |
+
+### When to Use
+
+- ✅ Semantic search without external services
+- ✅ Production deployments on single-server Frappe setups
+- ✅ Content where meaning matters more than exact keywords
+- ❌ Extremely large indexes (millions of vectors) — ChromaDB with a dedicated server is better suited
+
+---
+
+## ChromaDB (Vector Database)
+
+**Type key:** `chroma`  
+**File:** `huf/ai/knowledge/backends/chroma_backend.py`
+
+Integrates with [ChromaDB](https://www.trychroma.com/) via the **LlamaIndex adapter** (`llama-index-vector-stores-chroma`). Supports two connection modes:
+
+| Mode | Description |
+|---|---|
+| **File** (default) | `chromadb.PersistentClient` — stores on local disk, no server needed |
+| **Server** | `chromadb.HttpClient` — connects to a running Chroma server (local or remote) |
+
+### How It Works
+
+- Each Knowledge Source gets its own ChromaDB collection named `huf_{source_name}`.
+- Chunks are converted to `llama_index.core.Document` objects with embeddings pre-computed by LiteLLM.
+- Search embeds the query with the same model, then uses `ChromaVectorStore.query()` with cosine similarity.
+- Metadata filtering via `MetadataFilters` / `ExactMatchFilter` is supported.
+
+### Required Dependencies
+
+```bash
+pip install llama-index-vector-stores-chroma chromadb
+```
+
+> [!IMPORTANT]
+> These packages are **not** installed by default. ChromaDB is an optional dependency. The backend will raise an `ImportError` with installation instructions if the packages are missing.
+
+### Configuration Fields
+
+| Field | Description |
+|---|---|
+| `chroma_mode` | `File` or `Server` |
+| `chroma_host` | Server hostname (Server mode only, default: `localhost`) |
+| `chroma_port` | Server port (Server mode only, default: `8000`) |
+| `chroma_ssl` | Use HTTPS for server connection (Server mode only) |
+| `embedding_model` | LiteLLM model ID for embeddings |
+| `vector_dimension` | Must match the model's output |
+| `embedding_provider` | AI Provider for the embedding API key |
+
+### File Mode (No Server)
+
+```
+Knowledge Source → ChromaDB PersistentClient
+                   path: {site}/private/files/knowledge/{source_name}_chroma/
+```
+
+### Server Mode
+
+```
+Knowledge Source → ChromaDB HttpClient
+                   host: chroma_host, port: chroma_port, ssl: chroma_ssl
+```
+
+Start a Chroma server:
+```bash
+chroma run --path /path/to/persist --port 8000
+```
+
+### When to Use
+
+- ✅ Large knowledge bases with many documents
+- ✅ Teams that want a dedicated vector DB with monitoring
+- ✅ Multi-site deployments sharing a central Chroma server
+- ❌ Simple setups where `sqlite_vec` (File mode) is sufficient
+
+---
+
+## Coming Soon
+
+> [!NOTE]
+> A **pgvector backend** (`feat/pgvector-knowledge-backend`) is in active development. It will provide native PostgreSQL vector search via psycopg — no separate vector database needed for teams already running Frappe on Postgres. See the [Coming Soon](/docs/coming-soon) page for details.
+
+---
+
+## Switching Backends
+
+The `knowledge_type` field is set when you create a Knowledge Source and determines which backend class is instantiated for all indexing and retrieval operations. To switch backends for an existing source:
+
+1. Change `knowledge_type` on the Knowledge Source document.
+2. Click **Rebuild Index** to re-index all existing inputs into the new backend.
+
+> [!WARNING]
+> Switching backends clears the old index. Ensure you re-index all inputs after changing `knowledge_type`.

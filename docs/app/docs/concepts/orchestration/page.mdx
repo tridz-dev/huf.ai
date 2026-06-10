@@ -1,0 +1,175 @@
+export const metadata = {
+  sidebarTitle: "Agent Orchestration",
+};
+
+# Agent Orchestration
+
+Orchestration enables an agent to tackle complex, multi-step tasks by breaking them into a sequence of smaller steps and executing each one in turn. Rather than attempting to answer in a single response, the agent plans and executes systematically.
+
+---
+
+## How Orchestration Works
+
+When **Enable Multi Run** is turned on for an agent, the orchestration layer intercepts each user prompt and routes it through a multi-step execution cycle:
+
+```
+User Prompt
+     ↓
+Plan Generation (LLM or default_plan)
+     ↓
+Step 1: Execute → Record result
+     ↓
+Step 2: Execute → Record result
+     ↓
+    ...
+     ↓
+Final Step: Synthesise answer
+     ↓
+Response to User
+```
+
+### Planning
+
+The orchestrator has two planning modes:
+
+1. **Default Plan** — a pre-defined sequence of steps set in the `agent_orchestration_plan` child table on the Agent. The agent always executes these steps in order, regardless of the prompt.
+
+2. **LLM-Generated Plan** — if `default_plan` is empty, the orchestrator calls `run_planning()` (from `huf/ai/orchestration/planning.py`) to ask an LLM to decompose the user's prompt into a numbered list of steps. This uses the same agent/model to generate the plan.
+
+The planning LLM is given a strict system prompt that enforces backend-only, one-document-per-step reasoning.
+
+---
+
+## Agent Orchestration DocType
+
+Each orchestration run creates an **Agent Orchestration** document:
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Agent | `agent` | The agent running this orchestration |
+| Status | `status` | `Planned` → `Running` → `Paused` / `Completed` / `Failed` / `Cancelled` |
+| Current Step | `current_step` | 1-indexed. Which step is currently executing. |
+| Conversation | `conversation` | Linked Agent Conversation (for maintaining context) |
+| Parent Run | `parent_run` | The Agent Run that started this orchestration |
+| Last Run At | `last_run_at` | Datetime of last step execution |
+| Error Log | `error_log` | Error message if status = Failed |
+| Plan | `agent_orchestration_plan` | Child table of planned steps (type: `Agent Orchestration Plan`) |
+| Scratchpad | `scratchpad` | Free-form text the orchestrator uses to track intermediate state |
+
+### Agent Orchestration Plan (child table)
+
+| Field | Notes |
+|---|---|
+| `step_index` | Step number (1, 2, 3…) |
+| `instruction` | The instruction passed to the agent for this step |
+| `status` | `pending`, `in_progress`, `done`, `failed` |
+
+---
+
+## Orchestrator Execution Flow
+
+The orchestrator (in `huf/ai/orchestration/orchestrator.py`) runs each step as a separate **Agent Run**:
+
+1. For each step in the plan:
+   - Sets the step's `status` to `in_progress` in the orchestration document.
+   - Calls `run_agent_sync` with the step's instruction as the prompt.
+   - The agent uses its tools to fulfil the step.
+   - Records the result in the scratchpad.
+   - Sets step `status` to `done` or `failed`.
+2. After all steps complete, a final synthesis step generates the overall response.
+
+Each individual step creates its own `Agent Run` document with:
+- `is_child = True`
+- `parent_run` linking to the top-level run
+- `run_kind = orchestrator`
+
+This creates a full audit trail: you can see the parent run, the orchestration document, and each child step run from the **Agent Runs** list.
+
+---
+
+## Configuring Orchestration
+
+### Enabling on an Agent
+
+1. Open the Agent form.
+2. Under **Behaviour**, enable **Enable Multi Run**.
+3. Optionally, add a **Default Plan** in the `agent_orchestration_plan` child table.
+
+### With a Default Plan (Predictable Workflows)
+
+Use a default plan when the task is always the same sequence of steps:
+
+```
+Step 1: Get the customer's account balance using the get_balance tool
+Step 2: Check if any invoices are overdue using the get_overdue_invoices tool
+Step 3: Generate a summary report with the collected data
+```
+
+Every prompt to this agent triggers exactly these three steps in order.
+
+### Without a Default Plan (Dynamic Planning)
+
+Leave the plan table empty. The orchestrator sends the user's prompt to the planning LLM, which returns a numbered list:
+
+```
+User: "Onboard a new enterprise customer Acme Corp with three branches"
+
+Generated Plan:
+1. Create Customer record for Acme Corp
+2. Create Branch 1 for Acme Corp
+3. Create Branch 2 for Acme Corp
+4. Create Branch 3 for Acme Corp
+5. Send welcome email to Acme Corp
+```
+
+---
+
+## Running Orchestrated Agents
+
+Orchestration is transparent to callers — you invoke the agent exactly the same way:
+
+```bash
+POST /api/method/huf.ai.agent_integration.run_agent_sync
+{
+  "agent_name": "Onboarding Agent",
+  "prompt": "Onboard Acme Corp as an Enterprise customer"
+}
+```
+
+The response returns when all steps complete (or fail).
+
+---
+
+## Observability
+
+### From Agent Runs List
+
+Filter `Agent Run` by:
+- `run_kind = orchestrator` — see all orchestration-level runs
+- `is_child = 1` — see all child step runs
+- `parent_run = AGR-00001` — see all steps for a specific orchestration
+
+### From Agent Orchestration List
+
+Navigate to **Huf → Agent Orchestration** to see all orchestration documents. Open one to view:
+- The full plan with step statuses
+- The scratchpad notes
+- Links to the conversation and parent run
+
+---
+
+## Comparison: Orchestration vs. Flows
+
+Both orchestration and flows enable multi-step execution, but they serve different purposes:
+
+| Feature | Orchestration | Flows |
+|---|---|---|
+| **Design** | Dynamic, LLM-planned | Visual, graph-based |
+| **When to use** | Open-ended tasks requiring judgment | Defined business processes |
+| **Human approval** | Not built-in (agent asks in chat) | Built-in `human.approval` node |
+| **Parallel steps** | No (sequential) | Yes (multiple outgoing edges) |
+| **Conditions** | Agent decides | Edge conditions on graph |
+| **Tracing** | Agent Run → Orchestration → Child Runs | Flow Run → Node executions → Agent Runs |
+
+Use **Orchestration** when the task structure varies based on the input.  
+Use **Flows** when the process is well-defined and needs visual design + human approval steps.

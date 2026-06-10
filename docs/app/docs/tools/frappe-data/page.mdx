@@ -1,0 +1,380 @@
+---
+title: Frappe Data Tools
+description: Agent Tool Function types for reading and writing Frappe documents, reports, and field values.
+---
+
+import { Callout, Steps, Tabs } from 'nextra/components'
+
+# Frappe Data Tools
+
+Frappe Data tools are the built-in tool types available through the **Agent Tool Function** DocType. They give agents direct, permission-aware access to any DocType in your Frappe / ERPNext instance — including reading documents, creating records, running reports, and more.
+
+<Callout type="important">
+  All Frappe Data tools execute **as the user who invokes the agent** — the same Frappe permission system that governs the web UI applies to every tool call. An agent cannot read or modify documents the invoking user does not have access to.
+</Callout>
+
+---
+
+## How to Configure a Frappe Data Tool
+
+1. Go to **HUF → Agent Tool Function → New**
+2. Set a unique **Tool Name** (used by the LLM to identify the tool)
+3. Write a clear **Description** (the LLM reads this to decide when to use the tool)
+4. Choose the **Type** from the dropdown (see sections below)
+5. Select a **Reference DocType** (required for most data tools)
+6. Set **Tool Type** (required — links to `Agent Tool Type` for categorization)
+7. Define **Parameters** in the child table as needed
+8. Save — the **Function Definition** JSON field is auto-generated
+9. Add the tool to an **Agent** via the **Agent Tool** child table
+
+---
+
+## Tool Types Reference
+
+### Get Document
+
+Fetch a single document by its name (primary key).
+
+**Function Path:** `huf.ai.sdk_tools.handle_get_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | ✅ | The document name/ID to retrieve |
+| `fields` | string | ❌ | Comma-separated fields to return (default: all) |
+
+**Runtime context:** The `reference_doctype` is injected automatically from the tool configuration — the agent does not need to pass it.
+
+---
+
+### Get Multiple Documents
+
+Fetch a batch of documents by a list of names.
+
+**Function Path:** `huf.ai.sdk_tools.handle_get_documents`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `names` | string | ✅ | JSON array of document names (e.g., `["INV-001", "INV-002"]`) |
+| `fields` | string | ❌ | Comma-separated fields to include |
+
+---
+
+### Get List
+
+Query a list of documents with optional filters, field selection, limit, and ordering.
+
+**Function Path:** `huf.ai.sdk_tools.handle_get_list`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `filters` | string | ❌ | JSON filter object (e.g., `{"status": "Open", "priority": "High"}`) |
+| `fields` | string | ❌ | Comma-separated fields to return (default: `name`, `modified`) |
+| `limit` | integer | ❌ | Max records to return (0 = unlimited) |
+| `order_by` | string | ❌ | Sort clause (default: `modified desc`) |
+
+The tool validates field names against the DocType meta and ignores invalid fields, returning a warning in the response.
+
+---
+
+### Create Document
+
+Create a new document in a DocType.
+
+**Function Path:** `huf.ai.sdk_tools.handle_create_document`
+
+**Parameters to define:** Map the DocType's required/desired fields as parameters in the child table.
+
+The tool accepts both flat kwargs and a `doc` wrapper object (`{"doc": {"field": "value"}}`).
+
+<Callout type="warning">
+  Requires the invoking user to have `create` permission on the target DocType. Guest users are blocked unless the tool has **Allowed for Guest** checked and `ignore_permissions` is enabled.
+</Callout>
+
+---
+
+### Create Multiple Documents
+
+Create several documents in a single tool call.
+
+**Function Path:** `huf.ai.sdk_tools.handle_create_documents`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `documents` | string | ✅ | JSON array of document field objects |
+
+---
+
+### Update Document
+
+Update fields on an existing document.
+
+**Function Path:** `huf.ai.sdk_tools.handle_update_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The name/ID of the document to update |
+| _(additional fields)_ | various | ❌ | Any fields you want the agent to be able to update |
+
+The tool loads the document, sets only the provided fields, and calls `.save()`.
+
+---
+
+### Update Multiple Documents
+
+Batch-update several documents in one call.
+
+**Function Path:** `huf.ai.sdk_tools.handle_update_documents`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `updates` | string | ✅ | JSON array: `[{"name": "DOC-001", "status": "Closed"}, ...]` |
+
+---
+
+### Delete Document
+
+Permanently delete a document.
+
+**Function Path:** `huf.ai.sdk_tools.handle_delete_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The name/ID of the document to delete |
+
+<Callout type="caution">
+  This is a **mutating** tool. Guest users are blocked unconditionally. The invoking user must have `delete` permission.
+</Callout>
+
+---
+
+### Delete Multiple Documents
+
+Batch-delete several documents.
+
+**Function Path:** `huf.ai.sdk_tools.handle_delete_documents`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `names` | string | ✅ | JSON array of document names to delete |
+
+---
+
+### Submit Document
+
+Submit a document (transitions `docstatus` from 1 = Submitted). Used for submittable DocTypes like Sales Orders, Invoices.
+
+**Function Path:** `huf.ai.sdk_tools.handle_submit_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The name/ID of the document to submit |
+
+---
+
+### Cancel Document
+
+Cancel a submitted document.
+
+**Function Path:** `huf.ai.sdk_tools.handle_cancel_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The name/ID of the document to cancel |
+
+---
+
+### Get Amended Document
+
+Get the latest amended version of a cancelled document.
+
+**Function Path:** Referenced via `types = "Get Amended Document"` in the DocType.
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The name/ID of the original or cancelled document |
+
+---
+
+### Get Value
+
+Read a single field value from a document (lightweight, no full document fetch).
+
+**Function Path:** `huf.ai.sdk_tools.handle_get_value`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The document name/ID |
+| `fieldname` | string | ✅ | The field name to read |
+
+---
+
+### Set Value
+
+Write a single field value to a document.
+
+**Function Path:** `huf.ai.sdk_tools.handle_set_value`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `document_id` | string | ✅ | The document name/ID |
+| `fieldname` | string | ✅ | The field name to update |
+| `value` | string | ✅ | The value to set |
+
+---
+
+### Get Report Result
+
+Run a Frappe report and return its result.
+
+**Function Path:** `huf.ai.sdk_tools.handle_get_report_result`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `report_name` | string | ✅ | The report name (as it appears in Report list) |
+| `filters` | string | ❌ | JSON object of report filters |
+
+Returns the report columns and data rows.
+
+---
+
+### Attach File to Document
+
+Attach a file (by URL or Frappe file record) to a document.
+
+**Function Path:** `huf.ai.sdk_tools.handle_attach_file_to_document`
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `file_url` | string | ✅ | URL of the file to attach |
+| `document_id` | string | ✅ | The document name/ID to attach to |
+| `file_name` | string | ❌ | Filename for the attachment |
+
+The `reference_doctype` is injected from the tool configuration.
+
+---
+
+### Run Agent
+
+Invoke another HUF agent as a sub-agent from within the current agent's tool call chain. This enables **agent chaining**.
+
+**Function Path:** `huf.ai.sdk_tools.handle_run_agent`
+
+**Configuration:** Set the **Agent** field on the `Agent Tool Function` to the target agent.
+
+**Parameters to define:**
+
+| Fieldname | Type | Required | Description |
+|---|---|---|---|
+| `prompt` | string | ✅ | Prompt to send to the sub-agent |
+
+The sub-agent runs synchronously and its response is returned to the calling agent.
+
+---
+
+### Client Side Tool
+
+A tool that executes on the **frontend** rather than the server. When the agent calls this tool, the SDK sends a special event to the chat UI, which invokes a registered JavaScript function.
+
+**Function Path:** `huf.ai.cilent_side_tool.client_side_function`
+
+**Configuration:** Set **Function Name** to the JavaScript function name registered on the frontend.
+
+**Parameters to define:** Any parameters your frontend function expects.
+
+<Callout type="info">
+  The frontend must have a handler registered for the `function_name` before this tool will work. See the frontend integration guide for details.
+</Callout>
+
+---
+
+### Get / Set / Load Conversation Data
+
+These three tool types allow agents to persist key-value data within a conversation session. The data is stored on the `Agent Conversation` document in a `conversation_data` JSON field.
+
+**Available when:** The **Enable Conversation Data** checkbox is enabled on the Agent — the three tools are then automatically added to the agent's tool set without needing to create them manually.
+
+#### `get_conversation_data`
+
+Retrieve a specific value from the conversation data store.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | ✅ | Name of the item to retrieve |
+| `default` | string | ❌ | Default value if the key is not found |
+
+#### `set_conversation_data`
+
+Store a value in the conversation data store.
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `name` | string | ✅ | Name of the item to store |
+| `value` | string | ✅ | Value to store (scalar, object, or array) |
+| `value_type` | string | ❌ | Type hint: `scalar`, `object`, `array` |
+| `source` | string | ❌ | Source of data: `agent` or `user` (default: `agent`) |
+| `auto_inject` | boolean | ❌ | Whether to auto-inject this variable in the system prompt on future turns (default: `true`) |
+| `inject_mode` | string | ❌ | `visible` (injected in system prompt) or `hidden` (stored but not injected) |
+
+#### `load_conversation_data`
+
+Load the entire conversation data context as a JSON object.
+
+_No parameters required._
+
+---
+
+## Defining Parameters in the Child Table
+
+Each parameter row in the **Agent Function Params** child table has:
+
+| Field | Description |
+|---|---|
+| **Label** | Human-friendly label (auto-derived from fieldname) |
+| **Fieldname** | Parameter key passed to the function |
+| **Type** | JSON schema type: `string`, `integer`, `boolean`, `number`, `array`, `object` |
+| **Required** | Whether the LLM must always provide this parameter |
+| **Description** | What the parameter does — **write this clearly**, as the LLM uses it to fill in values |
+
+After saving the `Agent Tool Function`, the **Function Definition** field is automatically populated with the complete JSON schema that gets sent to the LLM.
+
+---
+
+## Permission Model
+
+| Tool Category | Guest Allowed? | Notes |
+|---|---|---|
+| Read tools (Get Document, Get List, Get Value, Get Report) | Only if **Allowed for Guest** is checked | Frappe's `has_permission` check still applies |
+| Mutating tools (Create, Update, Delete, Submit, Cancel, Set Value) | ❌ Never (unless explicitly overridden) | Blocked by `MUTATING_TOOL_TYPES` guard |
+| Run Agent | Inherits sub-agent's permission model | — |
+
+Mutating tools are listed in `PermissionAwareToolRegistry.MUTATING_TOOL_TYPES` and are blocked for the `Guest` user at the `create_function_tool` wrapper level, before the actual function is ever called.
