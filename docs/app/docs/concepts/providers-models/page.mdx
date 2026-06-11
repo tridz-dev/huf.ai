@@ -53,17 +53,11 @@ And 100+ more providers supported via LiteLLM.
 
 You add providers in the Frappe Desk so Huf can authenticate with the AI service on your behalf. Navigate to **Desk → Huf → AI Provider**, click **New**, and complete the form.
 
-1. **Provider Name** — enter the AI service name.
-   - Use standard names such as `OpenAI`, `Anthropic`, `Google`, or `OpenRouter`.
-   - Names are case-insensitive and automatically routed to LiteLLM.
-   - For non-standard providers, check the [LiteLLM docs](https://docs.litellm.ai/docs/providers).
-
-2. **API Key** — paste the key from your provider account.
-   - Get keys from the provider websites (links below).
-   - Huf stores the key securely using Frappe's encrypted Password field.
-   - The key is never exposed in logs or API responses.
-
-3. **Save** the provider record.
+<ConfigPanel title="Adding a Provider">
+  <ConfigField label="Provider Name" value="Enter the AI service name. Use standard names such as OpenAI, Anthropic, Google, or OpenRouter. Names are case-insensitive and automatically routed to LiteLLM. For non-standard providers, check the LiteLLM docs." />
+  <ConfigField label="API Key" value="Paste the key from your provider account. Get keys from the provider websites (links below). Huf stores the key securely using Frappe's encrypted Password field. The key is never exposed in logs or API responses." />
+  <ConfigField label="Save" value="Save the provider record." />
+</ConfigPanel>
 
 Get API keys from the provider sites below:
 
@@ -130,16 +124,11 @@ Use the user-friendly format—Huf adds the provider prefix automatically based 
 
 Models are created separately from providers so you can reuse a single provider across many models. Navigate to **Desk → Huf → AI Model**, click **New**, and complete the form.
 
-1. **Model Name** — enter the model identifier.
-   - Use user-friendly names such as `gpt-4-turbo` or `claude-3-opus`.
-   - Or use LiteLLM format such as `openai/gpt-4-turbo`, which skips normalization.
-   - Check provider docs for exact model names.
-
-2. **Provider** — select the provider you created earlier.
-   - The provider determines how the model name is normalized.
-   - It must match the provider that actually offers this model.
-
-3. **Save** the model record.
+<ConfigPanel title="Adding a Model">
+  <ConfigField label="Model Name" value="Enter the model identifier. Use user-friendly names such as gpt-4-turbo or claude-3-opus. Or use LiteLLM format such as openai/gpt-4-turbo, which skips normalization. Check provider docs for exact model names." />
+  <ConfigField label="Provider" value="Select the provider you created earlier. The provider determines how the model name is normalized. It must match the provider that actually offers this model." />
+  <ConfigField label="Save" value="Save the model record." />
+</ConfigPanel>
 
 ### Popular Models Comparison
 
@@ -231,19 +220,20 @@ You can (and should) add multiple providers and models. A small portfolio gives 
 
 **Example setup:**
 
-```
-Providers:
-- OpenAI (for GPT models)
-- Anthropic (for Claude models)
-- Google (for Gemini models)
-
-Models:
-- gpt-4-turbo (OpenAI) → For complex agents
-- gpt-3.5-turbo (OpenAI) → For simple agents
-- claude-3-opus (Anthropic) → For long-context agents
-- claude-3-haiku (Anthropic) → For fast, cheap agents
-- gemini-pro (Google) → For experimental agents
-```
+<ConfigPanel title="Provider-Model Setup">
+  <ConfigSection title="Providers">
+    <ConfigField label="OpenAI" value="for GPT models" />
+    <ConfigField label="Anthropic" value="for Claude models" />
+    <ConfigField label="Google" value="for Gemini models" />
+  </ConfigSection>
+  <ConfigSection title="Models">
+    <ConfigField label="gpt-4-turbo (OpenAI)" value="For complex agents" />
+    <ConfigField label="gpt-3.5-turbo (OpenAI)" value="For simple agents" />
+    <ConfigField label="claude-3-opus (Anthropic)" value="For long-context agents" />
+    <ConfigField label="claude-3-haiku (Anthropic)" value="For fast, cheap agents" />
+    <ConfigField label="gemini-pro (Google)" value="For experimental agents" />
+  </ConfigSection>
+</ConfigPanel>
 
 ## Monitoring and Costs
 

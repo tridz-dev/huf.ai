@@ -16,60 +16,62 @@ Huf agents can automate a wide variety of tasks across your Frappe system. Here 
 
 Automate common support workflows so your team can focus on complex, high-touch customer issues.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Support team spends too much time on repetitive questions and ticket routing.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    AI agent handles common inquiries, routes complex issues, and provides instant responses.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Support team spends too much time on repetitive questions and ticket routing.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        AI agent handles common inquiries, routes complex issues, and provides instant responses.
+      </div>
+    </div>
 
-The agent can answer questions, route tickets, look up records, and manage escalations.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Answer FAQs</span>Common questions about products, services, and policies</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Ticket Routing</span>Analyze tickets and assign to correct team</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Information Lookup</span>Retrieve customer history, order status, account details</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Escalation</span>Identify urgent issues and escalate appropriately</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Follow-up</span>Schedule follow-ups and reminders</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Answer FAQs</span>Common questions about products, services, and policies</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Ticket Routing</span>Analyze tickets and assign to correct team</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Information Lookup</span>Retrieve customer history, order status, account details</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Escalation</span>Identify urgent issues and escalate appropriately</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Follow-up</span>Schedule follow-ups and reminders</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get Document (Customer, Support Ticket) · Get List (Support Ticket with filters) · Create Document (Support Ticket) · Update Document (Support Ticket) · HTTP Request (for Slack/Email notifications)" />
+      <AgentPrompt title="Customer Support Assistant">
+        You are a customer support assistant. Your role is to:
+        1. Answer common questions about products, orders, and policies
+        2. Look up customer information when requested
+        3. Create support tickets for issues you cannot resolve
+        4. Route tickets to appropriate teams based on issue type
+        5. Escalate urgent issues immediately
 
-### Agent Configuration
+        Always be polite, professional, and helpful. If you don't know
+        something, create a support ticket and let the user know.
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Support Ticket</div>
+    </ConfigPanel>
+  </TabPanel>
 
-Configure the agent with document tools and a support-focused system prompt.
-
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get Document (Customer, Support Ticket) · Get List (Support Ticket with filters) · Create Document (Support Ticket) · Update Document (Support Ticket) · HTTP Request (for Slack/Email notifications)" />
-  <AgentPrompt title="Customer Support Assistant">
-    You are a customer support assistant. Your role is to:
-    1. Answer common questions about products, orders, and policies
-    2. Look up customer information when requested
-    3. Create support tickets for issues you cannot resolve
-    4. Route tickets to appropriate teams based on issue type
-    5. Escalate urgent issues immediately
-
-    Always be polite, professional, and helpful. If you don't know 
-    something, create a support ticket and let the user know.
-  </AgentPrompt>
-  <div className="huf-trigger-badge">After Insert on Support Ticket</div>
-</ConfigPanel>
-
-### Benefits
-
-These improvements help both customers and support staff.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">24/7 Availability</span>Instant responses anytime</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Resolution</span>Common issues resolved immediately</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Better Routing</span>Tickets go to right team first time</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistent Quality</span>Same high-quality responses every time</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Team Focus</span>Human agents handle complex cases</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">24/7 Availability</span>Instant responses anytime</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Resolution</span>Common issues resolved immediately</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Better Routing</span>Tickets go to right team first time</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistent Quality</span>Same high-quality responses every time</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Team Focus</span>Human agents handle complex cases</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 
@@ -83,61 +85,63 @@ These improvements help both customers and support staff.
 
 Let agents validate, enrich, and route documents so manual processing no longer bottlenecks your operations.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Manual document processing is slow, error-prone, and doesn't scale.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    Agents validate, enrich, and route documents automatically.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Manual document processing is slow, error-prone, and doesn't scale.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        Agents validate, enrich, and route documents automatically.
+      </div>
+    </div>
 
-The agent checks data quality, fills gaps, and moves documents through the right workflows.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Form Validation</span>Check required fields, formats, business rules</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Enrichment</span>Look up and add missing information</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Auto-routing</span>Send documents to correct approvers/workflows</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Duplicate Detection</span>Identify and flag duplicate entries</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Auto-correction</span>Fix common errors automatically</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Form Validation</span>Check required fields, formats, business rules</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Enrichment</span>Look up and add missing information</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Auto-routing</span>Send documents to correct approvers/workflows</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Duplicate Detection</span>Identify and flag duplicate entries</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Auto-correction</span>Fix common errors automatically</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get Document (various DocTypes) · Get List (for duplicate checking) · Create Document (for related records) · Update Document (for corrections) · Submit Document (for approvals)" />
+      <AgentPrompt title="Invoice Validation Agent">
+        You are an invoice validation agent. When invoices are submitted:
+        1. Verify pricing matches current price list
+        2. Check customer credit limit
+        3. Validate tax calculations
+        4. Ensure all required fields are filled
+        5. Check for duplicate invoices
 
-### Agent Configuration
+        If validation passes, add a comment confirming validation.
+        If issues are found, add comments with specific problems and
+        notify the accounts team.
+      </AgentPrompt>
+      <div className="huf-trigger-badge">On Submit of Sales Invoice DocType</div>
+    </ConfigPanel>
+  </TabPanel>
 
-Configure the agent with document lifecycle tools and validation instructions.
-
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get Document (various DocTypes) · Get List (for duplicate checking) · Create Document (for related records) · Update Document (for corrections) · Submit Document (for approvals)" />
-  <AgentPrompt title="Invoice Validation Agent">
-    You are an invoice validation agent. When invoices are submitted:
-    1. Verify pricing matches current price list
-    2. Check customer credit limit
-    3. Validate tax calculations
-    4. Ensure all required fields are filled
-    5. Check for duplicate invoices
-
-    If validation passes, add a comment confirming validation.
-    If issues are found, add comments with specific problems and 
-    notify the accounts team.
-  </AgentPrompt>
-  <div className="huf-trigger-badge">On Submit of Sales Invoice DocType</div>
-</ConfigPanel>
-
-### Benefits
-
-Automated document handling reduces errors and keeps approvals moving.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Processing</span>Instant validation vs manual review</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Error Reduction</span>Catch issues before submission</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistency</span>Same rules applied every time</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Audit Trail</span>All validations logged</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Scalability</span>Handle any volume</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Processing</span>Instant validation vs manual review</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Error Reduction</span>Catch issues before submission</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistency</span>Same rules applied every time</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Audit Trail</span>All validations logged</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Scalability</span>Handle any volume</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 
@@ -151,65 +155,67 @@ Automated document handling reduces errors and keeps approvals moving.
 
 Use agents to transform raw data into structured reports and synchronized records.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Data needs to be transformed, calculated, or aggregated across multiple sources.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    Agents process data, perform calculations, and generate reports automatically.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Data needs to be transformed, calculated, or aggregated across multiple sources.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        Agents process data, perform calculations, and generate reports automatically.
+      </div>
+    </div>
 
-The agent can pull data from multiple sources, calculate results, and produce formatted reports.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Aggregation</span>Combine data from multiple sources</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Calculations</span>Perform complex calculations and formulas</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Transformation</span>Convert formats, normalize data</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Report Generation</span>Create summaries and analytics</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Synchronization</span>Keep related records in sync</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Aggregation</span>Combine data from multiple sources</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Calculations</span>Perform complex calculations and formulas</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Transformation</span>Convert formats, normalize data</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Report Generation</span>Create summaries and analytics</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Synchronization</span>Keep related records in sync</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get List (for data retrieval) · Get Document (for details) · Create Document (for reports) · Custom Tools (for calculations) · HTTP Request (for external data)" />
+      <AgentPrompt title="Sales Report Generator">
+        Generate daily sales reports by:
+        1. Retrieving all sales invoices from today
+        2. Calculating totals by customer, product, and region
+        3. Comparing to previous day and week
+        4. Identifying top performers and trends
+        5. Creating a summary document
+        6. Sending report via email to sales team
 
-### Agent Configuration
+        Format the report clearly with sections for:
+        - Overall summary
+        - Top customers
+        - Top products
+        - Regional breakdown
+        - Trends and insights
+      </AgentPrompt>
+      <div className="huf-trigger-badge">Scheduled (Daily at 9 AM)</div>
+    </ConfigPanel>
+  </TabPanel>
 
-Configure the agent with list, document, custom, and HTTP tools for data pipelines.
-
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get List (for data retrieval) · Get Document (for details) · Create Document (for reports) · Custom Tools (for calculations) · HTTP Request (for external data)" />
-  <AgentPrompt title="Sales Report Generator">
-    Generate daily sales reports by:
-    1. Retrieving all sales invoices from today
-    2. Calculating totals by customer, product, and region
-    3. Comparing to previous day and week
-    4. Identifying top performers and trends
-    5. Creating a summary document
-    6. Sending report via email to sales team
-
-    Format the report clearly with sections for:
-    - Overall summary
-    - Top customers
-    - Top products
-    - Regional breakdown
-    - Trends and insights
-  </AgentPrompt>
-  <div className="huf-trigger-badge">Scheduled (Daily at 9 AM)</div>
-</ConfigPanel>
-
-### Benefits
-
-Scheduled data workflows save time and remove manual calculation mistakes.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>Automated report generation</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Accuracy</span>No manual calculation errors</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistency</span>Same format every time</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Timeliness</span>Reports ready when needed</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Insights</span>AI can identify patterns and trends</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>Automated report generation</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Accuracy</span>No manual calculation errors</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistency</span>Same format every time</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Timeliness</span>Reports ready when needed</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Insights</span>AI can identify patterns and trends</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 
@@ -223,64 +229,66 @@ Scheduled data workflows save time and remove manual calculation mistakes.
 
 Send contextual, multi-channel alerts whenever important document events occur.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Important events happen but stakeholders aren't notified promptly or appropriately.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    Agents monitor events and send intelligent, contextual notifications.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Important events happen but stakeholders aren't notified promptly or appropriately.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        Agents monitor events and send intelligent, contextual notifications.
+      </div>
+    </div>
 
-The agent watches for document changes, filters for relevance, and alerts through the right channel.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Event Monitoring</span>Watch for specific document changes</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Contextual Alerts</span>Include relevant information in notifications</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Multi-channel</span>Send via Slack, Email, SMS, etc.</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Smart Filtering</span>Only notify when conditions are met</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Escalation</span>Escalate if no response received</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Event Monitoring</span>Watch for specific document changes</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Contextual Alerts</span>Include relevant information in notifications</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Multi-channel</span>Send via Slack, Email, SMS, etc.</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Smart Filtering</span>Only notify when conditions are met</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Escalation</span>Escalate if no response received</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get Document (for context) · Get List (for related records) · HTTP Request (for Slack/Email/SMS) · Custom Tools (for notification logic)" />
+      <AgentPrompt title="High-Priority Ticket Alert">
+        When a high-priority support ticket is created:
+        1. Retrieve ticket details
+        2. Check customer information and history
+        3. Determine appropriate team based on issue type
+        4. Format notification with:
+           - Ticket ID and subject
+           - Customer name and tier
+           - Issue description
+           - Suggested assignee
+        5. Send to relevant Slack channel
+        6. Also email the team lead if customer is VIP
 
-### Agent Configuration
+        Only send notifications for tickets marked "High" or "Critical" priority.
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Support Ticket (with condition: priority = "High")</div>
+    </ConfigPanel>
+  </TabPanel>
 
-Configure the agent to fetch context and push notifications through external services.
-
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get Document (for context) · Get List (for related records) · HTTP Request (for Slack/Email/SMS) · Custom Tools (for notification logic)" />
-  <AgentPrompt title="High-Priority Ticket Alert">
-    When a high-priority support ticket is created:
-    1. Retrieve ticket details
-    2. Check customer information and history
-    3. Determine appropriate team based on issue type
-    4. Format notification with:
-       - Ticket ID and subject
-       - Customer name and tier
-       - Issue description
-       - Suggested assignee
-    5. Send to relevant Slack channel
-    6. Also email the team lead if customer is VIP
-
-    Only send notifications for tickets marked "High" or "Critical" priority.
-  </AgentPrompt>
-  <div className="huf-trigger-badge">After Insert on Support Ticket (with condition: priority = "High")</div>
-</ConfigPanel>
-
-### Benefits
-
-Targeted notifications keep the right people informed without creating noise.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Immediate Alerts</span>Instant notification of important events</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Context Rich</span>Include relevant information automatically</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Right Audience</span>Notify correct people based on context</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Reduced Noise</span>Only notify when necessary</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Multi-channel</span>Reach people where they are</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Immediate Alerts</span>Instant notification of important events</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Context Rich</span>Include relevant information automatically</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Right Audience</span>Notify correct people based on context</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Reduced Noise</span>Only notify when necessary</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Multi-channel</span>Reach people where they are</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 
@@ -294,67 +302,69 @@ Targeted notifications keep the right people informed without creating noise.
 
 Score, enrich, and assign incoming leads automatically so sales reps focus on the best opportunities.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Leads come in but aren't qualified, scored, or assigned efficiently.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    Agents analyze leads, score them, and route to appropriate sales reps.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Leads come in but aren't qualified, scored, or assigned efficiently.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        Agents analyze leads, score them, and route to appropriate sales reps.
+      </div>
+    </div>
 
-The agent evaluates lead quality, enriches data, assigns reps, and schedules follow-ups.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Lead Scoring</span>Evaluate leads based on multiple criteria</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Enrichment</span>Look up company info, social profiles</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Assignment Logic</span>Assign to best sales rep based on territory, workload, expertise</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Follow-up Scheduling</span>Set appropriate follow-up dates</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Qualification</span>Determine if lead meets criteria</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Lead Scoring</span>Evaluate leads based on multiple criteria</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Enrichment</span>Look up company info, social profiles</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Assignment Logic</span>Assign to best sales rep based on territory, workload, expertise</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Follow-up Scheduling</span>Set appropriate follow-up dates</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Qualification</span>Determine if lead meets criteria</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get Document (Lead, Customer, Territory) · Get List (Sales Person, existing leads) · Create Document (Lead, Task) · Update Document (Lead assignment) · Custom Tools (for scoring algorithm)" />
+      <AgentPrompt title="Lead Qualifier Agent">
+        When a new lead is created:
+        1. Score the lead based on:
+           - Company size (from company_name lookup)
+           - Industry match with our ideal customer profile
+           - Source quality (referral > website > cold)
+           - Budget indicators in description
+        2. Assign to sales rep based on:
+           - Territory match
+           - Current workload (fewer active leads = higher priority)
+           - Industry expertise
+        3. Set follow-up date:
+           - Hot leads: Same day
+           - Warm leads: Next business day
+           - Cold leads: Next week
+        4. Add internal notes with scoring rationale
+        5. Notify assigned sales rep
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Lead DocType</div>
+    </ConfigPanel>
+  </TabPanel>
 
-### Agent Configuration
-
-Configure the agent with lead, territory, and task tools plus scoring instructions.
-
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get Document (Lead, Customer, Territory) · Get List (Sales Person, existing leads) · Create Document (Lead, Task) · Update Document (Lead assignment) · Custom Tools (for scoring algorithm)" />
-  <AgentPrompt title="Lead Qualifier Agent">
-    When a new lead is created:
-    1. Score the lead based on:
-       - Company size (from company_name lookup)
-       - Industry match with our ideal customer profile
-       - Source quality (referral > website > cold)
-       - Budget indicators in description
-    2. Assign to sales rep based on:
-       - Territory match
-       - Current workload (fewer active leads = higher priority)
-       - Industry expertise
-    3. Set follow-up date:
-       - Hot leads: Same day
-       - Warm leads: Next business day
-       - Cold leads: Next week
-    4. Add internal notes with scoring rationale
-    5. Notify assigned sales rep
-  </AgentPrompt>
-  <div className="huf-trigger-badge">After Insert on Lead DocType</div>
-</ConfigPanel>
-
-### Benefits
-
-Faster, more consistent lead handling improves conversion and rep productivity.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Response</span>Hot leads get immediate attention</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Better Assignment</span>Leads go to right rep automatically</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistent Scoring</span>Same criteria applied to all leads</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Higher Conversion</span>Better qualification = better close rates</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>Sales reps focus on qualified leads</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Faster Response</span>Hot leads get immediate attention</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Better Assignment</span>Leads go to right rep automatically</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Consistent Scoring</span>Same criteria applied to all leads</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Higher Conversion</span>Better qualification = better close rates</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>Sales reps focus on qualified leads</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 
@@ -368,67 +378,69 @@ Faster, more consistent lead handling improves conversion and rep productivity.
 
 Let users request reports in plain language and have the agent build and format them automatically.
 
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Users need reports but don't know how to create them or use complex report builders.
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    Agents understand natural language requests and generate reports automatically.
-  </div>
-</div>
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
 
-### Capabilities
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Problem</span>
+        Users need reports but don't know how to create them or use complex report builders.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">Solution</span>
+        Agents understand natural language requests and generate reports automatically.
+      </div>
+    </div>
 
-The agent parses plain-language requests, retrieves data, and presents formatted results.
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">Natural Language Understanding</span>Parse user requests like "Show me sales this month"</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Query Building</span>Convert requests to database queries</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Data Retrieval</span>Fetch relevant data</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Formatting</span>Present data in readable format</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">Visualization</span>Suggest charts or graphs when appropriate</div>
+    </div>
+  </TabPanel>
 
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell"><span className="huf-cap-term">Natural Language Understanding</span>Parse user requests like "Show me sales this month"</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Query Building</span>Convert requests to database queries</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Data Retrieval</span>Fetch relevant data</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Formatting</span>Present data in readable format</div>
-  <div className="huf-cap-cell"><span className="huf-cap-term">Visualization</span>Suggest charts or graphs when appropriate</div>
-</div>
+  <TabPanel value="config">
+    <ConfigPanel title="Agent Configuration">
+      <ConfigField label="Tools Required" value="Get List (with dynamic filters) · Get Document (for details) · Custom Tools (for report formatting) · HTTP Request (for exporting to Excel/PDF)" />
+      <AgentPrompt title="Report Generator Agent">
+        You are a report generation assistant. Users ask for reports in
+        natural language, and you create them.
 
-### Agent Configuration
+        When users request reports:
+        1. Understand what data they want (sales, inventory, customers, etc.)
+        2. Determine time period (today, this week, this month, custom range)
+        3. Identify filters (by customer, product, region, etc.)
+        4. Retrieve the data using appropriate tools
+        5. Format results clearly:
+           - Summary statistics
+           - Detailed breakdown
+           - Comparisons if requested
+        6. Offer to export to Excel or PDF if needed
 
-Configure the agent with dynamic list tools and formatting/export helpers.
+        Be conversational and ask clarifying questions if the request
+        is ambiguous.
+      </AgentPrompt>
+      <ConfigField label="Tools" value="get_list (for data retrieval) · generate_report (custom tool for formatting) · export_to_excel (custom tool)" />
+    </ConfigPanel>
+  </TabPanel>
 
-<ConfigPanel title="Agent Configuration">
-  <ConfigField label="Tools Required" value="Get List (with dynamic filters) · Get Document (for details) · Custom Tools (for report formatting) · HTTP Request (for exporting to Excel/PDF)" />
-  <AgentPrompt title="Report Generator Agent">
-    You are a report generation assistant. Users ask for reports in 
-    natural language, and you create them.
-
-    When users request reports:
-    1. Understand what data they want (sales, inventory, customers, etc.)
-    2. Determine time period (today, this week, this month, custom range)
-    3. Identify filters (by customer, product, region, etc.)
-    4. Retrieve the data using appropriate tools
-    5. Format results clearly:
-       - Summary statistics
-       - Detailed breakdown
-       - Comparisons if requested
-    6. Offer to export to Excel or PDF if needed
-
-    Be conversational and ask clarifying questions if the request 
-    is ambiguous.
-  </AgentPrompt>
-  <ConfigField label="Tools" value="get_list (for data retrieval) · generate_report (custom tool for formatting) · export_to_excel (custom tool)" />
-</ConfigPanel>
-
-### Benefits
-
-Natural-language reporting makes data accessible to everyone in the organization.
-
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Accessibility</span>Non-technical users can get reports</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Speed</span>Instant report generation</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Flexibility</span>Handle varied requests</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Natural Interaction</span>Users ask naturally, not query syntax</div>
-  <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>No need to build reports manually</div>
-</div>
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Accessibility</span>Non-technical users can get reports</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Speed</span>Instant report generation</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Flexibility</span>Handle varied requests</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Natural Interaction</span>Users ask naturally, not query syntax</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">Time Savings</span>No need to build reports manually</div>
+    </div>
+  </TabPanel>
+</Tabs>
 
 </div>
 

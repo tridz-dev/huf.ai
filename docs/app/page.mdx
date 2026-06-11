@@ -3,6 +3,7 @@ sidebarTitle: Introduction
 ---
 
 import Link from 'next/link'
+import { Button } from '@/app/components'
 
 <div style={{
   maxWidth: '1200px',
@@ -43,12 +44,8 @@ import Link from 'next/link'
   flexWrap: 'wrap',
   marginBottom: '4rem'
 }}>
-  <Link href="/docs/quick-start" className="huf-btn huf-btn-solid">
-    Read Documentation →
-  </Link>
-  <a href="https://github.com/tridz-dev/agent_flo" target="_blank" rel="noreferrer" className="huf-btn huf-btn-ghost">
-    View on GitHub →
-  </a>
+  <Button href="/docs/quick-start" variant="solid">Get started</Button>
+  <Button href="https://github.com/tridz-dev/agent_flo" variant="ghost">View on GitHub</Button>
 </div>
 
 <div style={{

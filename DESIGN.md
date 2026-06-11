@@ -520,6 +520,32 @@ Use `carry` to include prior-message token totals in the running sum.
 ]} />
 ```
 
+### 10.8 Tabs
+
+```mdx
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">Overview</Tab>
+    <Tab value="config">Config</Tab>
+    <Tab value="benefits">Benefits</Tab>
+  </TabList>
+  <TabPanel value="overview">...</TabPanel>
+  <TabPanel value="config">...</TabPanel>
+  <TabPanel value="benefits">...</TabPanel>
+</Tabs>
+```
+
+Use tabs to collapse long use-case cards or multi-section config into a compact viewport-friendly interface.
+
+### 10.9 Button
+
+```mdx
+<Button href="/docs/quick-start" variant="solid">Get started</Button>
+<Button href="https://github.com/tridz-dev/agent_flo" variant="ghost">View on GitHub</Button>
+```
+
+Use `variant="solid"` or `variant="ghost"`. External URLs automatically render with `target="_blank"` and `rel="noreferrer"`.
+
 ---
 
 ## 11. Responsive Behavior

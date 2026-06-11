@@ -437,23 +437,45 @@ That's it! The next time you call this agent, it will:
 
 ### Execution Flow
 
-```
-User Request → Create Orchestration → Planning Phase
-                                           ↓
-                                    Generate Steps
-                                           ↓
-                              Save to agent_orchestration_plan
-                                           ↓
-                              Scheduler picks up (every 1 min)
-                                           ↓
-                              Execute Step 1 → Save output
-                                           ↓
-                              Execute Step 2 → Save output
-                                           ↓
-                                         ...
-                                           ↓
-                              All steps done → Completed
-```
+<div className="huf-pipeline">
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">User Request</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Create Orchestration</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Planning Phase</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Generate Steps</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Save to Plan</span>
+    <span className="huf-pipeline-desc">agent_orchestration_plan</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Scheduler</span>
+    <span className="huf-pipeline-desc">every 1 min</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Execute Step 1</span>
+    <span className="huf-pipeline-desc">Save output</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Execute Step 2</span>
+    <span className="huf-pipeline-desc">Save output</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">…</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">All Steps Done</span>
+  </div>
+  <div className="huf-pipeline-step">
+    <span className="huf-pipeline-label">Completed</span>
+  </div>
+</div>
 
 ### Monitoring Orchestrations
 

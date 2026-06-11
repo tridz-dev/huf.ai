@@ -12,7 +12,12 @@ import {
   ConfigField,
   ConfigSection,
   DoDont,
-  Checklist
+  Checklist,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  Button
 } from '@/app/components'
 
 const nextraComponents = getNextraComponents()
@@ -32,6 +37,11 @@ export function useMDXComponents(components) {
     ConfigField,
     ConfigSection,
     DoDont,
-    Checklist
+    Checklist,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanel,
+    Button
   }
 }

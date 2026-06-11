@@ -36,11 +36,12 @@ Scheduled triggers make an agent run repeatedly at fixed intervals. They are use
 Common use cases include daily report generation, hourly inventory checks, weekly summarization tasks, periodic data synchronization, and scheduled notifications.
 
 **Example:**
-```
-Agent: Daily Sales Summary
-Trigger: Every day at 9:00 AM
-Action: Generates sales report and sends via email
-```
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Daily Sales Summary" />
+  <ConfigField label="Trigger" value="Every day at 9:00 AM" />
+  <ConfigField label="Action" value="Generates sales report and sends via email" />
+</ConfigPanel>
 
 ### 3. Document Event Triggers
 
@@ -58,11 +59,12 @@ Document event triggers react to changes in Frappe documents, so agents can vali
 Typical use cases include validating invoices on submission, auto-assigning leads when they are created, notifying the team when deals update, running quality checks on document submission, and enriching data on creation.
 
 **Example:**
-```
-Agent: Invoice Validator
-Trigger: After Submit on DocType "Sales Invoice"
-Action: Validates pricing, checks credit limits, flags issues
-```
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Invoice Validator" />
+  <ConfigField label="Trigger" value="After Submit on DocType &quot;Sales Invoice&quot;" />
+  <ConfigField label="Action" value="Validates pricing, checks credit limits, flags issues" />
+</ConfigPanel>
 
 ### 4. Chat-Based Execution
 
@@ -162,11 +164,16 @@ Focus on fast-moving items from the last 7 days.
 ```
 
 **Example Trigger:**
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Inventory Monitor" />
+  <ConfigField label="Schedule" value="Every day at 8:00 AM" />
+</ConfigPanel>
+
+**Prompt:**
 ```
-Agent: Inventory Monitor
-Schedule: Every day at 8:00 AM
-Prompt: "Check inventory for items below reorder level and create purchase 
-        requisitions if needed. Prioritize high-demand items."
+"Check inventory for items below reorder level and create purchase
+requisitions if needed. Prioritize high-demand items."
 ```
 
 ## Document Event Trigger Configuration
@@ -239,13 +246,18 @@ Lead Details:
 The data available to the prompt includes all fields on the document, standard fields such as `name`, `creation`, `modified`, and `owner`, and linked document data when the agent has tools that can fetch it.
 
 **Example:**
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Lead Qualifier" />
+  <ConfigField label="DocType" value="Lead" />
+  <ConfigField label="Event" value="After Insert" />
+</ConfigPanel>
+
+**Prompt:**
 ```
-Agent: Lead Qualifier
-DocType: Lead
-Event: After Insert
-Prompt: "A new lead was created: {lead_name} from {company_name} 
-        in {territory}. Score this lead, assign to appropriate sales 
-        rep, and set next follow-up date."
+"A new lead was created: {lead_name} from {company_name}
+in {territory}. Score this lead, assign to appropriate sales
+rep, and set next follow-up date."
 ```
 
 ## Conversation Modes for Triggers
@@ -333,8 +345,11 @@ These examples show how triggers combine event types, agents, and prompt templat
 
 When a new Lead is created, the Lead Router agent can evaluate territory, workload, and industry fit to assign the best sales rep and schedule the next follow-up.
 
-**Trigger:** After Insert on Lead
-**Agent:** Lead Router
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="After Insert on Lead" />
+  <ConfigField label="Agent" value="Lead Router" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 New lead: {lead_name} from {territory}.
@@ -349,8 +364,11 @@ Update the lead with assigned rep and next follow-up date.
 
 On submission of a Sales Invoice, the Invoice Validator agent can check pricing, credit limits, taxes, and anomalies before the invoice is finalized.
 
-**Trigger:** On Submit on Sales Invoice
-**Agent:** Invoice Validator
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="On Submit on Sales Invoice" />
+  <ConfigField label="Agent" value="Invoice Validator" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Validate this invoice:
@@ -365,8 +383,11 @@ If issues found, add comment and notify accounts team.
 
 A scheduled morning run can produce a daily sales summary and send it to the team without manual intervention.
 
-**Trigger:** Schedule (Daily at 9 AM)
-**Agent:** Sales Report Generator
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="Schedule (Daily at 9 AM)" />
+  <ConfigField label="Agent" value="Sales Report Generator" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Generate daily sales summary:
@@ -381,8 +402,11 @@ Send report to sales@company.com
 
 When a new Support Ticket arrives, the Ticket Router agent can triage priority, set SLAs, and route the ticket to the right team.
 
-**Trigger:** After Insert on Support Ticket
-**Agent:** Ticket Router
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="After Insert on Support Ticket" />
+  <ConfigField label="Agent" value="Ticket Router" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 New ticket: {subject}
@@ -398,8 +422,11 @@ Analyze the issue and:
 
 A recurring inventory check can raise purchase requisitions when stock falls below reorder levels.
 
-**Trigger:** Schedule (Every 6 hours)
-**Agent:** Inventory Monitor
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="Schedule (Every 6 hours)" />
+  <ConfigField label="Agent" value="Inventory Monitor" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Check all items with stock below reorder level.
