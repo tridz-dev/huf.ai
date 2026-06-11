@@ -28,22 +28,22 @@ Conversations matter because they turn isolated questions into coherent, multi-t
 Without memory, an agent can answer a single question but loses track of what was just said. With a conversation, pronouns and follow-ups resolve naturally because the agent still has the prior turn in context.
 
 **Without Conversations:**
-```
-User: "What's the status of order SO-2024-001?"
-Agent: "The order is confirmed and pending shipment."
 
-User: "When will it ship?"
-Agent: "Which order are you asking about?"  (No memory)
-```
+<ChatTranscript>
+  <ChatMessage role="user">What's the status of order SO-2024-001?</ChatMessage>
+  <ChatMessage role="agent">The order is confirmed and pending shipment.</ChatMessage>
+  <ChatMessage role="user">When will it ship?</ChatMessage>
+  <ChatMessage role="agent">Which order are you asking about? (No memory)</ChatMessage>
+</ChatTranscript>
 
 **With Conversations:**
-```
-User: "What's the status of order SO-2024-001?"
-Agent: "The order is confirmed and pending shipment."
 
-User: "When will it ship?"
-Agent: "Order SO-2024-001 is scheduled to ship on Jan 15."  ✓ Remembers context
-```
+<ChatTranscript>
+  <ChatMessage role="user">What's the status of order SO-2024-001?</ChatMessage>
+  <ChatMessage role="agent">The order is confirmed and pending shipment.</ChatMessage>
+  <ChatMessage role="user">When will it ship?</ChatMessage>
+  <ChatMessage role="agent">Order SO-2024-001 is scheduled to ship on Jan 15. ✓ Remembers context</ChatMessage>
+</ChatTranscript>
 
 ### Multi-turn Interactions
 
@@ -107,7 +107,11 @@ Shared conversation mode uses a single conversation thread across all users. Eve
 - Shared project agents
 - Collaborative workflows
 
-**Configuration:** Set `persist_user_history=0` in Agent settings.
+**Configuration:**
+
+<ConfigPanel title="Shared Conversation Settings">
+  <ConfigField label="Persist User History" value="0" />
+</ConfigPanel>
 
 ### 3. Conversation per Trigger
 
@@ -183,19 +187,16 @@ Limiting history matters for three reasons:
 
 When an agent runs, the platform formats the recent history and includes it in the prompt. The agent can then resolve references like "their" because the earlier customer lookup is still visible.
 
-```
-System: [Agent Instructions]
-
-User: Can you look up customer CUST-001?
-Agent: Sure! Let me get that information for you.
-[Tool Call: get_customer(CUST-001)]
-[Tool Result: {...customer data...}]
-Agent: Here's the information for ABC Corporation...
-
-User: What's their outstanding balance?
-Agent: [Reads history, knows we're talking about CUST-001]
-       Their current outstanding balance is $5,230.
-```
+<ChatTranscript>
+  <ChatMessage role="system">[Agent Instructions]</ChatMessage>
+  <ChatMessage role="user">Can you look up customer CUST-001?</ChatMessage>
+  <ChatMessage role="agent">Sure! Let me get that information for you.</ChatMessage>
+  <ChatMessage role="tool-call">get_customer(CUST-001)</ChatMessage>
+  <ChatMessage role="tool-result">{'{...customer data...}'}</ChatMessage>
+  <ChatMessage role="agent">Here's the information for ABC Corporation...</ChatMessage>
+  <ChatMessage role="user">What's their outstanding balance?</ChatMessage>
+  <ChatMessage role="agent">[Reads history, knows we're talking about CUST-001] Their current outstanding balance is $5,230.</ChatMessage>
+</ChatTranscript>
 
 The agent sees the full context and understands "their" refers to CUST-001.
 
@@ -278,11 +279,12 @@ Conversations affect token costs in three ways:
 - **Exponential growth** — Each new message includes all previous ones, so cost rises with conversation length.
 
 **Example:**
-```
-Message 1: 100 tokens prompt + 50 tokens response = 150 tokens
-Message 2: 100 + 50 (msg 1) + 100 (new prompt) + 50 (response) = 300 tokens
-Message 3: 100 + 50 + 100 + 50 (msg 2) + 100 + 50 = 450 tokens
-```
+
+<TokenCalculation>
+  <TokenRow label="Message 1" prompt={100} response={50} total={150} />
+  <TokenRow label="Message 2" prompt={100} response={50} carry={[150]} total={300} />
+  <TokenRow label="Message 3" prompt={100} response={50} carry={[300]} total={450} />
+</TokenCalculation>
 
 ### Cost Optimization
 
@@ -345,7 +347,12 @@ Different interaction patterns call for different conversation configurations. C
 Short-conversation strategy suits one-off questions and independent requests where earlier context is unlikely to matter.
 
 **Configuration:**
-- Set `persist_conversation = 0` or use a short history limit
+
+<ConfigPanel title="Short Conversation Settings">
+  <ConfigField label="Persist Conversation" value="0" />
+  <ConfigField label="History Limit" value="Short" />
+</ConfigPanel>
+
 - Focus on clear, complete requests
 
 **Use cases:**
@@ -358,9 +365,13 @@ Short-conversation strategy suits one-off questions and independent requests whe
 Long-conversation strategy supports complex, multi-step interactions where context across many turns is essential.
 
 **Configuration:**
-- Set `persist_conversation = 1`
-- Use a longer history limit, with cost monitoring
-- Add a summarization strategy for very long threads
+
+<ConfigPanel title="Long Conversation Settings">
+  <ConfigField label="Persist Conversation" value="1" />
+  <ConfigField label="History Limit" value="Long" />
+  <ConfigField label="Cost Monitoring" value="Enabled" />
+  <ConfigField label="Summarization Strategy" value="For very long threads" />
+</ConfigPanel>
 
 **Use cases:**
 - Customer support sessions
@@ -372,9 +383,12 @@ Long-conversation strategy supports complex, multi-step interactions where conte
 Session-based strategy fits task-oriented interactions that should persist while the user is active but expire cleanly afterward.
 
 **Configuration:**
-- Keep history persistent within the session
-- Auto-expire after a timeout
-- Define clear session boundaries
+
+<ConfigPanel title="Session-Based Conversation Settings">
+  <ConfigField label="History Persistence" value="Within session" />
+  <ConfigField label="Auto-Expire" value="After timeout" />
+  <ConfigField label="Session Boundaries" value="Defined" />
+</ConfigPanel>
 
 **Use cases:**
 - Form filling assistance
@@ -386,28 +400,40 @@ Session-based strategy fits task-oriented interactions that should persist while
 When conversations behave unexpectedly, the cause usually falls into one of four areas: persistence settings, history length, session identity, or message storage. The checklist below helps you isolate each issue.
 
 **Agent doesn't remember context:**
-- Check that `persist_conversation` is enabled
-- Verify the history length setting is not too short
-- Ensure the same session ID is used across messages
-- Check that the conversation is marked active
+
+<Checklist items={[
+  "Check that `persist_conversation` is enabled",
+  "Verify the history length setting is not too short",
+  "Ensure the same session ID is used across messages",
+  "Check that the conversation is marked active"
+]} />
 
 **Costs are too high:**
-- Review the conversation history length
-- Check for overly long conversations
-- Consider a shorter history limit
-- Monitor token usage in Agent Run logs
+
+<Checklist items={[
+  "Review the conversation history length",
+  "Check for overly long conversations",
+  "Consider a shorter history limit",
+  "Monitor token usage in Agent Run logs"
+]} />
 
 **Wrong conversation retrieved:**
-- Verify the session ID format
-- Check user, agent, and channel matching
-- Review the conversation active status
-- Check for session ID collisions
+
+<Checklist items={[
+  "Verify the session ID format",
+  "Check user, agent, and channel matching",
+  "Review the conversation active status",
+  "Check for session ID collisions"
+]} />
 
 **Messages not appearing:**
-- Verify the conversation was saved
-- Check that the database commit happened
-- Review Agent Run for errors
-- Check permissions on the conversation DocType
+
+<Checklist items={[
+  "Verify the conversation was saved",
+  "Check that the database commit happened",
+  "Review Agent Run for errors",
+  "Check permissions on the conversation DocType"
+]} />
 
 ## Best Practices
 
@@ -415,18 +441,21 @@ Following a few design habits will keep conversations useful, private, and cost-
 
 ### Conversation Design
 
-**Do:**
-- Start with short history limits and increase only if needed
-- End conversations when tasks complete
-- Monitor token usage regularly
-- Use per-user conversations for privacy-sensitive agents
-- Clear conversations when starting a new topic
-
-**Don't:**
-- Keep unlimited history
-- Mix multiple unrelated topics in one conversation
-- Share conversations when privacy matters
-- Forget to deactivate completed conversations
+<DoDont
+  doItems={[
+    "Start with short history limits and increase only if needed",
+    "End conversations when tasks complete",
+    "Monitor token usage regularly",
+    "Use per-user conversations for privacy-sensitive agents",
+    "Clear conversations when starting a new topic"
+  ]}
+  dontItems={[
+    "Keep unlimited history",
+    "Mix multiple unrelated topics in one conversation",
+    "Share conversations when privacy matters",
+    "Forget to deactivate completed conversations"
+  ]}
+/>
 
 ### User Experience
 

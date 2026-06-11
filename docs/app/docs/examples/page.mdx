@@ -12,15 +12,17 @@ Complete, production-ready agent configurations you can use as templates or star
 
 ### Agent Configuration
 
-**Basic Settings:**
-- **Agent Name:** `Invoice Validator`
-- **Provider:** Your OpenAI provider
-- **Model:** `gpt-4-turbo` (or `gpt-3.5-turbo` for cost savings)
-- **Temperature:** `0.3` (focused, consistent validation)
-- **Allow Chat:** No (triggered automatically)
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Agent Name" value="Invoice Validator" />
+  <ConfigField label="Provider" value="Your OpenAI provider" />
+  <ConfigField label="Model" value="gpt-4-turbo (or gpt-3.5-turbo for cost savings)" />
+  <ConfigField label="Temperature" value="0.3 (focused, consistent validation)" />
+  <ConfigField label="Allow Chat" value="No (triggered automatically)" />
+</ConfigPanel>
 
 ### Instructions
 
+<AgentPrompt title="Invoice Validator Agent">
 ```
 You are an invoice validation agent. Your job is to validate sales invoices 
 when they are submitted.
@@ -42,6 +44,7 @@ Validation Results:
 
 Be thorough but efficient. Focus on accuracy over speed.
 ```
+</AgentPrompt>
 
 ### Tools
 
@@ -76,26 +79,28 @@ Be thorough but efficient. Focus on accuracy over speed.
 
 ### Trigger Configuration
 
-**Agent Trigger:**
-- **Trigger Type:** Doc Event
-- **Reference DocType:** Sales Invoice
-- **Document Event:** On Submit
-- **Condition:** None (validate all submitted invoices)
-- **Prompt Template:**
-```
-A sales invoice has been submitted: {name}
-Customer: {customer}
-Total Amount: {grand_total}
+<ConfigPanel title="Agent Trigger">
+  <ConfigField label="Trigger Type" value="Doc Event" />
+  <ConfigField label="Reference DocType" value="Sales Invoice" />
+  <ConfigField label="Document Event" value="On Submit" />
+  <ConfigField label="Condition" value="None (validate all submitted invoices)" />
+  <ConfigSection title="Prompt Template">
+    ```
+    A sales invoice has been submitted: {name}
+    Customer: {customer}
+    Total Amount: {grand_total}
 
-Please validate this invoice:
-1. Check pricing against price list
-2. Verify customer credit limit
-3. Validate tax calculations
-4. Check for duplicates
-5. Ensure all required fields are correct
+    Please validate this invoice:
+    1. Check pricing against price list
+    2. Verify customer credit limit
+    3. Validate tax calculations
+    4. Check for duplicates
+    5. Ensure all required fields are correct
 
-Add comments with validation results.
-```
+    Add comments with validation results.
+    ```
+  </ConfigSection>
+</ConfigPanel>
 
 ### Expected Behavior
 
@@ -127,15 +132,17 @@ Add comments with validation results.
 
 ### Agent Configuration
 
-**Basic Settings:**
-- **Agent Name:** `Email Auto-Responder`
-- **Provider:** Your Anthropic provider
-- **Model:** `claude-3-sonnet` (good for email understanding)
-- **Temperature:** `0.7` (balanced, natural responses)
-- **Allow Chat:** No
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Agent Name" value="Email Auto-Responder" />
+  <ConfigField label="Provider" value="Your Anthropic provider" />
+  <ConfigField label="Model" value="claude-3-sonnet (good for email understanding)" />
+  <ConfigField label="Temperature" value="0.7 (balanced, natural responses)" />
+  <ConfigField label="Allow Chat" value="No" />
+</ConfigPanel>
 
 ### Instructions
 
+<AgentPrompt title="Email Auto-Responder Agent">
 ```
 You are an email auto-responder agent. Your job is to process incoming 
 emails and handle them appropriately.
@@ -177,6 +184,7 @@ When an email is received:
 Always be professional, helpful, and empathetic. Match the tone 
 of the original email (formal vs casual).
 ```
+</AgentPrompt>
 
 ### Tools
 
@@ -211,23 +219,25 @@ of the original email (formal vs casual).
 
 ### Trigger Configuration
 
-**Agent Trigger:**
-- **Trigger Type:** Doc Event
-- **Reference DocType:** Communication
-- **Document Event:** After Insert
-- **Condition:** `{"communication_type": "Communication", "sent_or_received": "Received", "email_status": "Open"}`
-- **Prompt Template:**
-```
-A new email has been received:
-From: {sender}
-Subject: {subject}
-Content: {content}
+<ConfigPanel title="Agent Trigger">
+  <ConfigField label="Trigger Type" value="Doc Event" />
+  <ConfigField label="Reference DocType" value="Communication" />
+  <ConfigField label="Document Event" value="After Insert" />
+  <ConfigField label="Condition" value={`{"communication_type": "Communication", "sent_or_received": "Received", "email_status": "Open"}`} />
+  <ConfigSection title="Prompt Template">
+    ```
+    A new email has been received:
+    From: {sender}
+    Subject: {subject}
+    Content: {content}
 
-Please process this email:
-1. Categorize it
-2. Take appropriate action (create ticket, lead, etc.)
-3. Draft and send response if needed
-```
+    Please process this email:
+    1. Categorize it
+    2. Take appropriate action (create ticket, lead, etc.)
+    3. Draft and send response if needed
+    ```
+  </ConfigSection>
+</ConfigPanel>
 
 ### Expected Behavior
 
@@ -257,15 +267,17 @@ Please process this email:
 
 ### Agent Configuration
 
-**Basic Settings:**
-- **Agent Name:** `Sales Lead Qualifier`
-- **Provider:** Your OpenAI provider
-- **Model:** `gpt-4-turbo` (good for analysis)
-- **Temperature:** `0.5` (balanced analysis)
-- **Allow Chat:** No
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Agent Name" value="Sales Lead Qualifier" />
+  <ConfigField label="Provider" value="Your OpenAI provider" />
+  <ConfigField label="Model" value="gpt-4-turbo (good for analysis)" />
+  <ConfigField label="Temperature" value="0.5 (balanced analysis)" />
+  <ConfigField label="Allow Chat" value="No" />
+</ConfigPanel>
 
 ### Instructions
 
+<AgentPrompt title="Sales Lead Qualifier Agent">
 ```
 You are a sales lead qualification agent. Your job is to analyze new 
 leads and prepare them for the sales team.
@@ -307,6 +319,7 @@ When a new lead is created:
 
 Be thorough in analysis. Better to over-qualify than miss opportunities.
 ```
+</AgentPrompt>
 
 ### Tools
 
@@ -341,28 +354,30 @@ Be thorough in analysis. Better to over-qualify than miss opportunities.
 
 ### Trigger Configuration
 
-**Agent Trigger:**
-- **Trigger Type:** Doc Event
-- **Reference DocType:** Lead
-- **Document Event:** After Insert
-- **Condition:** None (qualify all new leads)
-- **Prompt Template:**
-```
-A new lead has been created:
-Company: {company_name}
-Contact: {lead_name}
-Email: {email_id}
-Source: {source}
-Description: {description}
-Territory: {territory}
+<ConfigPanel title="Agent Trigger">
+  <ConfigField label="Trigger Type" value="Doc Event" />
+  <ConfigField label="Reference DocType" value="Lead" />
+  <ConfigField label="Document Event" value="After Insert" />
+  <ConfigField label="Condition" value="None (qualify all new leads)" />
+  <ConfigSection title="Prompt Template">
+    ```
+    A new lead has been created:
+    Company: {company_name}
+    Contact: {lead_name}
+    Email: {email_id}
+    Source: {source}
+    Description: {description}
+    Territory: {territory}
 
-Please:
-1. Score this lead (0-100)
-2. Extract key information
-3. Assign to appropriate sales rep
-4. Set follow-up priority
-5. Add qualification notes
-```
+    Please:
+    1. Score this lead (0-100)
+    2. Extract key information
+    3. Assign to appropriate sales rep
+    4. Set follow-up priority
+    5. Add qualification notes
+    ```
+  </ConfigSection>
+</ConfigPanel>
 
 ### Expected Behavior
 
@@ -395,15 +410,17 @@ Please:
 
 ### Agent Configuration
 
-**Basic Settings:**
-- **Agent Name:** `Inventory Alert Bot`
-- **Provider:** Your OpenAI provider
-- **Model:** `gpt-3.5-turbo` (cost-effective for monitoring)
-- **Temperature:** `0.2` (very focused, data-driven)
-- **Allow Chat:** No
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Agent Name" value="Inventory Alert Bot" />
+  <ConfigField label="Provider" value="Your OpenAI provider" />
+  <ConfigField label="Model" value="gpt-3.5-turbo (cost-effective for monitoring)" />
+  <ConfigField label="Temperature" value="0.2 (very focused, data-driven)" />
+  <ConfigField label="Allow Chat" value="No" />
+</ConfigPanel>
 
 ### Instructions
 
+<AgentPrompt title="Inventory Alert Bot">
 ```
 You are an inventory monitoring agent. Your job is to monitor stock 
 levels and prevent stockouts.
@@ -442,6 +459,7 @@ Every 6 hours, check inventory:
 
 Be proactive. It's better to order early than run out of stock.
 ```
+</AgentPrompt>
 
 ### Tools
 
@@ -481,19 +499,21 @@ Be proactive. It's better to order early than run out of stock.
 
 ### Trigger Configuration
 
-**Agent Trigger:**
-- **Trigger Type:** Schedule
-- **Schedule:** Every 6 hours (Cron: `0 */6 * * *`)
-- **Prompt Template:**
-```
-It's time to check inventory levels. Please:
-1. Identify all items below reorder level
-2. Calculate required purchase quantities
-3. Create purchase requisitions for items needing reorder
-4. Predict stockouts and flag critical items
-5. Generate summary report
-6. Notify procurement team of urgent items
-```
+<ConfigPanel title="Agent Trigger">
+  <ConfigField label="Trigger Type" value="Schedule" />
+  <ConfigField label="Schedule" value="Every 6 hours (Cron: 0 */6 * * *)" />
+  <ConfigSection title="Prompt Template">
+    ```
+    It's time to check inventory levels. Please:
+    1. Identify all items below reorder level
+    2. Calculate required purchase quantities
+    3. Create purchase requisitions for items needing reorder
+    4. Predict stockouts and flag critical items
+    5. Generate summary report
+    6. Notify procurement team of urgent items
+    ```
+  </ConfigSection>
+</ConfigPanel>
 
 ### Expected Behavior
 
@@ -520,11 +540,13 @@ It's time to check inventory levels. Please:
 
 ### Copy and Customize
 
-1. **Copy agent configuration** from example
-2. **Adjust instructions** for your specific needs
-3. **Modify tools** based on your DocTypes
-4. **Update triggers** to match your workflow
-5. **Test thoroughly** before production
+<Checklist items={[
+  "Copy agent configuration from example",
+  "Adjust instructions for your specific needs",
+  "Modify tools based on your DocTypes",
+  "Update triggers to match your workflow",
+  "Test thoroughly before production"
+]} />
 
 ### Adaptation Tips
 
@@ -549,19 +571,25 @@ It's time to check inventory levels. Please:
 ### Testing
 
 **Before Production:**
-1. Test with sample data
-2. Verify tool calls work correctly
-3. Check trigger conditions
-4. Review agent responses
-5. Validate business logic
-6. Test error handling
+
+<Checklist items={[
+  "Test with sample data",
+  "Verify tool calls work correctly",
+  "Check trigger conditions",
+  "Review agent responses",
+  "Validate business logic",
+  "Test error handling"
+]} />
 
 **In Production:**
-1. Monitor Agent Run logs
-2. Review tool call results
-3. Check for errors
-4. Gather user feedback
-5. Iterate and improve
+
+<Checklist items={[
+  "Monitor Agent Run logs",
+  "Review tool call results",
+  "Check for errors",
+  "Gather user feedback",
+  "Iterate and improve"
+]} />
 
 ## What's Next?
 
@@ -573,4 +601,3 @@ It's time to check inventory levels. Please:
 ---
 
 **Have an example to share?** Contribute to [GitHub](https://github.com/tridz-dev/agent_flo)!
-

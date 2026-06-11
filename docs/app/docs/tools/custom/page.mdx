@@ -172,32 +172,26 @@ Create the Agent Tool Function record that points to your Python function.
 
 **Click New** and fill in:
 
-1. **Tool Name**: `calculate_customer_ltv`
-   - Use descriptive snake_case names
-   - Should match function name (not required but clearer)
+<ConfigPanel title="Agent Tool Function">
+  <ConfigField label="Tool Name" value="calculate_customer_ltv" />
+  <ConfigField label="Description" value="Calculate the lifetime value for a customer including total revenue, order count, and average order value across all paid invoices." />
+  <ConfigField label="Types" value="Custom Function" />
+  <ConfigField label="Function Path" value="my_app.api.tools.calculate_customer_lifetime_value" />
+  <ConfigSection title="Parameters">
+    <ConfigField label="customer_id" value="String (Required) — The customer ID to calculate LTV for" />
+  </ConfigSection>
+</ConfigPanel>
 
-2. **Description**:
-   ```
-   Calculate the lifetime value for a customer including total revenue,
-   order count, and average order value across all paid invoices.
-   ```
-   - Be specific—agent uses this to decide when to use the tool
-   - Mention what data it returns
-   - Include any limitations
+**Guidelines:**
 
-3. **Types**: Select `Custom Function`
+- Use descriptive snake_case names
+- Should match function name (not required but clearer)
+- Be specific—agent uses this to decide when to use the tool
+- Mention what data it returns
+- Include any limitations
+- Full dotted path to the function must be importable: `from my_app.api.tools import calculate_customer_lifetime_value`
 
-4. **Function Path**: `my_app.api.tools.calculate_customer_lifetime_value`
-   - Full dotted path to the function
-   - Must be importable: `from my_app.api.tools import calculate_customer_lifetime_value`
-
-5. **Parameters**: Add rows in the table
-
-| Parameter Name | Type | Description | Required |
-|----------------|------|-------------|----------|
-| customer_id | String | The customer ID to calculate LTV for | Yes |
-
-6. **Save** the tool
+**Save** the tool
 
 </div>
   </div>
@@ -229,16 +223,13 @@ Link the tool to the agent that should be able to use it.
 
 Use Agent Chat or run the agent:
 
-```
-User: "What's the lifetime value for customer CUST-001?"
-
-Agent:
-- Recognizes need for LTV data
-- Calls: calculate_customer_ltv("CUST-001")
-- Receives: {"lifetime_value": 45230.50, "order_count": 12, ...}
-- Responds: "Customer CUST-001 has a lifetime value of $45,230.50 
-            across 12 orders, with an average order value of $3,769.21."
-```
+<ChatTranscript>
+  <ChatMessage role="user">What's the lifetime value for customer CUST-001?</ChatMessage>
+  <ChatMessage role="agent">Recognizes need for LTV data</ChatMessage>
+  <ChatMessage role="tool-call">calculate_customer_ltv("CUST-001")</ChatMessage>
+  <ChatMessage role="tool-result">{`{"lifetime_value": 45230.50, "order_count": 12, ...}`}</ChatMessage>
+  <ChatMessage role="agent">Customer CUST-001 has a lifetime value of $45,230.50 across 12 orders, with an average order value of $3,769.21.</ChatMessage>
+</ChatTranscript>
 
     </div>
   </div>
@@ -314,13 +305,12 @@ def get_weather_forecast(city: str):
         frappe.throw(f"Weather API error: {response.status_code}")
 ```
 
-**Agent Instructions:**
-```
-When user asks about weather:
-1. Extract city name
-2. Use get_weather_forecast tool
-3. Present temperature, condition, and humidity in a friendly format
-```
+<AgentPrompt title="Weather Agent Instructions">
+  When user asks about weather:
+  1. Extract city name
+  2. Use get_weather_forecast tool
+  3. Present temperature, condition, and humidity in a friendly format
+</AgentPrompt>
 
 ### Example 2: Complex Calculation
 
@@ -448,27 +438,24 @@ Follow these guidelines to build reliable, maintainable custom tools.
 
 Well-designed functions are easier for agents to understand and safer to maintain.
 
-**Do:**
-
-<div className="huf-feature-grid">
-  <div className="huf-feature-cell"><span className="huf-feature-label">Single Responsibility</span>Write clear, focused functions (single responsibility)</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Descriptive Names</span>Use descriptive function and parameter names</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Comprehensive Docstrings</span>Include comprehensive docstrings</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Structured Data</span>Return structured data (dicts with clear keys)</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Error Handling</span>Handle errors and edge cases</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Type Hints</span>Add type hints for parameters</div>
-</div>
-
-**Don't:**
-
-<div className="huf-feature-grid">
-  <div className="huf-feature-cell"><span className="huf-feature-label">Mega-Functions</span>Create mega-functions that do everything</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Vague Names</span>Use vague parameter names (`data`, `info`, `x`)</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Raw Objects</span>Return raw database objects (serialize them)</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Missing Errors</span>Forget error handling</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Global State</span>Make functions depend on global state</div>
-  <div className="huf-feature-cell"><span className="huf-feature-label">Hidden Side Effects</span>Use side effects without documenting them</div>
-</div>
+<DoDont
+  doItems={[
+    "Write clear, focused functions (single responsibility)",
+    "Use descriptive function and parameter names",
+    "Include comprehensive docstrings",
+    "Return structured data (dicts with clear keys)",
+    "Handle errors and edge cases",
+    "Add type hints for parameters"
+  ]}
+  dontItems={[
+    "Create mega-functions that do everything",
+    "Use vague parameter names (\`data\`, \`info\`, \`x\`)",
+    "Return raw database objects (serialize them)",
+    "Forget error handling",
+    "Make functions depend on global state",
+    "Use side effects without documenting them"
+  ]}
+/>
 
 ### Error Handling
 
@@ -590,13 +577,14 @@ Once inside, import and run your function:
 
 Review the Agent Run logs after an agent uses your tool.
 
-1. Navigate to **Agent Run** in Desk
-2. Find the run
-3. Check **Tool Calls** section
-4. Review:
-   - Parameters agent passed
-   - Result your function returned
-   - Any errors that occurred
+<Checklist items={[
+  "Navigate to **Agent Run** in Desk",
+  "Find the run",
+  "Check **Tool Calls** section",
+  "Review parameters agent passed",
+  "Review result your function returned",
+  "Review any errors that occurred"
+]} />
 
 ### Common Issues
 

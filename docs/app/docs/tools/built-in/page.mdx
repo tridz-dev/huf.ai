@@ -33,13 +33,15 @@ Each tool is optimized for its specific purpose and respects Frappe's permission
 
 ### Configuration
 
-**Tool Type:** `Get Document`
-
-**Required Fields:**
-- **Reference DocType**: The DocType to query (e.g., "Customer", "Sales Order")
-
-**Agent-Supplied Parameters:**
-- `name`: The document ID/name
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Get Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value='The DocType to query (e.g., "Customer", "Sales Order")' />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -52,13 +54,13 @@ Reference DocType: Customer
 
 ### Example Usage
 
-**User:** "Show me info for customer ABC Corporation"
-
-**Agent:** 
-1. Extracts: `name = "ABC Corporation"`
-2. Calls: `get_customer("ABC Corporation")`
-3. Receives: Full customer document with all fields
-4. Responds: "ABC Corporation is a wholesale customer based in New York..."
+<ChatTranscript>
+  <ChatMessage role="user">Show me info for customer ABC Corporation</ChatMessage>
+  <ChatMessage role="agent">I'll look up that customer for you.</ChatMessage>
+  <ChatMessage role="tool-call">get_customer("ABC Corporation")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...full customer document with all fields...}'}</ChatMessage>
+  <ChatMessage role="agent">ABC Corporation is a wholesale customer based in New York...</ChatMessage>
+</ChatTranscript>
 
 ### Return Value
 
@@ -96,13 +98,15 @@ Full document as JSON with all standard and custom fields:
 
 ### Configuration
 
-**Tool Type:** `Create Document`
-
-**Required Fields:**
-- **Reference DocType**: The DocType to create
-
-**Agent-Supplied Parameters:**
-- `fields`: Object with field name/value pairs
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Create Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to create" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="fields" value="Object with field name/value pairs" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -115,13 +119,13 @@ Reference DocType: Lead
 
 ### Example Usage
 
-**User:** "Create a lead for John Doe at XYZ Corp, email john@xyz.com"
-
-**Agent:**
-1. Extracts relevant fields
-2. Calls: `create_lead({ lead_name: "John Doe", company_name: "XYZ Corp", email_id: "john@xyz.com" })`
-3. Receives: Created document with name
-4. Responds: "I've created lead LEAD-2024-001 for John Doe at XYZ Corp."
+<ChatTranscript>
+  <ChatMessage role="user">Create a lead for John Doe at XYZ Corp, email john@xyz.com</ChatMessage>
+  <ChatMessage role="agent">I'll create that lead for you.</ChatMessage>
+  <ChatMessage role="tool-call">{'create_lead({ lead_name: "John Doe", company_name: "XYZ Corp", email_id: "john@xyz.com" })'}</ChatMessage>
+  <ChatMessage role="tool-result">{'{...created document with name...}'}</ChatMessage>
+  <ChatMessage role="agent">I've created lead LEAD-2024-001 for John Doe at XYZ Corp.</ChatMessage>
+</ChatTranscript>
 
 ### Parameter Format
 
@@ -177,14 +181,16 @@ The created document with auto-generated fields:
 
 ### Configuration
 
-**Tool Type:** `Update Document`
-
-**Required Fields:**
-- **Reference DocType**: The DocType to update
-
-**Agent-Supplied Parameters:**
-- `name`: The document ID/name
-- `fields`: Object with fields to update
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Update Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to update" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name" />
+    <ConfigField label="fields" value="Object with fields to update" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -197,13 +203,13 @@ Reference DocType: Customer
 
 ### Example Usage
 
-**User:** "Update customer CUST-001's email to newemail@company.com"
-
-**Agent:**
-1. Extracts: `name = "CUST-001"`, `email_id = "newemail@company.com"`
-2. Calls: `update_customer("CUST-001", { email_id: "newemail@company.com" })`
-3. Receives: Updated document
-4. Responds: "I've updated the email for ABC Corporation to newemail@company.com."
+<ChatTranscript>
+  <ChatMessage role="user">Update customer CUST-001's email to newemail@company.com</ChatMessage>
+  <ChatMessage role="agent">I'll update that email for you.</ChatMessage>
+  <ChatMessage role="tool-call">{'update_customer("CUST-001", { email_id: "newemail@company.com" })'}</ChatMessage>
+  <ChatMessage role="tool-result">{'{...updated document...}'}</ChatMessage>
+  <ChatMessage role="agent">I've updated the email for ABC Corporation to newemail@company.com.</ChatMessage>
+</ChatTranscript>
 
 ### Parameter Format
 
@@ -260,13 +266,15 @@ Updated document with modifications:
 
 ### Configuration
 
-**Tool Type:** `Delete Document`
-
-**Required Fields:**
-- **Reference DocType**: The DocType to delete from
-
-**Agent-Supplied Parameters:**
-- `name`: The document ID/name to delete
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Delete Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to delete from" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name to delete" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -279,13 +287,13 @@ Reference DocType: Sales Order
 
 ### Example Usage
 
-**User:** "Delete draft order SO-2024-999"
-
-**Agent:**
-1. Verifies document status (if instructed)
-2. Calls: `delete_draft_order("SO-2024-999")`
-3. Receives: Confirmation
-4. Responds: "I've deleted draft order SO-2024-999."
+<ChatTranscript>
+  <ChatMessage role="user">Delete draft order SO-2024-999</ChatMessage>
+  <ChatMessage role="agent">I'll delete that draft order for you.</ChatMessage>
+  <ChatMessage role="tool-call">delete_draft_order("SO-2024-999")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...confirmation...}'}</ChatMessage>
+  <ChatMessage role="agent">I've deleted draft order SO-2024-999.</ChatMessage>
+</ChatTranscript>
 
 ### Return Value
 
@@ -306,15 +314,13 @@ Success message or error if deletion failed:
 - Log deletions for audit trail
 - Restrict to trusted agents only
 
-**Agent Instructions Example:**
-```
-Before deleting any document:
+<AgentPrompt title="Before deleting any document">
 1. Verify it's in Draft status
 2. Confirm it hasn't been submitted
 3. Warn the user that deletion is permanent
 4. Ask for explicit confirmation
 5. Only then proceed with deletion
-```
+</AgentPrompt>
 
 ### Permissions
 
@@ -336,13 +342,15 @@ Deletion respects Frappe permissions:
 
 ### Configuration
 
-**Tool Type:** `Submit Document`
-
-**Required Fields:**
-- **Reference DocType**: The submittable DocType
-
-**Agent-Supplied Parameters:**
-- `name`: The document ID/name to submit
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Submit Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The submittable DocType" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name to submit" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -355,13 +363,13 @@ Reference DocType: Sales Order
 
 ### Example Usage
 
-**User:** "Submit order SO-2024-123"
-
-**Agent:**
-1. Verifies document exists and is in Draft
-2. Calls: `submit_sales_order("SO-2024-123")`
-3. Receives: Submitted document
-4. Responds: "Sales order SO-2024-123 has been submitted successfully."
+<ChatTranscript>
+  <ChatMessage role="user">Submit order SO-2024-123</ChatMessage>
+  <ChatMessage role="agent">I'll submit that order for you.</ChatMessage>
+  <ChatMessage role="tool-call">submit_sales_order("SO-2024-123")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...submitted document...}'}</ChatMessage>
+  <ChatMessage role="agent">Sales order SO-2024-123 has been submitted successfully.</ChatMessage>
+</ChatTranscript>
 
 ### Submittable DocTypes
 
@@ -412,17 +420,19 @@ Submitted document with updated status:
 
 ### Configuration
 
-**Tool Type:** `Get List`
-
-**Required Fields:**
-- **Reference DocType**: The DocType to query
-
-**Agent-Supplied Parameters:**
-- `filters`: Filter conditions (optional)
-- `fields`: Fields to return (optional, default: all)
-- `order_by`: Sort order (optional, default: creation desc)
-- `limit`: Max results (optional, default: 20)
-- `limit_start`: Pagination offset (optional, default: 0)
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Get List" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to query" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="filters" value="Filter conditions (optional)" />
+    <ConfigField label="fields" value="Fields to return (optional, default: all)" />
+    <ConfigField label="order_by" value="Sort order (optional, default: creation desc)" />
+    <ConfigField label="limit" value="Max results (optional, default: 20)" />
+    <ConfigField label="limit_start" value="Pagination offset (optional, default: 0)" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -435,13 +445,13 @@ Reference DocType: Support Ticket
 
 ### Example Usage
 
-**User:** "Show me all high-priority open tickets"
-
-**Agent:**
-1. Constructs filter
-2. Calls: `list_support_tickets({ status: "Open", priority: "High" })`
-3. Receives: Array of matching tickets
-4. Responds: "Here are the 5 open high-priority tickets: ..."
+<ChatTranscript>
+  <ChatMessage role="user">Show me all high-priority open tickets</ChatMessage>
+  <ChatMessage role="agent">I'll find those tickets for you.</ChatMessage>
+  <ChatMessage role="tool-call">list_support_tickets({'{ status: "Open", priority: "High" }'})</ChatMessage>
+  <ChatMessage role="tool-result">{'{...array of matching tickets...}'}</ChatMessage>
+  <ChatMessage role="agent">Here are the 5 open high-priority tickets: ...</ChatMessage>
+</ChatTranscript>
 
 ### Filter Syntax
 
@@ -563,11 +573,13 @@ Array of documents:
 
 ### Configuration
 
-**Tool Type:** `Run Agent`
-
-**Agent-Supplied Parameters:**
-- `agent_name`: Name of the agent to run
-- `prompt`: Message to send to that agent
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Run Agent" />
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="agent_name" value="Name of the agent to run" />
+    <ConfigField label="prompt" value="Message to send to that agent" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -579,14 +591,13 @@ Types: Run Agent
 
 ### Example Usage
 
-**User (to General Agent):** "What's our sales forecast for Q2?"
-
-**General Agent:**
-1. Recognizes this is a sales question
-2. Calls: `ask_sales_agent("Sales Forecast Agent", "What's our sales forecast for Q2?")`
-3. Sales Agent processes the query
-4. General Agent receives response
-5. General Agent: "According to our sales forecast agent, Q2 is projected at $2.5M..."
+<ChatTranscript>
+  <ChatMessage role="user">What's our sales forecast for Q2?</ChatMessage>
+  <ChatMessage role="agent">I'll delegate that to our sales forecast agent.</ChatMessage>
+  <ChatMessage role="tool-call">ask_sales_agent("Sales Forecast Agent", "What's our sales forecast for Q2?")</ChatMessage>
+  <ChatMessage role="tool-result">{'{ response: "Based on current pipeline and historical data, Q2 forecast is $2.5M with 15% growth over Q1. Key drivers are..." }'}</ChatMessage>
+  <ChatMessage role="agent">According to our sales forecast agent, Q2 is projected at $2.5M...</ChatMessage>
+</ChatTranscript>
 
 ### Agent Chaining Strategies
 
@@ -654,13 +665,15 @@ The other agent's response:
 
 ### Configuration
 
-**Tool Type:** `HTTP Request`
-
-**Agent-Supplied Parameters:**
-- `url`: The endpoint URL
-- `method`: HTTP method (GET, POST, PUT, DELETE)
-- `headers`: Request headers (optional)
-- `body`: Request body for POST/PUT (optional)
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="HTTP Request" />
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="url" value="The endpoint URL" />
+    <ConfigField label="method" value="HTTP method (GET, POST, PUT, DELETE)" />
+    <ConfigField label="headers" value="Request headers (optional)" />
+    <ConfigField label="body" value="Request body for POST/PUT (optional)" />
+  </ConfigSection>
+</ConfigPanel>
 
 ### Example Tool Definition
 
@@ -672,17 +685,13 @@ Types: HTTP Request
 
 ### Example Usage
 
-**Agent Instructions:**
-```
-When you need to notify the team:
+<AgentPrompt title="When you need to notify the team">
 1. Format the message clearly
 2. Use send_slack_notification tool
 3. Post to webhook URL: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-```
+</AgentPrompt>
 
-**Agent Call:**
-```json
-{
+<ToolCallResult call={`{
   "url": "https://hooks.slack.com/services/T00/B00/XXXX",
   "method": "POST",
   "headers": {"Content-Type": "application/json"},
@@ -690,8 +699,7 @@ When you need to notify the team:
     "text": "New high-priority ticket: TICKET-123",
     "channel": "#support"
   }
-}
-```
+}`} />
 
 ### Security Considerations
 
@@ -765,13 +773,19 @@ All built-in tools respect Frappe's permission system:
 - **Audit trail**: All operations logged
 
 **Example:**
-```
+
 User with "Sales User" role runs agent:
-✓ Can read Customers, Leads
-✓ Can create Leads
-✗ Cannot delete Customers
-✗ Cannot read Purchase Orders
-```
+
+<DoDont
+  doItems={[
+    'Can read Customers, Leads',
+    'Can create Leads'
+  ]}
+  dontItems={[
+    'Cannot delete Customers',
+    'Cannot read Purchase Orders'
+  ]}
+/>
 
 ## Error Handling
 
@@ -783,14 +797,13 @@ Tools return errors when:
 - DocType doesn't exist
 
 **Agent should handle errors gracefully:**
-```
-Agent Instructions:
-If a tool fails:
+
+<AgentPrompt title="If a tool fails">
 1. Explain the error to the user
 2. Suggest alternative actions
 3. Don't retry the same failed operation repeatedly
 4. Ask user to check permissions if access denied
-```
+</AgentPrompt>
 
 ## Performance Tips
 

@@ -43,15 +43,9 @@ The agent can answer questions, route tickets, look up records, and manage escal
 
 Configure the agent with document tools and a support-focused system prompt.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get Document</strong> (Customer, Support Ticket) · <strong>Get List</strong> (Support Ticket with filters) · <strong>Create Document</strong> (Support Ticket) · <strong>Update Document</strong> (Support Ticket) · <strong>HTTP Request</strong> (for Slack/Email notifications)
-    </div>
-    <p><strong>Example Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get Document (Customer, Support Ticket) · Get List (Support Ticket with filters) · Create Document (Support Ticket) · Update Document (Support Ticket) · HTTP Request (for Slack/Email notifications)" />
+  <AgentPrompt title="Customer Support Assistant">
     You are a customer support assistant. Your role is to:
     1. Answer common questions about products, orders, and policies
     2. Look up customer information when requested
@@ -61,10 +55,9 @@ Configure the agent with document tools and a support-focused system prompt.
 
     Always be polite, professional, and helpful. If you don't know 
     something, create a support ticket and let the user know.
-    ```
-    <div className="huf-trigger-badge">After Insert on Support Ticket</div>
-  </div>
-</div>
+  </AgentPrompt>
+  <div className="huf-trigger-badge">After Insert on Support Ticket</div>
+</ConfigPanel>
 
 ### Benefits
 
@@ -117,16 +110,9 @@ The agent checks data quality, fills gaps, and moves documents through the right
 
 Configure the agent with document lifecycle tools and validation instructions.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get Document</strong> (various DocTypes) · <strong>Get List</strong> (for duplicate checking) · <strong>Create Document</strong> (for related records) · <strong>Update Document</strong> (for corrections) · <strong>Submit Document</strong> (for approvals)
-    </div>
-    <p><strong>Example: Invoice Validation Agent</strong></p>
-    <p><strong>Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get Document (various DocTypes) · Get List (for duplicate checking) · Create Document (for related records) · Update Document (for corrections) · Submit Document (for approvals)" />
+  <AgentPrompt title="Invoice Validation Agent">
     You are an invoice validation agent. When invoices are submitted:
     1. Verify pricing matches current price list
     2. Check customer credit limit
@@ -137,10 +123,9 @@ Configure the agent with document lifecycle tools and validation instructions.
     If validation passes, add a comment confirming validation.
     If issues are found, add comments with specific problems and 
     notify the accounts team.
-    ```
-    <div className="huf-trigger-badge">On Submit of Sales Invoice DocType</div>
-  </div>
-</div>
+  </AgentPrompt>
+  <div className="huf-trigger-badge">On Submit of Sales Invoice DocType</div>
+</ConfigPanel>
 
 ### Benefits
 
@@ -193,16 +178,9 @@ The agent can pull data from multiple sources, calculate results, and produce fo
 
 Configure the agent with list, document, custom, and HTTP tools for data pipelines.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get List</strong> (for data retrieval) · <strong>Get Document</strong> (for details) · <strong>Create Document</strong> (for reports) · <strong>Custom Tools</strong> (for calculations) · <strong>HTTP Request</strong> (for external data)
-    </div>
-    <p><strong>Example: Sales Report Generator</strong></p>
-    <p><strong>Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get List (for data retrieval) · Get Document (for details) · Create Document (for reports) · Custom Tools (for calculations) · HTTP Request (for external data)" />
+  <AgentPrompt title="Sales Report Generator">
     Generate daily sales reports by:
     1. Retrieving all sales invoices from today
     2. Calculating totals by customer, product, and region
@@ -217,10 +195,9 @@ Configure the agent with list, document, custom, and HTTP tools for data pipelin
     - Top products
     - Regional breakdown
     - Trends and insights
-    ```
-    <div className="huf-trigger-badge">Scheduled (Daily at 9 AM)</div>
-  </div>
-</div>
+  </AgentPrompt>
+  <div className="huf-trigger-badge">Scheduled (Daily at 9 AM)</div>
+</ConfigPanel>
 
 ### Benefits
 
@@ -273,16 +250,9 @@ The agent watches for document changes, filters for relevance, and alerts throug
 
 Configure the agent to fetch context and push notifications through external services.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get Document</strong> (for context) · <strong>Get List</strong> (for related records) · <strong>HTTP Request</strong> (for Slack/Email/SMS) · <strong>Custom Tools</strong> (for notification logic)
-    </div>
-    <p><strong>Example: High-Priority Ticket Alert</strong></p>
-    <p><strong>Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get Document (for context) · Get List (for related records) · HTTP Request (for Slack/Email/SMS) · Custom Tools (for notification logic)" />
+  <AgentPrompt title="High-Priority Ticket Alert">
     When a high-priority support ticket is created:
     1. Retrieve ticket details
     2. Check customer information and history
@@ -296,10 +266,9 @@ Configure the agent to fetch context and push notifications through external ser
     6. Also email the team lead if customer is VIP
 
     Only send notifications for tickets marked "High" or "Critical" priority.
-    ```
-    <div className="huf-trigger-badge">After Insert on Support Ticket (with condition: priority = "High")</div>
-  </div>
-</div>
+  </AgentPrompt>
+  <div className="huf-trigger-badge">After Insert on Support Ticket (with condition: priority = "High")</div>
+</ConfigPanel>
 
 ### Benefits
 
@@ -352,16 +321,9 @@ The agent evaluates lead quality, enriches data, assigns reps, and schedules fol
 
 Configure the agent with lead, territory, and task tools plus scoring instructions.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get Document</strong> (Lead, Customer, Territory) · <strong>Get List</strong> (Sales Person, existing leads) · <strong>Create Document</strong> (Lead, Task) · <strong>Update Document</strong> (Lead assignment) · <strong>Custom Tools</strong> (for scoring algorithm)
-    </div>
-    <p><strong>Example: Lead Qualifier Agent</strong></p>
-    <p><strong>Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get Document (Lead, Customer, Territory) · Get List (Sales Person, existing leads) · Create Document (Lead, Task) · Update Document (Lead assignment) · Custom Tools (for scoring algorithm)" />
+  <AgentPrompt title="Lead Qualifier Agent">
     When a new lead is created:
     1. Score the lead based on:
        - Company size (from company_name lookup)
@@ -378,10 +340,9 @@ Configure the agent with lead, territory, and task tools plus scoring instructio
        - Cold leads: Next week
     4. Add internal notes with scoring rationale
     5. Notify assigned sales rep
-    ```
-    <div className="huf-trigger-badge">After Insert on Lead DocType</div>
-  </div>
-</div>
+  </AgentPrompt>
+  <div className="huf-trigger-badge">After Insert on Lead DocType</div>
+</ConfigPanel>
 
 ### Benefits
 
@@ -434,16 +395,9 @@ The agent parses plain-language requests, retrieves data, and presents formatted
 
 Configure the agent with dynamic list tools and formatting/export helpers.
 
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    <p style={{ marginTop: 0 }}><strong>Tools Required:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>Get List</strong> (with dynamic filters) · <strong>Get Document</strong> (for details) · <strong>Custom Tools</strong> (for report formatting) · <strong>HTTP Request</strong> (for exporting to Excel/PDF)
-    </div>
-    <p><strong>Example: Report Generator Agent</strong></p>
-    <p><strong>Instructions:</strong></p>
-    ```
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Tools Required" value="Get List (with dynamic filters) · Get Document (for details) · Custom Tools (for report formatting) · HTTP Request (for exporting to Excel/PDF)" />
+  <AgentPrompt title="Report Generator Agent">
     You are a report generation assistant. Users ask for reports in 
     natural language, and you create them.
 
@@ -460,13 +414,9 @@ Configure the agent with dynamic list tools and formatting/export helpers.
 
     Be conversational and ask clarifying questions if the request 
     is ambiguous.
-    ```
-    <p><strong>Tools:</strong></p>
-    <div className="huf-tool-tags">
-      <strong>get_list</strong> (for data retrieval) · <strong>generate_report</strong> (custom tool for formatting) · <strong>export_to_excel</strong> (custom tool)
-    </div>
-  </div>
-</div>
+  </AgentPrompt>
+  <ConfigField label="Tools" value="get_list (for data retrieval) · generate_report (custom tool for formatting) · export_to_excel (custom tool)" />
+</ConfigPanel>
 
 ### Benefits
 

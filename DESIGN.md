@@ -437,7 +437,92 @@ Default styles applied inside `article`:
 
 ---
 
-## 10. Responsive Behavior
+## 10. React Components (MDX)
+
+In addition to CSS utility classes, the docs provide globally-registered React components for common documentation patterns. They are defined in `docs/app/components/` and registered via `docs/mdx-components.js`, so they can be used in any MDX file without importing.
+
+### 10.1 Chat Transcript
+
+```mdx
+<ChatTranscript>
+  <ChatMessage role="system">[Agent Instructions]</ChatMessage>
+  <ChatMessage role="user">Can you look up customer CUST-001?</ChatMessage>
+  <ChatMessage role="agent">Sure! Let me get that information.</ChatMessage>
+  <ChatMessage role="tool-call">get_customer("CUST-001")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...customer data...}'}</ChatMessage>
+  <ChatMessage role="agent">Here's the information...</ChatMessage>
+</ChatTranscript>
+```
+
+**Tip:** wrap literal `{...}` in a JSX expression string (`{'{...}'}`) so MDX doesn't try to parse it as an expression.
+
+### 10.2 Agent Prompt
+
+```mdx
+<AgentPrompt title="Customer Support Assistant">
+  You are a customer support assistant. Your role is to:
+  1. Answer common questions
+  2. Look up customer information
+</AgentPrompt>
+```
+
+For long prompts with complex nested lists, keep the prompt inside a code fence inside `<AgentPrompt>` to avoid MDX JSX parsing issues.
+
+### 10.3 Token Calculation
+
+```mdx
+<TokenCalculation>
+  <TokenRow label="Message 1" prompt={100} response={50} total={150} />
+  <TokenRow label="Message 2" prompt={100} response={50} carry={[150]} total={300} />
+  <TokenRow label="Message 3" prompt={100} response={50} carry={[300]} total={450} />
+</TokenCalculation>
+```
+
+Use `carry` to include prior-message token totals in the running sum.
+
+### 10.4 Tool Call / Result
+
+```mdx
+<ToolCallResult
+  call={`get_document(doctype="Customer", name="CUST-001")`}
+  result={`{ "name": "CUST-001", ... }`}
+/>
+```
+
+### 10.5 Config Panel
+
+```mdx
+<ConfigPanel title="Agent Configuration">
+  <ConfigField label="Agent Name" value="Customer Support Assistant" />
+  <ConfigField label="Model" value="gpt-4-turbo" />
+  <ConfigSection title="Tools">
+    <ConfigField label="Get Document" value="Customer" />
+  </ConfigSection>
+</ConfigPanel>
+```
+
+### 10.6 Do / Don't
+
+```mdx
+<DoDont
+  doItems={["Test changes first", "Document what changed"]}
+  dontItems={["Edit production agents at peak hours", "Forget rollback plan"]}
+/>
+```
+
+### 10.7 Checklist
+
+```mdx
+<Checklist items={[
+  "Instructions are clear",
+  "Tools are called correctly",
+  "Responses are accurate"
+]} />
+```
+
+---
+
+## 11. Responsive Behavior
 
 Breakpoints are minimal. The main responsive overrides collapse multi-column grids on small screens:
 
@@ -452,7 +537,7 @@ Most grids use `auto-fill` / `auto-fit` with `minmax()` and adapt naturally.
 
 ---
 
-## 11. Dark Mode
+## 12. Dark Mode
 
 Dark mode is supported via the `.dark` class. Tokens invert the background/text scale while keeping the signal accent and sharp-radius language.
 
@@ -460,17 +545,17 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
 
 ---
 
-## 12. How to Extend
+## 13. How to Extend
 
-1. **Add a new component:** define a new `.huf-*` class in `docs/app/globals.css` using existing tokens.
+1. **Add a new component:** define a new `.huf-*` class in `docs/app/globals.css` using existing tokens, or add a new React component in `docs/app/components/` and register it in `docs/mdx-components.js`.
 2. **Add a new color:** prefer `color-mix()` or a new semantic token; avoid adding new accent colors.
 3. **Add a new spacing value:** keep to the 4px grid.
 4. **Keep radius at 2px.** If you need to change it globally, update all `--radius-*` tokens.
-5. **Document new utilities in this file.**
+5. **Document new utilities and components in this file.**
 
 ---
 
-## 13. Quick Reference
+## 14. Quick Reference
 
 ```css
 :root {

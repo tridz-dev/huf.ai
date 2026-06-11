@@ -191,10 +191,11 @@ Get Document fetches a single document by name or ID. Use it when the user refer
 **Returns:** Full document with all fields.
 
 **Example:**
-```
-Agent Call: get_document(doctype="Customer", name="CUST-001")
-Result: { "name": "CUST-001", "customer_name": "ABC Corp", ... }
-```
+
+<ToolCallResult
+  call={`get_document(doctype="Customer", name="CUST-001")`}
+  result={`{ "name": "CUST-001", "customer_name": "ABC Corp", ... }`}
+/>
 
 ### Create Document
 
@@ -252,15 +253,16 @@ Get List queries multiple documents with filtering, sorting, and pagination. It 
 **Returns:** Array of documents.
 
 **Example:**
-```
-Agent Call: get_list(
+
+<ToolCallResult
+  call={`get_list(
   doctype="Support Ticket",
   filters={"status": "Open", "priority": "High"},
   order_by="creation desc",
   limit=10
-)
-Result: [ {...}, {...}, ... ]
-```
+)`}
+  result={`[ {...}, {...}, ... ]`}
+/>
 
 ### Run Agent
 
@@ -338,31 +340,39 @@ When an agent misbehaves, the cause usually falls into one of four patterns. Use
 
 **Agent doesn't use a tool:**
 
-- Check that the tool description is clear and specific.
-- Verify the tool is assigned to the agent.
-- Check whether the agent instructions mention when to use it.
-- Review the Agent Run logs for the agent's reasoning.
+<Checklist items={[
+  "Check that the tool description is clear and specific.",
+  "Verify the tool is assigned to the agent.",
+  "Check whether the agent instructions mention when to use it.",
+  "Review the Agent Run logs for the agent's reasoning."
+]} />
 
 **Tool call fails:**
 
-- Check user permissions for the DocType.
-- Verify the document exists (for Get/Update/Delete).
-- Check that required fields are provided (for Create).
-- Review the error in Agent Run logs.
+<Checklist items={[
+  "Check user permissions for the DocType.",
+  "Verify the document exists (for Get/Update/Delete).",
+  "Check that required fields are provided (for Create).",
+  "Review the error in Agent Run logs."
+]} />
 
 **Wrong tool selected:**
 
-- Improve the tool description's specificity.
-- Rename the tool for clarity.
-- Adjust agent instructions to guide tool usage.
-- Consider splitting tools into more specific variants.
+<Checklist items={[
+  "Improve the tool description's specificity.",
+  "Rename the tool for clarity.",
+  "Adjust agent instructions to guide tool usage.",
+  "Consider splitting tools into more specific variants."
+]} />
 
 **Slow performance:**
 
-- Reduce the number of tools assigned to the agent.
-- Optimize Get List queries with filters.
-- Cache common results in custom functions.
-- Consider agent chaining for complex workflows.
+<Checklist items={[
+  "Reduce the number of tools assigned to the agent.",
+  "Optimize Get List queries with filters.",
+  "Cache common results in custom functions.",
+  "Consider agent chaining for complex workflows."
+]} />
 
 ## Best Practices
 
@@ -370,20 +380,21 @@ When an agent misbehaves, the cause usually falls into one of four patterns. Use
 
 Well-designed tools are easier for agents to understand and harder to misuse. Use the guidelines below when creating or naming tools.
 
-**Do:**
-
-- Write clear, specific descriptions.
-- Use descriptive tool names.
-- Define all parameters explicitly.
-- Include examples in descriptions.
-- Keep tools focused on one task.
-
-**Don't:**
-
-- Use vague descriptions like "handles customer stuff".
-- Create overly generic mega-tools.
-- Forget to specify required parameters.
-- Mix multiple unrelated actions in one tool.
+<DoDont
+  doItems={[
+    "Write clear, specific descriptions.",
+    "Use descriptive tool names.",
+    "Define all parameters explicitly.",
+    "Include examples in descriptions.",
+    "Keep tools focused on one task."
+  ]}
+  dontItems={[
+    "Use vague descriptions like \"handles customer stuff\".",
+    "Create overly generic mega-tools.",
+    "Forget to specify required parameters.",
+    "Mix multiple unrelated actions in one tool."
+  ]}
+/>
 
 ### Tool Assignment
 
@@ -397,22 +408,17 @@ Assign tools strategically so each agent has exactly the capabilities it needs a
 - Test with minimal tools, then add as needed.
 
 **Example:**
-```
-Customer Support Agent:
-- get_customer
-- get_list (for tickets)
-- create_document (for tickets)
-- update_document (for tickets)
 
-Sales Agent:
-- get_customer
-- get_list (for leads, opportunities)
-- create_document (for leads)
-- update_document (for opportunities)
-- calculate_commission (custom tool)
+<ConfigPanel title="Agent Tool Assignment">
+  <ConfigSection title="Customer Support Agent">
+    <ConfigField label="Tools" value="get_customer, get_list (for tickets), create_document (for tickets), update_document (for tickets)" />
+  </ConfigSection>
+  <ConfigSection title="Sales Agent">
+    <ConfigField label="Tools" value="get_customer, get_list (for leads, opportunities), create_document (for leads), update_document (for opportunities), calculate_commission (custom tool)" />
+  </ConfigSection>
+</ConfigPanel>
 
 Not: One agent with all 20 tools
-```
 
 ### Documentation for Tools
 

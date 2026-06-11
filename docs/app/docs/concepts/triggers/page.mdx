@@ -114,12 +114,14 @@ The Agent Trigger form contains the fields that decide which agent runs, when it
 
 To set up a new trigger, open **Agent Trigger** and click **New**, then fill out the form and save. The process is:
 
-1. **Navigate** to Agent Trigger and click **New**.
-2. **Select Agent** from the dropdown.
-3. **Choose Trigger Type**: **Doc Event** for document-based automation, or **Schedule** for time-based execution.
-4. **Configure Details** for the chosen type (see the sections below).
-5. **Set Prompt Template** so the agent knows what task to perform.
-6. **Enable** the trigger and save.
+<Checklist items={[
+  "Navigate to Agent Trigger and click New.",
+  "Select Agent from the dropdown.",
+  "Choose Trigger Type: Doc Event for document-based automation, or Schedule for time-based execution.",
+  "Configure Details for the chosen type (see the sections below).",
+  "Set Prompt Template so the agent knows what task to perform.",
+  "Enable the trigger and save."
+]} />
 
 ## Scheduled Trigger Configuration
 
@@ -266,49 +268,58 @@ Following a few guidelines keeps triggers reliable, cost-effective, and easy to 
 
 Good scheduling keeps agents reliable and avoids resource contention.
 
-**Do:**
-- Run heavy tasks during off-peak hours to reduce load on users.
-- Stagger multiple agents so they do not overlap.
-- Choose reasonable frequencies to avoid over-scheduling.
-- Monitor the cost of scheduled runs.
-
-**Don't:**
-- Schedule too frequently, such as every minute.
-- Run multiple heavy agents at the same time.
-- Ignore timezone considerations.
-- Leave failed runs unreviewed.
+<DoDont
+  doItems={[
+    "Run heavy tasks during off-peak hours to reduce load on users.",
+    "Stagger multiple agents so they do not overlap.",
+    "Choose reasonable frequencies to avoid over-scheduling.",
+    "Monitor the cost of scheduled runs."
+  ]}
+  dontItems={[
+    "Schedule too frequently, such as every minute.",
+    "Run multiple heavy agents at the same time.",
+    "Ignore timezone considerations.",
+    "Leave failed runs unreviewed."
+  ]}
+/>
 
 ### Document Events
 
 Be precise with document events to prevent loops and unnecessary agent runs.
 
-**Do:**
-- Use specific events rather than every available event.
-- Add conditions to limit executions.
-- Handle errors gracefully.
-- Test with draft documents first.
-
-**Don't:**
-- Trigger on every update, which can cause loops.
-- Use Before Save unless it is necessary.
-- Forget permission checks.
-- Create infinite trigger loops.
+<DoDont
+  doItems={[
+    "Use specific events rather than every available event.",
+    "Add conditions to limit executions.",
+    "Handle errors gracefully.",
+    "Test with draft documents first."
+  ]}
+  dontItems={[
+    "Trigger on every update, which can cause loops.",
+    "Use Before Save unless it is necessary.",
+    "Forget permission checks.",
+    "Create infinite trigger loops."
+  ]}
+/>
 
 ### Prompt Templates
 
 A clear prompt produces a clear result.
 
-**Do:**
-- Be specific about the task.
-- Include relevant document fields.
-- Provide clear instructions.
-- Mention expected outputs.
-
-**Don't:**
-- Use vague prompts.
-- Forget to test with real data.
-- Include sensitive data unnecessarily.
-- Assume the agent already knows the document structure.
+<DoDont
+  doItems={[
+    "Be specific about the task.",
+    "Include relevant document fields.",
+    "Provide clear instructions.",
+    "Mention expected outputs."
+  ]}
+  dontItems={[
+    "Use vague prompts.",
+    "Forget to test with real data.",
+    "Include sensitive data unnecessarily.",
+    "Assume the agent already knows the document structure."
+  ]}
+/>
 
 ### Error Handling
 

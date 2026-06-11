@@ -37,12 +37,15 @@ Agents go through distinct stages:
 4. **Edge Cases:** Test error handling and boundaries
 
 **Testing Checklist:**
-- [ ] Instructions are clear and followed
-- [ ] Tools are called correctly
-- [ ] Responses are accurate
-- [ ] Error handling works
-- [ ] Tone is appropriate
-- [ ] Performance is acceptable
+
+<Checklist items={[
+  "Instructions are clear and followed",
+  "Tools are called correctly",
+  "Responses are accurate",
+  "Error handling works",
+  "Tone is appropriate",
+  "Performance is acceptable"
+]} />
 
 ### Iterating on Drafts
 
@@ -103,18 +106,21 @@ Agents go through distinct stages:
 
 ### Best Practices
 
-**Do:**
-- Test changes in draft/duplicate first
-- Make small, incremental changes
-- Document what changed and why
-- Monitor after changes
-- Have rollback plan
-
-**Don't:**
-- Make major changes without testing
-- Edit production agents during peak hours
-- Change multiple things at once
-- Forget to update documentation
+<DoDont
+  doItems={[
+    "Test changes in draft/duplicate first",
+    "Make small, incremental changes",
+    "Document what changed and why",
+    "Monitor after changes",
+    "Have rollback plan"
+  ]}
+  dontItems={[
+    "Make major changes without testing",
+    "Edit production agents during peak hours",
+    "Change multiple things at once",
+    "Forget to update documentation"
+  ]}
+/>
 
 ### Version Control Strategy
 
@@ -372,50 +378,59 @@ Agents go through distinct stages:
 
 ### Lifecycle Management
 
-**Do:**
-- Start with drafts
-- Test before production
-- Monitor actively
-- Optimize regularly
-- Document everything
-- Plan retirement
-
-**Don't:**
-- Skip testing
-- Ignore performance
-- Make changes blindly
-- Forget documentation
-- Keep unused agents
+<DoDont
+  doItems={[
+    "Start with drafts",
+    "Test before production",
+    "Monitor actively",
+    "Optimize regularly",
+    "Document everything",
+    "Plan retirement"
+  ]}
+  dontItems={[
+    "Skip testing",
+    "Ignore performance",
+    "Make changes blindly",
+    "Forget documentation",
+    "Keep unused agents"
+  ]}
+/>
 
 ### Change Management
 
-**Do:**
-- Test changes first
-- Make incremental changes
-- Document changes
-- Monitor after changes
-- Have rollback plan
-
-**Don't:**
-- Change without testing
-- Make multiple changes at once
-- Ignore feedback
-- Forget to communicate
+<DoDont
+  doItems={[
+    "Test changes first",
+    "Make incremental changes",
+    "Document changes",
+    "Monitor after changes",
+    "Have rollback plan"
+  ]}
+  dontItems={[
+    "Change without testing",
+    "Make multiple changes at once",
+    "Ignore feedback",
+    "Forget to communicate"
+  ]}
+/>
 
 ### Organization
 
-**Do:**
-- Use clear naming
-- Categorize agents
-- Document purpose
-- Track ownership
-- Regular cleanup
-
-**Don't:**
-- Use vague names
-- Mix unrelated agents
-- Forget documentation
-- Ignore organization
+<DoDont
+  doItems={[
+    "Use clear naming",
+    "Categorize agents",
+    "Document purpose",
+    "Track ownership",
+    "Regular cleanup"
+  ]}
+  dontItems={[
+    "Use vague names",
+    "Mix unrelated agents",
+    "Forget documentation",
+    "Ignore organization"
+  ]}
+/>
 
 ## Troubleshooting
 
