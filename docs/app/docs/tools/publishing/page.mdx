@@ -30,32 +30,14 @@ Published tools are discovered and synced automatically through a simple lifecyc
 
 Publishing a tool follows a predictable path from code to agent availability.
 
-<div className="huf-pipeline">
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">You write</span>
-    <span className="huf-pipeline-desc">a Python function in your app</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">You decorate</span>
-    <span className="huf-pipeline-desc">it with <code>@agent_tool</code></span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">You install</span>
-    <span className="huf-pipeline-desc">your app on a Frappe site</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Huf discovers</span>
-    <span className="huf-pipeline-desc">the decorated functions</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Huf creates</span>
-    <span className="huf-pipeline-desc">Agent Tool Function records automatically</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Agents can use</span>
-    <span className="huf-pipeline-desc">the tools immediately</span>
-  </div>
-</div>
+<Mermaid>{`
+flowchart LR
+    A["Write a Python function<br/>in your app"] --> B["Decorate it with<br/>@agent_tool"]
+    B --> C["Install your app on<br/>a Frappe site"]
+    C --> D["Huf discovers the<br/>decorated functions"]
+    D --> E["Huf creates Agent Tool<br/>Function records automatically"]
+    E --> F["Agents can use the<br/>tools immediately"]
+`}</Mermaid>
 
 ### Auto-Sync Process
 
@@ -376,32 +358,14 @@ Huf finds and registers your tools through a structured scan.
 
 The discovery process runs through these stages.
 
-<div className="huf-pipeline">
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Scan app directory</span>
-    <span className="huf-pipeline-desc">Huf scans your app's Python modules</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Import modules</span>
-    <span className="huf-pipeline-desc">Attempts to import modules (handles errors gracefully)</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Find decorators</span>
-    <span className="huf-pipeline-desc">Looks for <code>@agent_tool</code> decorated functions</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Extract metadata</span>
-    <span className="huf-pipeline-desc">Reads function signature, docstring, decorator args</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Create records</span>
-    <span className="huf-pipeline-desc">Creates Agent Tool Function records</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Link to app</span>
-    <span className="huf-pipeline-desc">Associates tools with your app</span>
-  </div>
-</div>
+<Mermaid>{`
+flowchart LR
+    A["Scan app directory<br/>Huf scans your app's Python modules"] --> B["Import modules<br/>Attempts to import modules (handles errors gracefully)"]
+    B --> C["Find decorators<br/>Looks for @agent_tool decorated functions"]
+    C --> D["Extract metadata<br/>Reads function signature, docstring, decorator args"]
+    D --> E["Create records<br/>Creates Agent Tool Function records"]
+    E --> F["Link to app<br/>Associates tools with your app"]
+`}</Mermaid>
 
 ### Module Scanning
 
@@ -432,24 +396,12 @@ Tools stay in sync with your app as you release updates.
 
 When you update a tool function, migration propagates the changes.
 
-<div className="huf-pipeline">
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Update your code</span>
-    <span className="huf-pipeline-desc">in the app</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Run migration</span>
-    <span className="huf-pipeline-desc"><code>bench --site sitename migrate</code></span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Huf syncs</span>
-    <span className="huf-pipeline-desc">Automatically updates Agent Tool Function records</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Agents get updates</span>
-    <span className="huf-pipeline-desc">New version available immediately</span>
-  </div>
-</div>
+<Mermaid>{`
+flowchart LR
+    A["Update your code<br/>in the app"] --> B["Run migration<br/>bench --site sitename migrate"]
+    B --> C["Huf syncs<br/>Automatically updates Agent Tool Function records"]
+    C --> D["Agents get updates<br/>New version available immediately"]
+`}</Mermaid>
 
 The following changes are synchronized:
 

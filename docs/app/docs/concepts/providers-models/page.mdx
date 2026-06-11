@@ -177,10 +177,16 @@ Understanding how a model request travels from an agent to the provider API make
 
 When an agent runs, Huf resolves the model and provider into a single authenticated request to LiteLLM. The sequence is:
 
-1. **Create a Provider** with an API key.
-2. **Create a Model** linked to that Provider.
-3. **Assign the Model to an Agent**.
-4. **When the agent runs**, Huf loads the provider credentials, calls LiteLLM with the normalized model name, LiteLLM routes the request to the correct provider API, and the response is returned to the agent.
+<Mermaid>{`
+flowchart LR
+    A[Create Provider<br/>with API key] --> B[Create Model<br/>linked to Provider]
+    B --> C[Assign Model<br/>to Agent]
+    C --> D[Agent runs]
+    D --> E[Huf loads provider<br/>credentials]
+    E --> F[Huf calls LiteLLM with<br/>normalized model name]
+    F --> G[LiteLLM routes request<br/>to provider API]
+    G --> H[Response returned<br/>to agent]
+`}</Mermaid>
 
 ### LiteLLM Integration
 

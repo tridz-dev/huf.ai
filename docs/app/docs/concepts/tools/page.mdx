@@ -29,14 +29,18 @@ The agent decides which tool to use based on the conversation and tool descripti
 
 Every tool call follows a predictable loop between the user, the agent, and the target system. Understanding this flow helps when debugging why an agent did—or did not—use a tool.
 
-1. **User sends a message** to the agent.
-2. **Agent analyzes** the request and determines if a tool is needed.
-3. **Agent selects a tool** from its available toolset.
-4. **Agent calls the tool** with appropriate parameters.
-5. **Tool executes** (queries database, calls API, runs function).
-6. **Tool returns result** to the agent.
-7. **Agent uses the result** to formulate a response.
-8. **User receives** the agent's answer.
+<Mermaid>{`
+flowchart LR
+    A[User sends a message<br/>to the agent]
+    B[Agent analyzes the request]
+    C[Agent selects a tool]
+    D[Agent calls the tool]
+    E[Tool executes]
+    F[Tool returns result]
+    G[Agent uses the result to<br/>formulate a response]
+    H[User receives the answer]
+    A --> B --> C --> D --> E --> F --> G --> H
+`}</Mermaid>
 
 ### Tool Selection
 

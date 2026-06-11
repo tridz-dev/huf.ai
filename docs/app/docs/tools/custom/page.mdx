@@ -55,36 +55,15 @@ Custom tools bridge your Python code and Huf agents through a defined lifecycle.
 
 The agent discovers and executes your function through these stages.
 
-<div className="huf-pipeline">
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Write</span>
-    <span className="huf-pipeline-desc">You write a Python function in your Frappe app</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Create</span>
-    <span className="huf-pipeline-desc">You create an Agent Tool Function pointing to that function</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Assign</span>
-    <span className="huf-pipeline-desc">You assign the tool to an agent</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Call</span>
-    <span className="huf-pipeline-desc">Agent calls the tool when needed</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Execute</span>
-    <span className="huf-pipeline-desc">Your function executes with provided parameters</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Return</span>
-    <span className="huf-pipeline-desc">Result returns to the agent</span>
-  </div>
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Use</span>
-    <span className="huf-pipeline-desc">Agent uses the result in its response</span>
-  </div>
-</div>
+<Mermaid>{`
+flowchart LR
+    Write[Write<br/>Python function in Frappe app] --> Create[Create<br/>Agent Tool Function]
+    Create --> Assign[Assign<br/>tool to agent]
+    Assign --> Call[Call<br/>Agent calls tool when needed]
+    Call --> Execute[Execute<br/>Function runs with parameters]
+    Execute --> Return[Return<br/>Result to agent]
+    Return --> Use[Use<br/>Agent uses result in response]
+`}</Mermaid>
 
 ### Function Requirements
 

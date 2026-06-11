@@ -17,7 +17,8 @@ import {
   TabList,
   Tab,
   TabPanel,
-  Button
+  Button,
+  Mermaid
 } from '@/app/components'
 
 const nextraComponents = getNextraComponents()
@@ -42,6 +43,7 @@ export function useMDXComponents(components) {
     TabList,
     Tab,
     TabPanel,
-    Button
+    Button,
+    Mermaid
   }
 }

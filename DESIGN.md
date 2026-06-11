@@ -546,6 +546,19 @@ Use tabs to collapse long use-case cards or multi-section config into a compact 
 
 Use `variant="solid"` or `variant="ghost"`. External URLs automatically render with `target="_blank"` and `rel="noreferrer"`.
 
+### 10.10 Mermaid Diagrams
+
+```mdx
+<Mermaid>{`
+flowchart LR
+    A[User Request] --> B[Create Orchestration]
+    B --> C[Planning Phase]
+    C --> D[Completed]
+`}</Mermaid>
+```
+
+Use Mermaid for execution flows and lifecycle diagrams instead of ASCII art or numbered lists. The component renders client-side using the HUF color tokens.
+
 ---
 
 ## 11. Responsive Behavior
