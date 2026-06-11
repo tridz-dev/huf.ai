@@ -2,23 +2,30 @@
 sidebarTitle: Conversations
 ---
 
+import { Callout } from 'nextra/components'
+
 # Conversations
 
 Conversations enable agents to maintain context across multiple interactions. Without conversations, every message would be like talking to someone with amnesia. With conversations, agents remember what you've discussed and build on it.
 
 ## What is a Conversation?
 
-A **conversation** is a persistent thread of messages between a user and an agent. It tracks:
-- All messages exchanged (user and agent)
-- Tool calls made during the conversation
-- Context and history for continuity
-- Session information
+A **conversation** is a persistent thread of messages between a user and an agent. It functions like a chat thread in a messaging app: every exchange stays in context so the agent can refer back to earlier messages. Each conversation records the full set of messages, the tools invoked, the context needed for continuity, and the session that identifies the interaction.
 
-Think of it like a chat thread in messaging apps—everything stays in context.
+| What it tracks | Why it matters |
+|---|---|
+| All messages exchanged (user and agent) | Provides the raw history the agent reads for context |
+| Tool calls made during the conversation | Shows which tools were used and when |
+| Context and history for continuity | Lets later messages build on earlier ones |
+| Session information | Ensures the right history is retrieved for the right user and channel |
 
 ## Why Conversations Matter
 
+Conversations matter because they turn isolated questions into coherent, multi-turn dialogues. The two effects below show the difference between stateless and stateful interactions.
+
 ### Context Preservation
+
+Without memory, an agent can answer a single question but loses track of what was just said. With a conversation, pronouns and follow-ups resolve naturally because the agent still has the prior turn in context.
 
 **Without Conversations:**
 ```
@@ -40,7 +47,10 @@ Agent: "Order SO-2024-001 is scheduled to ship on Jan 15."  ✓ Remembers contex
 
 ### Multi-turn Interactions
 
-Conversations enable complex, multi-step workflows:
+Conversations enable complex, multi-step workflows where each step depends on what came before. The agent does not need the user to repeat the customer name on every turn because it can read the earlier turns.
+
+For example, a support workflow might flow like this:
+
 1. User asks for customer info
 2. Agent retrieves it
 3. User asks for their recent orders
@@ -50,7 +60,11 @@ Conversations enable complex, multi-step workflows:
 
 ## How Conversations Work
 
+A conversation is created or reused automatically when an agent receives a message. The platform then appends each new message, reads the recent history, and persists the result so the next turn can continue from the same state.
+
 ### Conversation Lifecycle
+
+The lifecycle of a conversation follows the natural arc of an interaction:
 
 1. **User initiates** interaction with an agent
 2. **System creates** or retrieves active conversation
@@ -61,48 +75,48 @@ Conversations enable complex, multi-step workflows:
 
 ### Session Management
 
-Conversations are tied to **sessions**, which combine:
-- **Channel**: Where the interaction happens (chat, API, trigger)
-- **User**: Who is interacting
-- **Agent**: Which agent is being used
+A session ties together the three pieces of identity that make a conversation unique: the **channel** where the interaction happens, the **user** who is interacting, and the **agent** being addressed. The platform combines these into a single Session ID.
 
-**Session ID Format:** `{channel}:{user_id}:{agent_name}`
+| Component | Description | Example |
+|---|---|---|
+| **Channel** | Where the interaction happens | `chat`, `api`, `trigger` |
+| **User** | Who is interacting | `john@example.com` |
+| **Agent** | Which agent is being used | `customer_support_agent` |
 
-**Example:** `chat:john@example.com:customer_support_agent`
+**Session ID format:** `{channel}:{user_id}:{agent_name}` → `chat:john@example.com:customer_support_agent`
 
 ## Conversation Modes
 
+Agents can share or isolate conversation history depending on the use case. The same agent can run in per-user, shared, or trigger-scoped modes by adjusting the `persist_user_history` setting.
+
 ### 1. Per-User Conversations
 
-**Default behavior** for most agents:
-- Each user has their own conversation with the agent
-- Conversations don't mix between users
-- Privacy is preserved
+Per-user conversation is the default behavior for most agents. Each user has a separate conversation thread, so messages and context never mix between users. This preserves privacy and prevents one user's history from influencing another user's results.
 
-**Use Cases:**
+**Common use cases:**
 - Customer support chat
 - Personal assistants
 - User-specific workflows
 
 ### 2. Shared Conversations
 
-**Single conversation** shared across users:
-- All users see the same conversation thread
-- Useful for team collaboration
-- Requires careful permission management
+Shared conversation mode uses a single conversation thread across all users. Everyone sees the same history, which is useful for team collaboration but requires careful permission management because earlier user messages become visible to later users.
 
-**Use Cases:**
+**Common use cases:**
 - Team assistants
 - Shared project agents
 - Collaborative workflows
 
-**Configuration:** Set `persist_user_history=0` in Agent settings
+**Configuration:** Set `persist_user_history=0` in Agent settings.
 
 ### 3. Conversation per Trigger
 
-For **scheduled** and **document event** agents:
-- **Per-user mode** (default): Each user/owner has separate history
-- **Shared mode**: Single history across all triggers
+For **scheduled** and **document event** agents, history can be scoped either per trigger owner or shared across all triggers. The behavior is controlled by the `persist_user_history` checkbox in the Agent DocType.
+
+| Mode | Behavior |
+|---|---|
+| **Per-user mode** (default) | Each user/owner has separate history |
+| **Shared mode** | Single history across all triggers |
 
 **Example:**
 ```
@@ -111,11 +125,9 @@ Per-User Mode: Separate history for each user who submits invoices
 Shared Mode: Single history tracking all invoice validations
 ```
 
-**Configuration:** `persist_user_history` checkbox in Agent
-
 ## Agent Conversation DocType
 
-Conversations are stored in **Desk → Huf → Agent Conversation**.
+Conversations are stored in **Desk → Huf → Agent Conversation**. This DocType stores the metadata that links a session to its messages and lets administrators inspect, filter, and manage active or inactive threads.
 
 ### Key Fields
 
@@ -131,34 +143,45 @@ Conversations are stored in **Desk → Huf → Agent Conversation**.
 
 ### Viewing Conversations
 
+You can inspect conversations directly from Desk. Filtering by agent, user, or date makes it easy to find the thread you need.
+
 **In Desk:**
 1. Navigate to **Huf → Agent Conversation**
 2. Filter by agent, user, or date
 3. Click a conversation to see all messages
 
-**Message Types:**
-- **User messages**: What the user said
-- **Agent messages**: Agent responses
-- **Tool calls**: Tools used during conversation
-- **Tool results**: Data returned by tools
+A conversation contains several kinds of entries:
+
+| Message type | What it represents |
+|---|---|
+| **User messages** | What the user said |
+| **Agent messages** | Agent responses |
+| **Tool calls** | Tools used during conversation |
+| **Tool results** | Data returned by tools |
 
 ## Conversation History Management
 
+History management controls how much of the conversation the agent loads into the prompt on each turn. A longer history gives more context, but it also increases token usage and can eventually hit model limits.
+
 ### History Length
 
-Agents load recent messages for context:
-- **Default**: Last 10-20 messages
-- **Configurable** per agent
-- **Token limit aware**: Stops before exceeding model limits
+Agents load recent messages for context. The exact number is configurable per agent, and the loader stops before exceeding model token limits.
 
-**Why limit history?**
-- **Token costs**: More history = more tokens = higher costs
-- **Context window**: Models have maximum token limits
-- **Relevance**: Very old messages often aren't useful
+| Aspect | Default / behavior |
+|---|---|
+| **Default length** | Last 10–20 messages |
+| **Configurability** | Set per agent |
+| **Token awareness** | Stops before exceeding model limits |
+
+Limiting history matters for three reasons:
+
+- **Token costs** — More history means more tokens per request, which increases costs.
+- **Context window** — Models have a maximum token limit that history must share with instructions and the current prompt.
+- **Relevance** — Very old messages often add noise rather than useful context.
 
 ### History in Prompts
 
-When an agent runs, the history is formatted and sent:
+When an agent runs, the platform formats the recent history and includes it in the prompt. The agent can then resolve references like "their" because the earlier customer lookup is still visible.
 
 ```
 System: [Agent Instructions]
@@ -178,6 +201,8 @@ The agent sees the full context and understands "their" refers to CUST-001.
 
 ## Conversation Persistence
 
+Persistence determines whether an agent remembers earlier turns or treats every request as independent. Enabling persistence is usually the right choice for chat and support agents, while disabling it keeps automated or batch tasks isolated.
+
 ### When to Persist
 
 **Enable conversation persistence** (`persist_conversation=1`) when:
@@ -188,17 +213,21 @@ The agent sees the full context and understands "their" refers to CUST-001.
 
 **Disable persistence** (`persist_conversation=0`) when:
 - Each request is independent
-- No context needed between calls
-- Processing batch/automated tasks
-- Privacy requires isolation
+- No context is needed between calls
+- You are processing batch or automated tasks
+- Privacy requires isolation between requests
 
 ### Persistence Settings
 
-**In Agent DocType:**
-- **Persist Conversation**: Enable/disable history
-- **Persist per User (Doc/Schedule)**: Per-user vs shared for triggers
+In the Agent DocType, two fields control how history is stored and shared:
 
-**Effects:**
+| Setting | Purpose |
+|---|---|
+| **Persist Conversation** | Enable or disable history entirely |
+| **Persist per User (Doc/Schedule)** | Choose per-user versus shared history for triggers |
+
+The combined effect of these flags is:
+
 ```
 persist_conversation = 1, persist_user_history = 1:
 → Each user has their own conversation history
@@ -212,7 +241,7 @@ persist_conversation = 0:
 
 ## Agent Message DocType
 
-Individual messages are stored in **Agent Message**.
+Individual messages are stored in **Agent Message**. Each record is a single turn in a conversation and links back to the parent conversation and the Agent Run that produced it.
 
 ### Key Fields
 
@@ -227,19 +256,26 @@ Individual messages are stored in **Agent Message**.
 
 ### Message Kinds
 
-- **Message**: Regular chat messages
-- **Tool Call**: Agent calling a tool
-- **Tool Result**: Data returned by a tool
-- **Error**: Errors during execution
+The **Kind** field classifies each entry so the agent and the UI can render or use it appropriately.
+
+| Kind | Description |
+|---|---|
+| **Message** | Regular chat messages |
+| **Tool Call** | Agent calling a tool |
+| **Tool Result** | Data returned by a tool |
+| **Error** | Errors during execution |
 
 ## Cost Implications
 
+Because every message in history is added to the prompt, conversation length has a direct impact on token cost. Understanding that relationship helps you set history limits and choose the right strategy for each agent.
+
 ### Token Usage
 
-Conversations affect token costs:
-- **History tokens**: Every message in history adds to prompt
-- **Cumulative cost**: Longer conversations = more tokens per message
-- **Exponential growth**: Each new message includes all previous ones
+Conversations affect token costs in three ways:
+
+- **History tokens** — Every message in history adds to the prompt.
+- **Cumulative cost** — Longer conversations mean more tokens are sent on each new message.
+- **Exponential growth** — Each new message includes all previous ones, so cost rises with conversation length.
 
 **Example:**
 ```
@@ -250,38 +286,38 @@ Message 3: 100 + 50 + 100 + 50 (msg 2) + 100 + 50 = 450 tokens
 
 ### Cost Optimization
 
-1. **Limit history length**: Don't keep unlimited history
-2. **Summarize old messages**: Condense earlier context
-3. **End conversations**: Mark completed conversations inactive
-4. **Use stateless agents**: For simple, independent requests
-5. **Monitor costs**: Check Agent Run for token usage
+You can keep costs under control without losing usefulness by managing how much history is retained and how conversations end:
+
+1. **Limit history length** — Cap prior messages at 10–20 to keep prompt size predictable and costs under control.
+2. **Summarize old messages** — Condense earlier context into a short summary instead of replaying every turn.
+3. **End conversations** — Mark completed conversations inactive so they stop accumulating tokens.
+4. **Use stateless agents** — For simple, independent requests, disable persistence entirely.
+5. **Monitor costs** — Check Agent Run logs for token usage and trends.
 
 ## Managing Conversations
+
+Conversations are largely automatic, but administrators can start, end, or reset them when needed.
 
 ### Starting a Conversation
 
 Conversations start automatically when:
-- User sends first message in chat
-- Agent is triggered by event or schedule
-- API call to agent with new session
+- A user sends a first message in chat
+- An agent is triggered by an event or schedule
+- An API call reaches the agent with a new session
 
-No manual setup required—the system handles it.
+No manual setup is required—the system creates the conversation and session for you.
 
 ### Ending a Conversation
 
-Mark conversations inactive when:
-- Task is completed
-- User leaves/logs out
-- Timeout period expires
-- Explicit reset requested
+A conversation should be marked inactive once the task is finished, the user leaves, a timeout expires, or a reset is requested. Ending a conversation stops it from growing further and keeps future turns from inheriting stale context.
 
-**Manually:**
+**End a conversation manually:**
 1. Open **Agent Conversation** in Desk
 2. Find the conversation
 3. Uncheck **Is Active**
 4. Save
 
-**Programmatically:**
+**End a conversation programmatically:**
 ```python
 conversation = frappe.get_doc("Agent Conversation", conversation_name)
 conversation.is_active = 0
@@ -290,92 +326,101 @@ conversation.save()
 
 ### Clearing History
 
-To reset an agent's memory:
-1. Mark conversation **Is Active = 0**
-2. Next interaction creates a new conversation
-3. Old conversation remains in logs for audit
+To reset an agent's memory, mark the existing conversation as inactive. The next interaction will create a fresh conversation, while the old one remains available for audit.
 
-**Note:** You cannot delete conversations (audit trail), only deactivate them.
+1. Mark conversation **Is Active = 0**
+2. The next interaction creates a new conversation
+3. The old conversation remains in logs for audit
+
+<Callout type="info">
+  You cannot delete conversations because they form an audit trail. You can only deactivate them.
+</Callout>
 
 ## Conversation Strategies
 
+Different interaction patterns call for different conversation configurations. Choose a strategy based on whether the task is one-off, long-running, or bounded by a single session.
+
 ### Short Conversations
 
-**Pattern:** One-off questions, independent requests
+Short-conversation strategy suits one-off questions and independent requests where earlier context is unlikely to matter.
 
 **Configuration:**
-- `persist_conversation = 0` or short history limit
+- Set `persist_conversation = 0` or use a short history limit
 - Focus on clear, complete requests
 
-**Use Cases:**
+**Use cases:**
 - FAQ agents
 - Simple data retrieval
 - Batch processing
 
 ### Long Conversations
 
-**Pattern:** Complex, multi-step interactions
+Long-conversation strategy supports complex, multi-step interactions where context across many turns is essential.
 
 **Configuration:**
-- `persist_conversation = 1`
-- Longer history limit (with cost monitoring)
-- Summarization strategy
+- Set `persist_conversation = 1`
+- Use a longer history limit, with cost monitoring
+- Add a summarization strategy for very long threads
 
-**Use Cases:**
+**Use cases:**
 - Customer support sessions
 - Troubleshooting workflows
 - Consultative interactions
 
 ### Session-Based
 
-**Pattern:** Task-oriented, bounded interactions
+Session-based strategy fits task-oriented interactions that should persist while the user is active but expire cleanly afterward.
 
 **Configuration:**
-- Persistent within session
-- Auto-expire after timeout
-- Clear session boundaries
+- Keep history persistent within the session
+- Auto-expire after a timeout
+- Define clear session boundaries
 
-**Use Cases:**
+**Use cases:**
 - Form filling assistance
 - Guided workflows
 - Multi-step processes
 
 ## Troubleshooting
 
+When conversations behave unexpectedly, the cause usually falls into one of four areas: persistence settings, history length, session identity, or message storage. The checklist below helps you isolate each issue.
+
 **Agent doesn't remember context:**
-- Check `persist_conversation` is enabled
-- Verify history length setting
-- Ensure same session ID across messages
-- Check conversation is marked active
+- Check that `persist_conversation` is enabled
+- Verify the history length setting is not too short
+- Ensure the same session ID is used across messages
+- Check that the conversation is marked active
 
 **Costs are too high:**
-- Review conversation history length
+- Review the conversation history length
 - Check for overly long conversations
-- Consider shorter history limit
+- Consider a shorter history limit
 - Monitor token usage in Agent Run logs
 
 **Wrong conversation retrieved:**
-- Verify session ID format
-- Check user/agent/channel matching
-- Review conversation active status
+- Verify the session ID format
+- Check user, agent, and channel matching
+- Review the conversation active status
 - Check for session ID collisions
 
 **Messages not appearing:**
-- Verify conversation was saved
-- Check database commit happened
+- Verify the conversation was saved
+- Check that the database commit happened
 - Review Agent Run for errors
-- Check permissions on conversation DocType
+- Check permissions on the conversation DocType
 
 ## Best Practices
+
+Following a few design habits will keep conversations useful, private, and cost-effective.
 
 ### Conversation Design
 
 **Do:**
-- Start with short history limits, increase if needed
+- Start with short history limits and increase only if needed
 - End conversations when tasks complete
 - Monitor token usage regularly
-- Use per-user conversations for privacy
-- Clear conversations for new topics
+- Use per-user conversations for privacy-sensitive agents
+- Clear conversations when starting a new topic
 
 **Don't:**
 - Keep unlimited history
@@ -385,17 +430,21 @@ To reset an agent's memory:
 
 ### User Experience
 
-- **Clear boundaries**: Let users know when a new conversation starts
-- **Reset option**: Provide way to start fresh
-- **Context cues**: Show conversation history in UI
-- **Timeout warnings**: Notify when sessions expire
+A good conversation UI sets expectations and gives users control:
+
+- **Clear boundaries** — Let users know when a new conversation starts
+- **Reset option** — Provide a way to start fresh
+- **Context cues** — Show conversation history in the UI
+- **Timeout warnings** — Notify users when sessions expire
 
 ### Performance
 
-- **Batch reads**: Fetch history efficiently
-- **Lazy loading**: Load history only when needed
-- **Cache strategy**: Cache conversation metadata
-- **Archive old**: Move inactive conversations to archives
+Performance improves when history is fetched and stored efficiently:
+
+- **Batch reads** — Fetch history in efficient batches
+- **Lazy loading** — Load history only when needed
+- **Cache strategy** — Cache conversation metadata
+- **Archive old** — Move inactive conversations to archives
 
 ## What's Next?
 
@@ -409,4 +458,3 @@ Now that you understand conversations:
 ---
 
 **Questions about conversations?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
-
