@@ -2,17 +2,18 @@ import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
+import './globals.css'
 
 export const metadata = {
-  title: 'Huf Documentation',
-  description: 'Documentation for Huf - AI agents for Frappe Framework'
+  title: 'HUF Documentation',
+  description: 'Documentation for HUF — the AI engine you actually control. Open-source agent infrastructure built on Frappe.'
 }
 
 const navbar = (
   <Navbar
     logo={
       <>
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>Huf</span>
+        <span style={{ fontFamily: "'Big Shoulders', sans-serif" }}>HUF</span>
       </>
     }
     projectLink="https://github.com/tridz-dev/agent_flo"
