@@ -2,6 +2,8 @@
 sidebarTitle: Agents
 ---
 
+import { Callout } from 'nextra/components'
+
 # Agents
 
 **Agents are AI-powered team members for your Frappe site.** Think of each agent as a specialist with a specific role, equipped with tools to work with your data, and ready to assist users or automate tasks.
@@ -61,7 +63,9 @@ The model determines the agent's intelligence and capabilities:
 | **Claude 3 Sonnet** | Balanced performance and cost | $$ | Fast |
 | **Gemini Pro** | Multimodal, Google ecosystem | $$ | Fast |
 
-> **Tip**: Start with a cheaper model (GPT-3.5, Gemini) for testing, then upgrade to more powerful models (GPT-4, Claude Opus) for production if needed.
+<Callout type="info">
+  Start with a cheaper model (GPT-3.5, Gemini) for testing, then upgrade to more powerful models (GPT-4, Claude Opus) for production if needed.
+</Callout>
 
 ### Tools
 
@@ -101,15 +105,22 @@ Fine-tune agent behavior with these parameters:
 - Start with `1.0` for most use cases
 - Lower values make output more focused
 
-> **Note**: Use either temperature OR top_p, not both. Temperature is more commonly used.
+<Callout type="warning">
+  Use either temperature OR top_p, not both. Temperature is more commonly used.
+</Callout>
 
 ## Agent States
 
 Agents have a lifecycle:
 
-```
-Draft → Active → Running → Completed
-```
+<div className="huf-state-row">
+  {["Draft", "Active", "Running", "Completed"].map((s, i, arr) => (
+    <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span className="huf-state-pill">{s}</span>
+      {i < arr.length - 1 && <span className="huf-state-arrow">→</span>}
+    </span>
+  ))}
+</div>
 
 - **Draft**: Being configured, not ready for use
 - **Active**: Ready to run (manually, scheduled, or triggered)
@@ -332,7 +343,9 @@ Navigate to: **Desk → Huf → Agent**
 
 Changes to agents take effect immediately for new runs. Ongoing conversations or scheduled runs may use the old configuration until they complete.
 
-> **Tip**: Test changes in a draft/duplicate agent before modifying production agents.
+<Callout type="info">
+  Test changes in a draft/duplicate agent before modifying production agents.
+</Callout>
 
 ### Monitoring Performance
 
@@ -451,16 +464,17 @@ Set up permissions via Frappe's **Role Permission Manager**.
 
 ## What's Next?
 
-Now that you understand agents, dive deeper into specific topics:
+Now that you understand agents, dive deeper into specific topics or jump to practical guides.
 
-- **[Providers & Models](/docs/concepts/providers-models)** - Choose and configure AI models
-- **[Tools](/docs/concepts/tools)** - Give agents powerful capabilities
-- **[Conversations](/docs/concepts/conversations)** - Understand how context is maintained
-- **[Triggers](/docs/concepts/triggers)** - Automate agents with schedules and events
+<div className="huf-next-steps">
 
-Or jump to practical guides:
+- **[Providers & Models](/docs/concepts/providers-models)** — Choose and configure AI models
+- **[Tools](/docs/concepts/tools)** — Give agents powerful capabilities
+- **[Conversations](/docs/concepts/conversations)** — Understand how context is maintained
+- **[Triggers](/docs/concepts/triggers)** — Automate agents with schedules and events
+- **[Creating Agents](/docs/guides/creating-agents)** — Step-by-step agent creation
+- **[Managing Agents](/docs/guides/managing-agents)** — Agent lifecycle management
+- **[Monitoring](/docs/guides/monitoring)** — Track performance and costs
 
-- **[Creating Agents](/docs/guides/creating-agents)** - Step-by-step agent creation
-- **[Managing Agents](/docs/guides/managing-agents)** - Agent lifecycle management
-- **[Monitoring](/docs/guides/monitoring)** - Track performance and costs
+</div>
 
