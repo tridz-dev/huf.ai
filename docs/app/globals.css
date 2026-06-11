@@ -1221,6 +1221,430 @@ kbd,
 }
 
 /* --------------------------------------------------------------------------
+   Chat transcript
+   -------------------------------------------------------------------------- */
+.huf-chat {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-5);
+  margin: var(--space-6) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.huf-chat-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 90%;
+}
+
+.huf-chat-bubble--user {
+  align-self: flex-end;
+}
+
+.huf-chat-bubble--agent,
+.huf-chat-bubble--system,
+.huf-chat-bubble--tool-call,
+.huf-chat-bubble--tool-result,
+.huf-chat-bubble--note {
+  align-self: flex-start;
+}
+
+.huf-chat-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.huf-chat-role {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.huf-chat-bubble--user .huf-chat-role {
+  color: var(--color-accent);
+}
+
+.huf-chat-bubble--tool-call .huf-chat-role,
+.huf-chat-bubble--tool-result .huf-chat-role {
+  color: var(--color-text-secondary);
+}
+
+.huf-chat-body {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.huf-chat-bubble--user .huf-chat-body {
+  background-color: var(--color-bg);
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+}
+
+.huf-chat-bubble--system .huf-chat-body {
+  background-color: var(--color-bg);
+  border-left: 3px solid var(--color-text-muted);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.huf-chat-bubble--tool-call .huf-chat-body,
+.huf-chat-bubble--tool-result .huf-chat-body {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background-color: var(--color-bg);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  white-space: pre-wrap;
+}
+
+.huf-chat-bubble--tool-result .huf-chat-body {
+  border-left-color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Agent prompt card
+   -------------------------------------------------------------------------- */
+.huf-prompt {
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: var(--color-bg-secondary);
+  margin: var(--space-6) 0;
+  overflow: hidden;
+}
+
+.huf-prompt-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.huf-prompt-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.huf-prompt-title {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.huf-prompt-body {
+  padding: var(--space-4);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+}
+
+.huf-prompt-body pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.huf-prompt-body pre code {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-sm) !important;
+  line-height: 1.7 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Token calculation
+   -------------------------------------------------------------------------- */
+.huf-token-calc {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-4);
+  margin: var(--space-6) 0;
+}
+
+.huf-token-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.huf-token-row:last-child {
+  border-bottom: none;
+}
+
+.huf-token-label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  min-width: 7rem;
+}
+
+.huf-token-parts {
+  flex: 1 1 auto;
+}
+
+.huf-token-total {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.huf-token-note {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Tool call / result
+   -------------------------------------------------------------------------- */
+.huf-tool-call {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin: var(--space-6) 0;
+  background-color: var(--color-bg-secondary);
+}
+
+.huf-tool-call-panel {
+  padding: var(--space-4);
+  background-color: var(--color-bg-secondary);
+}
+
+.huf-tool-call-panel--call {
+  border-right: 1px solid var(--color-border);
+}
+
+.huf-tool-call-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-3);
+}
+
+.huf-tool-call-panel--result .huf-tool-call-label {
+  color: var(--color-text-secondary);
+}
+
+.huf-tool-call-code {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+
+.huf-tool-call-code code {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-xs) !important;
+  line-height: 1.7 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Config panel
+   -------------------------------------------------------------------------- */
+.huf-config-panel {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin: var(--space-6) 0;
+  background-color: var(--color-surface);
+}
+
+.huf-config-panel-header {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.huf-config-panel-body {
+  padding: var(--space-4);
+}
+
+.huf-config-section {
+  margin-bottom: var(--space-5);
+}
+
+.huf-config-section:last-child {
+  margin-bottom: 0;
+}
+
+.huf-config-section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.huf-config-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: var(--text-sm);
+}
+
+.huf-config-field:last-child {
+  border-bottom: none;
+}
+
+.huf-config-field-label {
+  color: var(--color-text-muted);
+  min-width: 8rem;
+}
+
+.huf-config-field-value {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.huf-config-field-value code {
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   Do / Don't
+   -------------------------------------------------------------------------- */
+.huf-dodont {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin: var(--space-6) 0;
+}
+
+.huf-dodont-col {
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+}
+
+.huf-dodont-col--do {
+  border-right: 1px solid var(--color-border);
+  background-color: color-mix(in srgb, var(--color-bg) 97%, #22c55e);
+}
+
+.huf-dodont-col--dont {
+  background-color: color-mix(in srgb, var(--color-bg) 97%, #ef4444);
+}
+
+.huf-dodont-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+}
+
+.huf-dodont-col--do .huf-dodont-title {
+  color: #15803d;
+}
+
+.huf-dodont-col--dont .huf-dodont-title {
+  color: #b91c1c;
+}
+
+.huf-dodont-col ul {
+  margin: 0;
+  padding-left: var(--space-4);
+}
+
+.huf-dodont-col li {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Checklist
+   -------------------------------------------------------------------------- */
+.huf-checklist {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  padding: var(--space-4);
+  margin: var(--space-6) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.huf-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+  cursor: default;
+}
+
+.huf-checklist-box {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  margin-top: 2px;
+  flex: none;
+}
+
+.huf-checklist-box:checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
    Responsive adjustments
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
@@ -1236,5 +1660,23 @@ kbd,
   }
   .huf-pipeline-step {
     border-right: none;
+  }
+  .huf-tool-call {
+    grid-template-columns: 1fr;
+  }
+  .huf-tool-call-panel--call {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .huf-dodont {
+    grid-template-columns: 1fr;
+  }
+  .huf-dodont-col--do {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .huf-token-row {
+    flex-direction: column;
+    gap: var(--space-1);
   }
 }
