@@ -89,7 +89,7 @@ export default async function RootLayout({ children, params }) {
     'quick-start', 'installation', 'concepts', 'tools',
     'use-cases', 'examples', 'guides', 'development'
   ]
-  const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang)
+  const sortedPageMap = sortPageMap(pageMap, docsOrder)
 
   return (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
