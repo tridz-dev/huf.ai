@@ -1863,3 +1863,13 @@ nav[aria-label='breadcrumb'] {
 .huf-mermaid .arrowheadPath {
   fill: var(--color-text-secondary) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Skip navigation
+   -------------------------------------------------------------------------- */
+/* Nextra's Layout always renders its own SkipNavLink. We render a localized
+   SkipNavLink before Layout and suppress the built-in one so the accessibility
+   label matches the current language on every locale. */
+.nextra-skip-nav ~ .nextra-skip-nav {
+  display: none;
+}
