@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
@@ -93,6 +94,7 @@ export default async function RootLayout({ children, params }) {
     'use-cases', 'examples', 'guides', 'development'
   ]
   const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang)
+  fs.writeFileSync(`/tmp/pagemap-${lang}.json`, JSON.stringify(sortedPageMap, null, 2))
 
   return (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
