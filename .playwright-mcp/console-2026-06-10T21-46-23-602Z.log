@@ -1,0 +1,221 @@
+[    2087ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3333/docs/multimodal/:0
+[    2332ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:28004
+[    2407ms] Error: Cannot find module './5611.js'
+Require stack:
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/app/docs/installation/page.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/utils.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/options.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/index.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1500:15)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:57:36)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at __webpack_require__.f.require (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:259:28)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:172:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:171:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:223:22)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:378)
+    at Object.<anonymous> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:425)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1985:10)
+    at Module.load (node:internal/modules/cjs/loader:1577:32)
+    at Module._load (node:internal/modules/cjs/loader:1379:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at requirePage (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js:99:80)
+    at loadComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js:86:38)
+    at DevServer.findPageComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:899:77)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:877:21)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:170:36)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NoopTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:54:31)
+    at ProxyTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:27:24)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:103)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NextTracerImpl.trace (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:28)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:872:41)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:705:28)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1687:26)
+    at async pipe.req.req (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1610:30)
+    at async DevServer.pipeImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1025:25)
+    at async NextNodeServer.handleCatchallRenderRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:408:21)
+    at async DevServer.handleRequestImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:916:17)
+    at async (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:399:20)
+    at async Span.traceAsyncFn (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:395:24)
+    at async invokeRender (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js:240:21)
+[    2405ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[  239629ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3333/docs/multimodal/:0
+[  239808ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:28004
+[  239820ms] Error: Cannot find module './5611.js'
+Require stack:
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/app/docs/installation/page.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/utils.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/options.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/index.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1500:15)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:57:36)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at __webpack_require__.f.require (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:259:28)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:172:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:171:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:223:22)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:378)
+    at Object.<anonymous> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:425)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1985:10)
+    at Module.load (node:internal/modules/cjs/loader:1577:32)
+    at Module._load (node:internal/modules/cjs/loader:1379:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at requirePage (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js:99:80)
+    at loadComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js:86:38)
+    at DevServer.findPageComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:899:77)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:877:21)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:170:36)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NoopTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:54:31)
+    at ProxyTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:27:24)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:103)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NextTracerImpl.trace (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:28)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:872:41)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:705:28)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1687:26)
+    at async pipe.req.req (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1610:30)
+    at async DevServer.pipeImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1025:25)
+    at async NextNodeServer.handleCatchallRenderRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:408:21)
+    at async DevServer.handleRequestImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:916:17)
+    at async (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:399:20)
+    at async Span.traceAsyncFn (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:395:24)
+    at async invokeRender (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js:240:21)
+[  239820ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[  244429ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3333/:0
+[  244597ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:28004
+[  244605ms] Error: Cannot find module './5611.js'
+Require stack:
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js
+- /Users/safwan/Code/HUF/huf.ai/docs/.next/server/app/docs/installation/page.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/utils.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/options.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/swc/index.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/parse-module.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/build/analysis/get-page-static-info.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-utils/setup-dev-bundler.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js
+- /Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/start-server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1500:15)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:57:36)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1116:12)
+    at Module._load (node:internal/modules/cjs/loader:1285:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at __webpack_require__.f.require (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:259:28)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:172:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:171:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:223:22)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:378)
+    at Object.<anonymous> (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/pages/_document.js:1:425)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1985:10)
+    at Module.load (node:internal/modules/cjs/loader:1577:32)
+    at Module._load (node:internal/modules/cjs/loader:1379:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at mod.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require-hook.js:68:28)
+    at require (node:internal/modules/helpers:153:16)
+    at requirePage (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/require.js:99:80)
+    at loadComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/load-components.js:86:38)
+    at DevServer.findPageComponentsImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:899:77)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:877:21)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:170:36)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NoopTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/NoopTracer.js:54:31)
+    at ProxyTracer.startActiveSpan (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/trace/ProxyTracer.js:27:24)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:103)
+    at NoopContextManager.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/context/NoopContextManager.js:14:19)
+    at ContextAPI.with (file:///Users/safwan/node_modules/@opentelemetry/api/build/src/api/context.js:51:46)
+    at NextTracerImpl.trace (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/trace/tracer.js:152:28)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:872:41)
+    at DevServer.findPageComponents (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:705:28)
+    at async DevServer.renderErrorToResponseImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1687:26)
+    at async pipe.req.req (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1610:30)
+    at async DevServer.pipeImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:1025:25)
+    at async NextNodeServer.handleCatchallRenderRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/next-server.js:408:21)
+    at async DevServer.handleRequestImpl (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/base-server.js:916:17)
+    at async (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:399:20)
+    at async Span.traceAsyncFn (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/dev/next-dev-server.js:395:24)
+    at async invokeRender (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/server/lib/router-server.js:240:21)
+[  244607ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[  251808ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/:0
+[  254209ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:28004
+[  254276ms] TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (file:///Users/safwan/Code/HUF/huf.ai/docs/.next/server/webpack-runtime.js:25:42)
+    at Object.require (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:28541)
+    at globalThis.__next_require__ (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:38:29364)
+    at requireModule (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:318257)
+    at initializeModuleChunk (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:346881)
+    at getOutlinedModel (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:356123)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:363962)
+    at ResponseInstance._fromJSON (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:364053)
+    at JSON.parse (<anonymous>)
+    at initializeModelChunk (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:346322)
+    at resolveModelChunk (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:344628)
+    at processFullStringRow (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:382980)
+    at <unknown> (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:385383)
+    at processBinaryChunk (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:385455)
+    at progress (file:///Users/safwan/Code/HUF/huf.ai/docs/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:386983)
+[  254275ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[  254282ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favicon.ico:0

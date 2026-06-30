@@ -102,6 +102,74 @@
   --nextra-primary-saturation: 82%;
 }
 
+/* Arabic locale uses Noto Kufi Arabic for all text (loaded via next/font in layout) */
+html[lang="ar"] {
+  --font-display: 'Noto Kufi Arabic', sans-serif;
+  --font-body:    'Noto Kufi Arabic', sans-serif;
+  --x-font-sans:  'Noto Kufi Arabic', sans-serif;
+  --x-default-font-family: 'Noto Kufi Arabic', sans-serif;
+}
+
+/* Force Arabic font on headings, sidebar, TOC, and navigation.
+   Many HUF components set !important fonts, so these overrides must be
+   at least as specific and also use !important. */
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] h4,
+html[lang="ar"] h5,
+html[lang="ar"] h6,
+html[lang="ar"] .nextra-sidebar,
+html[lang="ar"] .nextra-sidebar *,
+html[lang="ar"] .nextra-toc,
+html[lang="ar"] .nextra-toc *,
+html[lang="ar"] .nextra-navbar,
+html[lang="ar"] .nextra-navbar *,
+html[lang="ar"] .nextra-breadcrumb,
+html[lang="ar"] .nextra-breadcrumb *,
+html[lang="ar"] .nextra-pagination,
+html[lang="ar"] .nextra-pagination *,
+html[lang="ar"] article h1,
+html[lang="ar"] article h2,
+html[lang="ar"] article h3,
+html[lang="ar"] article h4,
+html[lang="ar"] article h5,
+html[lang="ar"] article h6,
+html[lang="ar"] .nextra-sidebar a,
+html[lang="ar"] .nextra-sidebar button,
+html[lang="ar"] aside.nextra-sidebar a,
+html[lang="ar"] aside.nextra-sidebar button,
+html[lang="ar"] .nextra-toc a,
+html[lang="ar"] nav.nextra-toc a,
+html[lang="ar"] [class*='breadcrumb'],
+html[lang="ar"] nav[aria-label='breadcrumb'],
+html[lang="ar"] [class*='pagination'] a,
+html[lang="ar"] [class*='nav-links'] a,
+html[lang="ar"] .nextra-search input,
+html[lang="ar"] [role='searchbox'],
+html[lang="ar"] footer,
+html[lang="ar"] .huf-eyebrow,
+html[lang="ar"] .huf-btn,
+html[lang="ar"] .huf-state-pill,
+html[lang="ar"] .huf-cap-term,
+html[lang="ar"] .huf-agent-config-header,
+html[lang="ar"] .huf-tool-tags,
+html[lang="ar"] .huf-ps-label {
+  font-family: 'Noto Kufi Arabic', sans-serif !important;
+}
+
+/* Keep mono/code fonts untouched in Arabic */
+html[lang="ar"] code,
+html[lang="ar"] pre,
+html[lang="ar"] kbd,
+html[lang="ar"] .x\:font-mono,
+html[lang="ar"] .x\:font-mono *,
+html[lang="ar"] article code,
+html[lang="ar"] article pre,
+html[lang="ar"] article pre code {
+  font-family: var(--font-mono) !important;
+}
+
 /* --------------------------------------------------------------------------
    Design Tokens — Dark Mode (control plane)
    -------------------------------------------------------------------------- */

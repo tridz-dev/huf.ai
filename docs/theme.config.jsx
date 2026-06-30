@@ -5,6 +5,10 @@ export default {
     link: 'https://github.com/tridz-dev/agent_flo'
   },
   docsRepositoryBase: 'https://github.com/tridz-dev/agent_flo/tree/main/docs',
+  i18n: [
+    { locale: 'en', name: 'English' },
+    { locale: 'ar', name: 'العربية', direction: 'rtl' }
+  ],
   search: {
     placeholder: 'Search documentation...'
   },

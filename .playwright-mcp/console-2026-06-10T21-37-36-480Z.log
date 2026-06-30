@@ -1,0 +1,84 @@
+[   12815ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[   12972ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/favicon.ico:0
+[   13021ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13022ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13022ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13022ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13022ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13023ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13023ms] [ERROR] In HTML, %s cannot be a descendant of <%s>.
+This will cause a hydration error.%s <p> p 
+
+  ...
+    <SegmentViewNode type="page" pagePath="page.mdx">
+      <SegmentTrieNode>
+      <MDXWrapper>
+        <wrapper>
+          <div className="x:mx-auto ...">
+            <TOCProvider value={[...]}>
+              <Sidebar>
+              <ClientWrapper metadata={{...}} sourceCode={"---\nsid..."}>
+                <nav>
+                <article className="x:w-full x...">
+                  <Breadcrumb>
+                  <CopyPage>
+                  <div>
+                  <main data-pagefind-body={true}>
+                    <_createMdxContent>
+                      <div style={{maxWidth:"...", ...}}>
+                        <h1>
+                        <div>
+                        <div>
+                        <h2>
+                        <div style={{display:"grid", ...}}>
+                          <LinkComponent href="/docs/quic..." style={{display:"b...", ...}} onMouseOver={"this.sty..."} ...>
+                            <a style={{display:"b...", ...}} onMouseOver={"this.sty..."} onMouseOut={"this.sty..."} ...>
+                              <h3>
+>                             <p style={{margin:0,color:"var(--next...",opacity:0.8}}>
+                                <p>
+>                                 <p className="x:not-first:mt-[1.25em] x:leading-7">
+                          ...
+                        ...
+                  ...
+    ...
+ @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13023ms] [ERROR] <%s> cannot contain a nested %s.
+See this log for the ancestor stack trace. p <p> @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13061ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13061ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13061ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13062ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13063ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13064ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOver string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13064ms] [ERROR] Expected `%s` listener to be a function, instead got a value of `%s` type. onMouseOut string @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13205ms] Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at throwOnHydrationMismatch (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:4506:11)
+    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:11107:17)
+    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)
+    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15727:22)
+    at workLoopConcurrentByScheduler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15721:9)
+    at renderRootConcurrent (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15696:15)
+    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14990:13)
+    at performWorkOnRootViaSchedulerTask (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16816:7)
+    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:45:48)

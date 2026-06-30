@@ -1,0 +1,696 @@
+---
+sidebarTitle: إنشاء أدوات مخصصة
+---
+
+import { Callout } from 'nextra/components'
+
+# إنشاء أدوات مخصصة
+
+تمكنك الأدوات المخصصة من توسيع قدرات الوكيل لتتجاوز عمليات Frappe المدمجة. اربط دوال Python الخاصة بك بالوكلاء وافتح إمكانيات غير محدودة.
+
+## ما هي الأدوات المخصصة؟
+
+**الأدوات المخصصة** هي دوال Python الخاصة بك التي يمكن للوكلاء استدعاؤها. إنها تمكّن الوكلاء من تنفيذ مهام متخصصة لا تغطيها الأدوات المدمجة.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">حسابات معقدة</span>إجراء حسابات معقدة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">تكاملات خارجية</span>التكامل مع الأنظمة الخارجية</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">منطق الأعمال</span>تطبيق منطق الأعمال</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">معالجة بيانات مخصصة</span>معالجة البيانات بطرق مخصصة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">سير عمل متخصص</span>تنفيذ سير عمل متخصص</div>
+</div>
+
+إذا كانت الأدوات المدمجة هي مجموعة الأدوات القياسية، فالأدوات المخصصة هي أدواتك المتخصصة المصنوعة حسب الطلب.
+
+## متى تنشئ أدوات مخصصة؟
+
+اختر النهج المناسب بناءً على ما إذا كانت مهمتك تحتاج إلى منطق مخصص أو يمكنها استخدام العمليات القياسية.
+
+<p><strong>أنشئ أدوات مخصصة عند الحاجة إلى:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">منطق خاص بالأعمال</span>تنفيذ منطق خاص بالأعمال</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">حسابات متقدمة</span>إجراء حسابات تتجاوز الاستعلامات البسيطة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">تكامل API مخصص</span>التكامل مع واجهات API خارجية بمصادقة مخصصة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">معالجة بيانات معقدة</span>معالجة البيانات بطرق لا تستطيع الأدوات المدمجة القيام بها</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">سير عمل متعدد الخطوات</span>تنفيذ سير عمل متعدد الخطوات</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">تحقق معقد</span>التحقق من الشروط المعقدة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">تنسيق متخصص</span>تنسيق البيانات أو تحويلها بشكل خاص</div>
+</div>
+
+<p><strong>استخدم الأدوات المدمجة عندما:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">CRUD قياسي</span>تكفي عمليات CRUD القياسية</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">HTTP بسيط</span>تعمل طلبات HTTP البسيطة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">لا يوجد منطق مخصص</span>لا حاجة إلى منطق مخصص</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">حالة استخدام مغطاة</span>الأدوات المدمجة تغطي حالة الاستخدام بالفعل</div>
+</div>
+
+## كيف تعمل الأدوات المخصصة
+
+تربط الأدوات المخصصة بين كود Python الخاص بك ووكلاء Huf من خلال دورة حياة محددة.
+
+### التدفق
+
+يكتشف الوكيل الدالة الخاصة بك وينفذها عبر هذه المراحل.
+
+<Mermaid>{`
+flowchart LR
+    Write[اكتب<br/>دالة Python في تطبيق Frappe] --> Create[أنشئ<br/>دالة أداة الوكيل]
+    Create --> Assign[عيّن<br/>الأداة للوكيل]
+    Assign --> Call[استدعِ<br/>الوكيل يستدعي الأداة عند الحاجة]
+    Call --> Execute[نفّذ<br/>تعمل الدالة بالمعاملات]
+    Execute --> Return[أرجع<br/>النتيجة للوكيل]
+    Return --> Use[استخدم<br/>يستخدم الوكيل النتيجة في الرد]
+`}</Mermaid>
+
+### متطلبات الدالة
+
+يجب أن تلبي دالة Python الخاصة بك هذه المتطلبات الأساسية لتصبح قابلة للاستدعاء من قبل الوكيل.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">قابلة للاستيراد</span>أن تكون قابلة للاستيراد (في وحدة يمكن لـ Frappe الوصول إليها)</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">معاملات محددة</span>قبول معاملات محددة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">قيم إرجاع قابلة للتسلسل</span>إرجاع بيانات قابلة للتسلسل إلى JSON</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">أخطاء سليمة</span>معالجة الأخطاء بسلاسة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">مراعية للصلاحيات</span>احترام صلاحيات Frappe (عند الحاجة)</div>
+</div>
+
+## إنشاء أداة مخصصة
+
+أنشئ أداة مخصصة واربطها في أربع مراحل.
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">01</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">الخطوة 1: اكتب دالة Python</div>
+    <div className="huf-step-body">
+
+أنشئ دالة في تطبيق Frappe الخاص بك:
+
+**الملف:** `my_app/api/tools.py`
+
+```python
+import frappe
+
+def calculate_customer_lifetime_value(customer_id):
+    """
+    Calculate the total lifetime value for a customer.
+    
+    Args:
+        customer_id (str): The customer ID
+        
+    Returns:
+        dict: Customer LTV details including total value and order count
+    """
+    # Query all sales invoices for this customer
+    invoices = frappe.get_all(
+        "Sales Invoice",
+        filters={"customer": customer_id, "docstatus": 1},
+        fields=["grand_total"]
+    )
+    
+    # Calculate totals
+    total_value = sum(inv.grand_total for inv in invoices)
+    order_count = len(invoices)
+    
+    # Calculate average order value
+    avg_order = total_value / order_count if order_count > 0 else 0
+    
+    return {
+        "customer_id": customer_id,
+        "lifetime_value": total_value,
+        "order_count": order_count,
+        "average_order_value": avg_order
+    }
+```
+
+**النقاط الرئيسية:**
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">Docstring</span>تصبح جزءًا من وصف الأداة (مهم!)</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">تلميحات الأنواع</span>تساعد في توثيق المعاملات المتوقعة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">إرجاع Dict</span>يمكن للوكيل تحليل النتيجة بسهولة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">معالجة الأخطاء</span>معالجة الحالات الحدية (القسمة على صفر، البيانات المفقودة)</div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">02</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">الخطوة 2: أنشئ سجل دالة أداة الوكيل</div>
+    <div className="huf-step-body">
+
+أنشئ سجل دالة أداة الوكيل الذي يشير إلى دالة Python الخاصة بك.
+
+**انتقل إلى:** Desk → Huf → Agent Tool Function
+
+**انقر فوق جديد** واملأ:
+
+<ConfigPanel title="دالة أداة الوكيل">
+  <ConfigField label="اسم الأداة" value="calculate_customer_ltv" />
+  <ConfigField label="الوصف" value="احسب إجمالي قيمة العمر للعميل بما في ذلك إجمالي الإيرادات وعدد الطلبات ومتوسط قيمة الطلب." />
+  <ConfigField label="الأنواع" value="Custom Function" />
+  <ConfigField label="مسار الدالة" value="my_app.api.tools.calculate_customer_lifetime_value" />
+  <ConfigSection title="المعاملات">
+    <ConfigField label="customer_id" value="String (Required) — معرّف العميل لحساب LTV الخاص به" />
+  </ConfigSection>
+</ConfigPanel>
+
+**إرشادات:**
+
+- استخدم أسماء وصفية بتنسيق snake_case
+- يجب أن تطابق اسم الدالة (غير مطلوب لكنه أوضح)
+- كن محددًا — يستخدم الوكيل هذا لتحديد متى يستخدم الأداة
+- اذكر البيانات التي تُرجعها
+- أدرج أي قيود
+- يجب أن يكون المسار النقطي الكامل للدالة قابلاً للاستيراد: `from my_app.api.tools import calculate_customer_lifetime_value`
+
+**احفظ** الأداة
+
+</div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">03</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">الخطوة 3: عيّن للوكيل</div>
+    <div className="huf-step-body">
+
+اربط الأداة بالوكيل الذي يجب أن يكون قادرًا على استخدامها.
+
+1. افتح الوكيل الخاص بك (Desk → Huf → Agent)
+2. انتقل إلى جدول **Agent Tool**
+3. انقر فوق **Add Row**
+4. اختر **Tool Function**: `calculate_customer_ltv`
+5. **احفظ** الوكيل
+
+</div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">04</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">الخطوة 4: اختبار</div>
+    <div className="huf-step-body">
+
+استخدم Agent Chat أو شغّل الوكيل:
+
+<ChatTranscript>
+  <ChatMessage role="user">ما هي قيمة العمر للعميل CUST-001؟</ChatMessage>
+  <ChatMessage role="agent">يتعرف على الحاجة إلى بيانات LTV</ChatMessage>
+  <ChatMessage role="tool-call">calculate_customer_ltv("CUST-001")</ChatMessage>
+  <ChatMessage role="tool-result">{`{"lifetime_value": 45230.50, "order_count": 12, ...}`}</ChatMessage>
+  <ChatMessage role="agent">للعميل CUST-001 قيمة عمر تبلغ $45,230.50 عبر 12 طلبًا، بمتوسط قيمة طلب يبلغ $3,769.21.</ChatMessage>
+</ChatTranscript>
+
+    </div>
+  </div>
+</div>
+
+## أنواع المعاملات
+
+عند تعريف المعاملات في دالة أداة الوكيل، ربط كل نوع بما يعادله في Python.
+
+| النوع | نوع Python | الوصف | المثال |
+|------|-------------|-------------|---------|
+| **String** | `str` | قيم نصية | `"CUST-001"`, `"high"` |
+| **Int** | `int` | أعداد صحيحة | `42`, `100`, `-5` |
+| **Float** | `float` | أعداد عشرية | `3.14`, `99.99` |
+| **Boolean** | `bool` | صح/خطأ | `True`, `False` |
+| **Object** | `dict` | كائنات JSON | `{"key": "value"}` |
+| **Array** | `list` | مصفوفات JSON | `["item1", "item2"]` |
+
+تُظهر هذه التواقيع كيفية إعلان المعاملات لكل نوع:
+
+```python
+def search_products(category: str, min_price: float, in_stock: bool):
+    """Search products with filters."""
+    pass
+
+def batch_process_orders(order_ids: list):
+    """Process multiple orders at once."""
+    pass
+
+def create_customer_profile(data: dict):
+    """Create customer with complex nested data."""
+    pass
+```
+
+## أمثلة متقدمة
+
+تُظهر هذه الأمثلة أنماط الأدوات المخصصة الشائعة.
+
+### المثال 1: تكامل API خارجي
+
+استخدم هذا النمط عندما تحتاج إلى استدعاء API خارجي من الوكيل.
+
+```python
+import requests
+import frappe
+
+def get_weather_forecast(city: str):
+    """
+    Get weather forecast for a city from OpenWeather API.
+    
+    Args:
+        city (str): City name
+        
+    Returns:
+        dict: Weather forecast data
+    """
+    api_key = frappe.conf.get("openweather_api_key")
+    
+    response = requests.get(
+        f"https://api.openweathermap.org/data/2.5/weather",
+        params={"q": city, "appid": api_key, "units": "metric"}
+    )
+    
+    if response.status_code == 200:
+        data = response.json()
+        return {
+            "city": city,
+            "temperature": data["main"]["temp"],
+            "condition": data["weather"][0]["description"],
+            "humidity": data["main"]["humidity"]
+        }
+    else:
+        frappe.throw(f"Weather API error: {response.status_code}")
+```
+
+<AgentPrompt title="تعليمات وكيل الطقس">
+  عندما يسأل المستخدم عن الطقس:
+  1. استخرج اسم المدينة
+  2. استخدم أداة get_weather_forecast
+  3. اعرض درجة الحرارة والحالة والرطوبة بتنسيق ودي
+</AgentPrompt>
+
+### المثال 2: حساب معقد
+
+استخدم هذا النمط لتشغيل حسابات على بيانات Frappe.
+
+```python
+import frappe
+from datetime import datetime, timedelta
+
+def calculate_reorder_quantity(item_code: str, days_ahead: int = 30):
+    """
+    Calculate optimal reorder quantity based on historical consumption.
+    
+    Args:
+        item_code (str): Item code
+        days_ahead (int): Days to plan ahead (default: 30)
+        
+    Returns:
+        dict: Reorder recommendations
+    """
+    # Get current stock
+    stock_qty = frappe.db.get_value("Bin", 
+        {"item_code": item_code}, 
+        "actual_qty"
+    ) or 0
+    
+    # Get item details
+    item = frappe.get_doc("Item", item_code)
+    
+    # Calculate average daily consumption (last 90 days)
+    ninety_days_ago = datetime.now() - timedelta(days=90)
+    
+    consumed = frappe.db.sql("""
+        SELECT SUM(actual_qty)
+        FROM `tabStock Ledger Entry`
+        WHERE item_code = %s
+        AND posting_date >= %s
+        AND actual_qty < 0
+    """, (item_code, ninety_days_ago))[0][0] or 0
+    
+    daily_consumption = abs(consumed) / 90
+    
+    # Calculate needed quantity
+    needed_qty = daily_consumption * days_ahead
+    reorder_qty = max(0, needed_qty - stock_qty)
+    
+    # Round up to nearest safety stock level
+    if item.safety_stock:
+        reorder_qty = max(reorder_qty, item.safety_stock)
+    
+    return {
+        "item_code": item_code,
+        "current_stock": stock_qty,
+        "daily_consumption": round(daily_consumption, 2),
+        "days_ahead": days_ahead,
+        "recommended_reorder_qty": round(reorder_qty, 2),
+        "estimated_stockout_days": round(stock_qty / daily_consumption if daily_consumption > 0 else 999, 1)
+    }
+```
+
+### المثال 3: منطق التحقق
+
+استخدم هذا النمط للتحقق من المستندات وتحديد المشكلات.
+
+```python
+import frappe
+
+def validate_invoice_pricing(invoice_name: str):
+    """
+    Validate invoice pricing against price list and flag anomalies.
+    
+    Args:
+        invoice_name (str): Sales Invoice name
+        
+    Returns:
+        dict: Validation results with any issues found
+    """
+    invoice = frappe.get_doc("Sales Invoice", invoice_name)
+    issues = []
+    
+    for item in invoice.items:
+        # Get price list rate
+        price_list_rate = frappe.db.get_value(
+            "Item Price",
+            {
+                "item_code": item.item_code,
+                "price_list": invoice.selling_price_list
+            },
+            "price_list_rate"
+        )
+        
+        if not price_list_rate:
+            issues.append({
+                "item": item.item_code,
+                "issue": "No price list rate found",
+                "severity": "high"
+            })
+            continue
+        
+        # Check for significant variance
+        variance_pct = ((item.rate - price_list_rate) / price_list_rate) * 100
+        
+        if abs(variance_pct) > 10:
+            issues.append({
+                "item": item.item_code,
+                "issue": f"Price varies {variance_pct:.1f}% from price list",
+                "expected": price_list_rate,
+                "actual": item.rate,
+                "severity": "medium" if abs(variance_pct) < 20 else "high"
+            })
+    
+    return {
+        "invoice": invoice_name,
+        "is_valid": len(issues) == 0,
+        "issues_found": len(issues),
+        "issues": issues
+    }
+```
+
+## أفضل الممارسات
+
+اتبع هذه الإرشادات لبناء أدوات مخصصة موثوقة وقابلة للصيانة.
+
+### تصميم الدالة
+
+الدوال المصممة جيدًا أسهل على الوكلاء في الفهم وأكثر أمانًا في الصيانة.
+
+<DoDont
+  doItems={[
+    "اكتب دوال واضحة ومركزة (مسؤولية واحدة)",
+    "استخدم أسماء وصفية للدوال والمعاملات",
+    "أدرج docstrings شاملة",
+    "أرجع بيانات منظمة (dicts بمفاتيح واضحة)",
+    "تعامل مع الأخطاء والحالات الحدية",
+    "أضف تلميحات الأنواع للمعاملات"
+  ]}
+  dontItems={[
+    "إنشاء دوال ضخمة تقوم بكل شيء",
+    "استخدام أسماء معاملات غامضة (`data`, `info`, `x`)",
+    "إرجاع كائنات قاعدة بيانات خام (سلسلها)",
+    "نسيان معالجة الأخطاء",
+    "جعل الدوال تعتمد على الحالة العامة",
+    "استخدام الآثار الجانبية دون توثيقها"
+  ]}
+/>
+
+### معالجة الأخطاء
+
+تعامل مع الأخطاء بسلاسة حتى يتمكن الوكلاء من الإبلاغ عن حالات الفشل ذات معنى.
+
+```python
+def get_customer_balance(customer_id: str):
+    """Get customer outstanding balance."""
+    
+    # Validate input
+    if not customer_id:
+        frappe.throw("Customer ID is required")
+    
+    # Check if customer exists
+    if not frappe.db.exists("Customer", customer_id):
+        frappe.throw(f"Customer {customer_id} not found")
+    
+    try:
+        balance = frappe.db.get_value("Customer", customer_id, "outstanding_amount")
+        return {"customer_id": customer_id, "balance": balance or 0}
+    except Exception as e:
+        frappe.log_error(f"Error getting balance for {customer_id}: {str(e)}")
+        frappe.throw(f"Failed to retrieve customer balance: {str(e)}")
+```
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">أخطاء ذات معنى</span>يحصل الوكيل على رسائل خطأ ذات معنى</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">ملاحظات مفيدة</span>يرى المستخدم ملاحظات مفيدة</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">أخطاء مسجلة</span>يتم تسجيل الأخطاء لتصحيح الأخطاء</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">لا تعطل صامت</span>لا يتعطل النظام بصمت</div>
+</div>
+
+### الصلاحيات
+
+احترم صلاحيات Frappe بشكل صريح عندما تنفذ أداتك إجراءات حساسة.
+
+```python
+def delete_customer_document(doc_name: str):
+    """Delete a customer (respects permissions)."""
+    
+    # Check if user has permission
+    if not frappe.has_permission("Customer", "delete", doc_name):
+        frappe.throw("You don't have permission to delete this customer")
+    
+    # Verify document exists
+    if not frappe.db.exists("Customer", doc_name):
+        frappe.throw(f"Customer {doc_name} not found")
+    
+    # Delete
+    frappe.delete_doc("Customer", doc_name)
+    
+    return {"success": True, "message": f"Customer {doc_name} deleted"}
+```
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">فحوصات صريحة</span>افحص الصلاحيات بشكل صريح عند الحاجة</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">استخدم has_permission()</span>استخدم `frappe.has_permission()`</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">فشل آمن</span>افشل بأمان مع رسائل خطأ واضحة</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">سجلات التدقيق</span>سجل رفض الصلاحيات للتدقيق</div>
+</div>
+
+### الأداء
+
+حسّن أداتك لتقليل جولات قاعدة البيانات ونقل البيانات.
+
+```python
+# BAD: Multiple queries in loop
+def get_customer_orders_slow(customer_id):
+    orders = frappe.get_all("Sales Order", {"customer": customer_id}, ["name"])
+    results = []
+    for order in orders:
+        doc = frappe.get_doc("Sales Order", order.name)  # Separate query each time
+        results.append(doc.as_dict())
+    return results
+
+# GOOD: Single query with all data
+def get_customer_orders_fast(customer_id):
+    orders = frappe.get_all(
+        "Sales Order",
+        filters={"customer": customer_id},
+        fields=["name", "grand_total", "status", "delivery_date"]
+    )
+    return {"customer_id": customer_id, "orders": orders}
+```
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">استعلامات مجمعة</span>اجلب جميع البيانات المطلوبة في استعلام واحد عندما يكون ذلك ممكنًا</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">استخدم get_all()</span>استخدم `frappe.get_all()` بدلاً من عدة `get_doc()`</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">تخزين النتائج مؤقتًا</span>خزّن الحسابات المكلفة مؤقتًا</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">حمولات صغيرة</span>أرجع البيانات الضرورية فقط</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">فهرسة الحقول</span>فكر في فهارس قاعدة البيانات للحقول المستعلَمة بشكل متكرر</div>
+</div>
+
+## تصحيح أخطاء الأدوات المخصصة
+
+استخدم هذه التقنيات للتحقق من أدواتك المخصصة واستكشاف أخطائها وإصلاحها.
+
+### الاختبار في وحدة تحكم Frappe
+
+اختبر دالتك مباشرة في وحدة تحكم Frappe قبل ربطها بالوكيل.
+
+<div className="huf-cli-note">
+
+```bash
+bench --site yoursite console
+```
+
+</div>
+
+بمجرد الدخول، قم باستيراد وتشغيل دالتك:
+
+```python
+>>> from my_app.api.tools import calculate_customer_ltv
+>>> result = calculate_customer_ltv("CUST-001")
+>>> print(result)
+```
+
+### التحقق من سجلات تشغيل الوكيل
+
+راجع سجلات تشغيل الوكيل بعد أن يستخدم الوكيل أداتك.
+
+<Checklist items={[
+  "انتقل إلى **Agent Run** في Desk",
+  "ابحث عن التشغيل",
+  "تحقق من قسم **Tool Calls**",
+  "راجع المعاملات التي مررها الوكيل",
+  "راجع النتيجة التي أرجعتها دالتك",
+  "راجع أي أخطاء حدثت"
+]} />
+
+### المشكلات الشائعة
+
+تغطي هذه المشكلات والحلول أكثر مشكلات الأدوات المخصصة شيوعًا.
+
+| المشكلة | السبب / الحل |
+|---|---|
+| **"Function not found"** | تحقق من صحة مسار الدالة.<br />تأكد من أن الدالة قابلة للاستيراد.<br />أعد تشغيل bench بعد إضافة دوال جديدة. |
+| **"Missing parameter"** | لم يقدم الوكيل المعامل المطلوب.<br />حسّن وصف الأداة لتوضيح ما هو مطلوب.<br />تحقق من أن تعليمات الوكيل تذكر المعامل. |
+| **"TypeError" or "JSON serialization error"** | قيمة الإرجاع غير قابلة للتسلسل إلى JSON.<br />حوّل الكائنات إلى dicts.<br />حوّل التواريخ إلى سلاسل نصية.<br />لا تُرجع كائنات Frappe DocType مباشرة. |
+| **Function never called** | قد يكون وصف الأداة غير واضح.<br />الوكيل لا يتعرف على متى يستخدمها.<br />حاول تحسين الوصف أو تعليمات الوكيل. |
+
+## نصائح التوثيق
+
+يساعد التوثيق الواضح الوكلاء على اختيار أدواتك واستخدامها بشكل صحيح.
+
+### كتابة أوصاف رائعة
+
+قارن الوصف الغامض بوصف يمنح الوكيل سياقًا واضحًا.
+
+<div className="huf-ps-grid">
+  <div className="huf-ps-cell">
+    <span className="huf-ps-label">سيئ</span>
+```
+Description: Handles customer calculations
+```
+→ غامض جدًا، لن يعرف الوكيل متى يستخدمه
+  </div>
+  <div className="huf-ps-cell">
+    <span className="huf-ps-label">جيد</span>
+```
+Description: Calculate the total lifetime value for a customer including 
+all paid invoices, order count, and average order value. Use this when 
+users ask about customer value, spending history, or order statistics.
+```
+→ الغرض والسياق وحالات الاستخدام واضحة
+  </div>
+</div>
+
+### تضمين أمثلة في Docstrings
+
+أضف أمثلة ملموسة لاستخدام docstrings حتى يفهم الوكلاء المدخلات والمخرجات المتوقعة.
+
+```python
+def convert_currency(amount: float, from_currency: str, to_currency: str):
+    """
+    Convert an amount from one currency to another using current rates.
+    
+    Args:
+        amount (float): Amount to convert
+        from_currency (str): Source currency code (USD, EUR, GBP, etc.)
+        to_currency (str): Target currency code
+        
+    Returns:
+        dict: Converted amount and exchange rate used
+        
+    Example:
+        >>> convert_currency(100, "USD", "EUR")
+        {"amount": 100, "from": "USD", "to": "EUR", "converted": 85.50, "rate": 0.855}
+    """
+    # Implementation
+    pass
+```
+
+يمكن للوكيل "قراءة" هذا الـ docstring لفهم كيفية استخدام الأداة.
+
+## اعتبارات الأمان
+
+ضع هذه المبادئ الأمنية في اعتبارك عند بناء أدوات مخصصة.
+
+### العمليات الخطرة
+
+كن حذرًا بشكل خاص عندما تستطيع الأدوات الوصول إلى موارد حساسة أو تنفيذ آثار جانبية.
+
+<Callout type="warning">
+احذر من العمليات التي يمكن أن تتلف البيانات أو تسرب المعلومات.
+</Callout>
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">نظام الملفات</span>الوصول إلى نظام الملفات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">أوامر Shell</span>أوامر Shell</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">كتابة قاعدة البيانات</span>تعديلات قاعدة البيانات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">واجهات API حساسة</span>مكالمات API خارجية ببيانات حساسة</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">إشعارات</span>إرسال رسائل البريد الإلكتروني/الإشعارات</div>
+</div>
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">التحقق من المدخلات</span>تحقق من جميع المدخلات</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">التحقق من الصلاحيات</span>افحص الصلاحيات بشكل صريح</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">تسجيل العمليات</span>سجل جميع العمليات</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">تحديد المعدل</span>حدد معدل العمليات المكلفة</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">قيم القائمة البيضاء</span>استخدم قيم القائمة البيضاء عندما يكون ذلك ممكنًا</div>
+</div>
+
+### التحقق من المدخلات
+
+تحقق من جميع المدخلات قبل تنفيذ العمليات الحساسة.
+
+```python
+def send_email_notification(recipient: str, subject: str, message: str):
+    """Send email (with validation)."""
+    
+    # Validate email format
+    if not frappe.utils.validate_email_address(recipient):
+        frappe.throw(f"Invalid email address: {recipient}")
+    
+    # Whitelist allowed recipients (optional but safer)
+    allowed_domains = ["yourcompany.com", "partner.com"]
+    domain = recipient.split("@")[1]
+    if domain not in allowed_domains:
+        frappe.throw(f"Can only send to {', '.join(allowed_domains)} addresses")
+    
+    # Send email
+    frappe.sendmail(recipients=[recipient], subject=subject, message=message)
+    
+    return {"success": True, "recipient": recipient}
+```
+
+## ما التالي؟
+
+استكشف المواضيع ذات الصلة للاستمرار في البناء باستخدام الأدوات المخصصة.
+
+- **[نشر الأدوات](/docs/tools/publishing)** - مشاركة الأدوات عبر التطبيقات
+- **[الأدوات المدمجة](/docs/tools/built-in)** - مرجع للأدوات المدمجة
+- **[مفهوم الأدوات](/docs/concepts/tools)** - أساسيات الأدوات
+- **[إنشاء الوكلاء](/docs/guides/creating-agents)** - تعيين أدوات مخصصة للوكلاء
+
+---
+
+**هل لديك أسئلة؟** قم بزيارة [مناقشات GitHub](https://github.com/tridz-dev/agent_flo/discussions).

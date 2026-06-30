@@ -1,0 +1,373 @@
+- generic [active] [ref=e1]:
+  - link "Skip to Content" [ref=e2] [cursor=pointer]:
+    - /url: "#nextra-skip-nav"
+  - banner [ref=e3]:
+    - navigation [ref=e5]:
+      - link "Home page" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: Huf
+      - combobox "Search documentation…" [ref=e10]
+      - link "Project repository" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/tridz-dev/agent_flo
+        - img "Project repository" [ref=e12]
+  - generic [ref=e14]:
+    - complementary [ref=e15]:
+      - list [ref=e18]:
+        - listitem [ref=e19]:
+          - link "Introduction" [ref=e20] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e21]:
+          - button "Docs" [ref=e22] [cursor=pointer]:
+            - text: Docs
+            - img [ref=e23]
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link "Quick Start" [ref=e28] [cursor=pointer]:
+                - /url: /docs/quick-start/
+            - listitem [ref=e29]:
+              - link "Installation" [ref=e30] [cursor=pointer]:
+                - /url: /docs/installation/
+            - listitem [ref=e31]:
+              - button "Concepts" [ref=e32] [cursor=pointer]:
+                - text: Concepts
+                - img [ref=e33]
+              - list [ref=e35]:
+                - listitem [ref=e36]:
+                  - link "Agents" [ref=e37] [cursor=pointer]:
+                    - /url: /docs/concepts/agents/
+                - listitem [ref=e38]:
+                  - link "Conversations & Memory" [ref=e39] [cursor=pointer]:
+                    - /url: /docs/concepts/conversations/
+                - listitem [ref=e40]:
+                  - link "Data Tables" [ref=e41] [cursor=pointer]:
+                    - /url: /docs/concepts/data-tables/
+                - listitem [ref=e42]:
+                  - link "Interfaces" [ref=e43] [cursor=pointer]:
+                    - /url: /docs/concepts/interfaces/
+                - listitem [ref=e44]:
+                  - link "Knowledge & RAG" [ref=e45] [cursor=pointer]:
+                    - /url: /docs/concepts/knowledge/
+                - listitem [ref=e46]:
+                  - link "Agent Orchestration" [ref=e47] [cursor=pointer]:
+                    - /url: /docs/concepts/orchestration/
+                - listitem [ref=e48]:
+                  - link "Permissions" [ref=e49] [cursor=pointer]:
+                    - /url: /docs/concepts/permissions/
+                - listitem [ref=e50]:
+                  - link "Providers & Models" [ref=e51] [cursor=pointer]:
+                    - /url: /docs/concepts/providers-models/
+                - listitem [ref=e52]:
+                  - link "Tools" [ref=e53] [cursor=pointer]:
+                    - /url: /docs/concepts/tools/
+                - listitem [ref=e54]:
+                  - link "Triggers" [ref=e55] [cursor=pointer]:
+                    - /url: /docs/concepts/triggers/
+            - listitem [ref=e56]:
+              - button "Tools" [ref=e57] [cursor=pointer]:
+                - text: Tools
+                - img [ref=e58]
+              - list [ref=e60]:
+                - listitem [ref=e61]:
+                  - link "Built-in Integration Tools" [ref=e62] [cursor=pointer]:
+                    - /url: /docs/tools/built-in/
+                - listitem [ref=e63]:
+                  - link "Custom Tools" [ref=e64] [cursor=pointer]:
+                    - /url: /docs/tools/custom/
+                - listitem [ref=e65]:
+                  - link "Frappe Data Tools" [ref=e66] [cursor=pointer]:
+                    - /url: /docs/tools/frappe-data/
+                - listitem [ref=e67]:
+                  - link "Model Context Protocol (MCP) Tools" [ref=e68] [cursor=pointer]:
+                    - /url: /docs/tools/mcp/
+                - listitem [ref=e69]:
+                  - link "Publishing Tools (App Provided)" [ref=e70] [cursor=pointer]:
+                    - /url: /docs/tools/publishing/
+            - listitem [ref=e71]:
+              - link "Use Cases" [ref=e72] [cursor=pointer]:
+                - /url: /docs/use-cases/
+            - listitem [ref=e73]:
+              - link "Example Agents" [ref=e74] [cursor=pointer]:
+                - /url: /docs/examples/
+            - listitem [ref=e75]:
+              - button "Guides" [ref=e76] [cursor=pointer]:
+                - text: Guides
+                - img [ref=e77]
+              - list [ref=e79]:
+                - listitem [ref=e80]:
+                  - link "Creating Agents" [ref=e81] [cursor=pointer]:
+                    - /url: /docs/guides/creating-agents/
+                - listitem [ref=e82]:
+                  - link "Managing Agents" [ref=e83] [cursor=pointer]:
+                    - /url: /docs/guides/managing-agents/
+                - listitem [ref=e84]:
+                  - link "Monitoring & Debugging" [ref=e85] [cursor=pointer]:
+                    - /url: /docs/guides/monitoring/
+                - listitem [ref=e86]:
+                  - link "Running Agents" [ref=e87] [cursor=pointer]:
+                    - /url: /docs/guides/running-agents/
+            - listitem [ref=e88]:
+              - link "Development" [ref=e89] [cursor=pointer]:
+                - /url: /docs/development/
+            - listitem [ref=e90]:
+              - button "API" [ref=e91] [cursor=pointer]:
+                - text: API
+                - img [ref=e92]
+              - list [ref=e94]:
+                - listitem [ref=e95]:
+                  - link "API Overview" [ref=e96] [cursor=pointer]:
+                    - /url: /docs/api/
+                - listitem [ref=e97]:
+                  - link "Building on HUF" [ref=e98] [cursor=pointer]:
+                    - /url: /docs/api/app-development/
+                - listitem [ref=e99]:
+                  - link "Running Agents via API" [ref=e100] [cursor=pointer]:
+                    - /url: /docs/api/run-agent/
+            - listitem [ref=e101]:
+              - button "Chat" [ref=e102] [cursor=pointer]:
+                - text: Chat
+                - img [ref=e103]
+              - list [ref=e105]:
+                - listitem [ref=e106]:
+                  - link "Chat Overview" [ref=e107] [cursor=pointer]:
+                    - /url: /docs/chat/
+                - listitem [ref=e108]:
+                  - link "Chat Features" [ref=e109] [cursor=pointer]:
+                    - /url: /docs/chat/features/
+                - listitem [ref=e110]:
+                  - link "Voice in Chat" [ref=e111] [cursor=pointer]:
+                    - /url: /docs/chat/voice/
+            - listitem [ref=e112]:
+              - link "Coming Soon" [ref=e113] [cursor=pointer]:
+                - /url: /docs/coming-soon/
+            - listitem [ref=e114]:
+              - link "Flows" [ref=e115] [cursor=pointer]:
+                - /url: /docs/flows/
+            - listitem [ref=e116]:
+              - button "Knowledge" [ref=e117] [cursor=pointer]:
+                - text: Knowledge
+                - img [ref=e118]
+              - list [ref=e120]:
+                - listitem [ref=e121]:
+                  - link "Knowledge Base Overview" [ref=e122] [cursor=pointer]:
+                    - /url: /docs/knowledge/
+                - listitem [ref=e123]:
+                  - link "Storage Backends" [ref=e124] [cursor=pointer]:
+                    - /url: /docs/knowledge/backends/
+                - listitem [ref=e125]:
+                  - link "Retrieval & Chunking" [ref=e126] [cursor=pointer]:
+                    - /url: /docs/knowledge/retrieval/
+                - listitem [ref=e127]:
+                  - link "Knowledge Sources Guide" [ref=e128] [cursor=pointer]:
+                    - /url: /docs/knowledge/sources/
+            - listitem [ref=e129]:
+              - link "Audio, Voice & Vision" [ref=e130] [cursor=pointer]:
+                - /url: /docs/multimodal/
+            - listitem [ref=e131]:
+              - button "Permissions" [ref=e132] [cursor=pointer]:
+                - text: Permissions
+                - img [ref=e133]
+              - list [ref=e135]:
+                - listitem [ref=e136]:
+                  - link "Permissions & Security Overview" [ref=e137] [cursor=pointer]:
+                    - /url: /docs/permissions/
+                - listitem [ref=e138]:
+                  - link "Agent Access Control" [ref=e139] [cursor=pointer]:
+                    - /url: /docs/permissions/agent-access/
+                - listitem [ref=e140]:
+                  - link "Roles" [ref=e141] [cursor=pointer]:
+                    - /url: /docs/permissions/roles/
+            - listitem [ref=e142]:
+              - button "Settings" [ref=e143] [cursor=pointer]:
+                - text: Settings
+                - img [ref=e144]
+              - list [ref=e146]:
+                - listitem [ref=e147]:
+                  - link "Settings Overview" [ref=e148] [cursor=pointer]:
+                    - /url: /docs/settings/
+                - listitem [ref=e149]:
+                  - link "AI Providers & Models" [ref=e150] [cursor=pointer]:
+                    - /url: /docs/settings/providers/
+                - listitem [ref=e151]:
+                  - link "Voice Settings (STT & TTS)" [ref=e152] [cursor=pointer]:
+                    - /url: /docs/settings/stt-tts/
+      - generic [ref=e153]:
+        - button "Light" [ref=e154] [cursor=pointer]:
+          - img [ref=e155]
+          - text: Light
+        - button "Collapse sidebar" [expanded] [ref=e157] [cursor=pointer]:
+          - img [ref=e158]
+    - article [ref=e161]:
+      - generic "Introduction" [ref=e163]
+      - generic [ref=e164]:
+        - button "Copy page" [ref=e165] [cursor=pointer]:
+          - img [ref=e166]
+          - text: Copy page
+        - button [ref=e169] [cursor=pointer]:
+          - img [ref=e170]
+      - main [ref=e172]:
+        - generic [ref=e173]:
+          - heading "Welcome to Huf" [level=1] [ref=e174]
+          - paragraph [ref=e176]:
+            - strong [ref=e177]: Huf
+            - text: brings AI agents into your Frappe site. Think of agents as team members who can understand natural language, use tools to work with your data, and automate tasks across your Frappe ecosystem.
+          - generic [ref=e178]:
+            - link "Read Documentation →" [ref=e179] [cursor=pointer]:
+              - /url: /docs/quick-start/
+              - paragraph [ref=e180]: Read Documentation →
+            - link "View on GitHub →" [ref=e181] [cursor=pointer]:
+              - /url: https://github.com/tridz-dev/agent_flo
+              - paragraph [ref=e182]: View on GitHub →
+          - heading "Quick LinksPermalink for this section" [level=2] [ref=e183]:
+            - text: Quick Links
+            - link "Permalink for this section" [ref=e184] [cursor=pointer]:
+              - /url: "#quick-links"
+              - text: "#"
+          - generic [ref=e185]:
+            - link "Quick Start Create your first agent in 5 minutes. Perfect for getting started." [ref=e186] [cursor=pointer]:
+              - /url: /docs/quick-start/
+              - heading "Quick Start" [level=3] [ref=e187]
+              - paragraph
+              - paragraph [ref=e188]: Create your first agent in 5 minutes. Perfect for getting started.
+              - paragraph
+            - link "Core Concepts Learn about agents, tools, triggers, and how everything works together." [ref=e189] [cursor=pointer]:
+              - /url: /docs/concepts/agents/
+              - heading "Core Concepts" [level=3] [ref=e190]
+              - paragraph
+              - paragraph [ref=e191]: Learn about agents, tools, triggers, and how everything works together.
+              - paragraph
+            - link "Examples See real-world agent configurations and use cases in action." [ref=e192] [cursor=pointer]:
+              - /url: /docs/examples/
+              - heading "Examples" [level=3] [ref=e193]
+              - paragraph
+              - paragraph [ref=e194]: See real-world agent configurations and use cases in action.
+              - paragraph
+            - link "Tools Explore built-in tools and learn how to create custom capabilities." [ref=e195] [cursor=pointer]:
+              - /url: /docs/tools/built-in/
+              - heading "Tools" [level=3] [ref=e196]
+              - paragraph
+              - paragraph [ref=e197]: Explore built-in tools and learn how to create custom capabilities.
+              - paragraph
+            - link "Guides Step-by-step guides for creating, managing, and running agents." [ref=e198] [cursor=pointer]:
+              - /url: /docs/guides/creating-agents/
+              - heading "Guides" [level=3] [ref=e199]
+              - paragraph
+              - paragraph [ref=e200]: Step-by-step guides for creating, managing, and running agents.
+              - paragraph
+            - link "Development Extend Huf with custom tools, providers, and integrations." [ref=e201] [cursor=pointer]:
+              - /url: /docs/development/
+              - heading "Development" [level=3] [ref=e202]
+              - paragraph
+              - paragraph [ref=e203]: Extend Huf with custom tools, providers, and integrations.
+              - paragraph
+          - heading "Popular Use CasesPermalink for this section" [level=2] [ref=e204]:
+            - text: Popular Use Cases
+            - link "Permalink for this section" [ref=e205] [cursor=pointer]:
+              - /url: "#popular-use-cases"
+              - text: "#"
+          - generic [ref=e206]:
+            - generic [ref=e207]:
+              - heading "Customer Support Automation" [level=4] [ref=e208]
+              - paragraph
+              - paragraph [ref=e209]: Automatically respond to customer inquiries, create support tickets, and route issues to the right team—all powered by AI agents that understand context and your business rules.
+              - paragraph
+            - generic [ref=e210]:
+              - heading "Document Validation" [level=4] [ref=e211]
+              - paragraph
+              - paragraph [ref=e212]: Validate invoices, contracts, and forms automatically. Agents check for errors, missing information, and compliance issues before documents are processed.
+              - paragraph
+            - generic [ref=e213]:
+              - heading "Lead Qualification" [level=4] [ref=e214]
+              - paragraph
+              - paragraph [ref=e215]: Automatically score and qualify sales leads, extract key information, and assign them to the right sales representatives based on criteria you define.
+              - paragraph
+            - generic [ref=e216]:
+              - heading "Smart Notifications" [level=4] [ref=e217]
+              - paragraph
+              - paragraph [ref=e218]: Generate intelligent notifications and summaries. Agents analyze data and send contextual alerts via Slack, email, or other channels when important events occur.
+              - paragraph
+            - generic [ref=e219]:
+              - heading "Data Processing" [level=4] [ref=e220]
+              - paragraph
+              - paragraph [ref=e221]: Process unstructured data, extract insights, and transform information between formats. Perfect for handling imports, exports, and data migrations.
+              - paragraph
+            - generic [ref=e222]:
+              - heading "Report Generation" [level=4] [ref=e223]
+              - paragraph
+              - paragraph [ref=e224]: Generate reports from natural language queries. Ask questions in plain English and get formatted reports with charts, summaries, and insights.
+              - paragraph
+          - heading "What Users SayPermalink for this section" [level=2] [ref=e225]:
+            - text: What Users Say
+            - link "Permalink for this section" [ref=e226] [cursor=pointer]:
+              - /url: "#what-users-say"
+              - text: "#"
+          - generic [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: ”
+              - paragraph
+              - paragraph [ref=e230]: Huf transformed how we handle customer support. Our agents now handle 80% of inquiries automatically, and the quality is better than our manual process.
+              - paragraph
+              - paragraph [ref=e232]: — Frappe ERPNext User
+            - generic [ref=e233]:
+              - generic [ref=e234]: ”
+              - paragraph
+              - paragraph [ref=e235]: The ability to create custom tools means we can integrate Huf with any system. It’s like having a developer on your team who never sleeps.
+              - paragraph
+              - paragraph [ref=e237]: — E-commerce Platform Admin
+            - generic [ref=e238]:
+              - generic [ref=e239]: ”
+              - paragraph
+              - paragraph [ref=e240]: Setting up our first agent took less than 10 minutes. The documentation is clear, and the examples helped us get started immediately.
+              - paragraph
+              - paragraph [ref=e242]: — Small Business Owner
+          - heading "Key FeaturesPermalink for this section" [level=2] [ref=e243]:
+            - text: Key Features
+            - link "Permalink for this section" [ref=e244] [cursor=pointer]:
+              - /url: "#key-features"
+              - text: "#"
+          - generic [ref=e245]:
+            - generic [ref=e246]:
+              - heading "Flexible AI Agents" [level=4] [ref=e247]
+              - paragraph
+              - paragraph [ref=e248]: Create agents with custom roles, instructions, and personalities. Power them with OpenAI, Anthropic, Google, and 100+ models via LiteLLM.
+              - paragraph
+            - generic [ref=e249]:
+              - heading "Powerful Tool System" [level=4] [ref=e250]
+              - paragraph
+              - paragraph [ref=e251]: Give agents the ability to interact with Frappe documents, execute custom functions, make HTTP requests, and chain to other agents.
+              - paragraph
+            - generic [ref=e252]:
+              - heading "Multiple Triggers" [level=4] [ref=e253]
+              - paragraph
+              - paragraph [ref=e254]: Run agents manually, on schedule, when documents change, via chat, or through API calls. Complete flexibility for any workflow.
+              - paragraph
+            - generic [ref=e255]:
+              - heading "Complete Observability" [level=4] [ref=e256]
+              - paragraph
+              - paragraph [ref=e257]: Track every execution with detailed logs, token usage, costs, tool calls, and conversation history. Know exactly what your agents are doing.
+              - paragraph
+          - heading "Get StartedPermalink for this section" [level=2] [ref=e258]:
+            - text: Get Started
+            - link "Permalink for this section" [ref=e259] [cursor=pointer]:
+              - /url: "#get-started"
+              - text: "#"
+          - generic [ref=e260]:
+            - heading "Ready to build your first agent?" [level=3] [ref=e261]
+            - paragraph
+            - paragraph [ref=e262]: Follow our Quick Start guide and have your first AI agent running in under 5 minutes.
+            - paragraph
+            - link "Start Quick Start Guide →" [ref=e263] [cursor=pointer]:
+              - /url: /docs/quick-start/
+              - paragraph [ref=e264]: Start Quick Start Guide →
+      - generic [ref=e265]:
+        - text: Last updated on
+        - time [ref=e266]: June 11, 2026
+      - link "Quick Start" [ref=e268] [cursor=pointer]:
+        - /url: /docs/quick-start/
+        - text: Quick Start
+        - img [ref=e269]
+  - generic [ref=e271]:
+    - separator [ref=e272]
+    - contentinfo [ref=e273]:
+      - text: AGPL 2026 ©
+      - link "Tridz Technologies Ltd" [ref=e274] [cursor=pointer]:
+        - /url: https://tridz.com

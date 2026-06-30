@@ -1,0 +1,603 @@
+---
+sidebarTitle: وكلاء نموذجيون
+---
+
+# وكلاء نموذجيون
+
+تكوينات وكلاء كاملة وجاهزة للإنتاج يمكنك استخدامها كقوالب أو نقاط انطلاق لوكلائك الخاصين.
+
+## وكيل التحقق من الفواتير
+
+**الغرض:** التحقق التلقائي من فواتير المبيعات عند إرسالها، بالتحقق من التسعير وحدود الائتمان وحسابات الضرائب.
+
+### تكوين الوكيل
+
+<ConfigPanel title="تكوين الوكيل">
+  <ConfigField label="اسم الوكيل" value="مدقق الفواتير" />
+  <ConfigField label="المزود" value="Your OpenAI provider" />
+  <ConfigField label="النموذج" value="gpt-4-turbo (or gpt-3.5-turbo for cost savings)" />
+  <ConfigField label="درجة الحرارة" value="0.3 (تحقق مركّز ومُتّسق)" />
+  <ConfigField label="السماح بالدردشة" value="لا (يُشغّل تلقائيًا)" />
+</ConfigPanel>
+
+### التعليمات
+
+<AgentPrompt title="وكيل التحقق من الفواتير">
+```
+You are an invoice validation agent. Your job is to validate sales invoices 
+when they are submitted.
+
+When an invoice is submitted:
+1. Verify pricing matches the current price list for each item
+2. Check the customer's credit limit and current outstanding balance
+3. Validate tax calculations (tax rate, tax amount, total)
+4. Ensure all required fields are filled correctly
+5. Check for duplicate invoices
+
+For each validation check:
+- If it passes: Add a comment confirming the check passed
+- If it fails: Add a comment with specific details about what's wrong
+
+Validation Results:
+- If all checks pass: Add comment "Invoice validated successfully. All checks passed."
+- If any check fails: Add comment with list of issues found and notify accounts team
+
+Be thorough but efficient. Focus on accuracy over speed.
+```
+</AgentPrompt>
+
+### الأدوات
+
+1. **استرداد المستند** (Sales Invoice)
+   - اسم الأداة: `get_invoice`
+   - نوع المستند المرجعي: Sales Invoice
+   - الوصف: استرداد تفاصيل الفاتورة للتحقق
+
+2. **استرداد المستند** (Customer)
+   - اسم الأداة: `get_customer`
+   - نوع المستند المرجعي: Customer
+   - الوصف: الحصول على حد الائتمان والرصيد المستحق للعميل
+
+3. **الحصول على قائمة** (Item Price)
+   - اسم الأداة: `get_price_list_rates`
+   - نوع المستند المرجعي: Item Price
+   - الوصف: التحقق من أسعار قائمة الأسعار الحالية للأصناف
+
+4. **الحصول على قائمة** (Sales Invoice)
+   - اسم الأداة: `check_duplicate_invoices`
+   - نوع المستند المرجعي: Sales Invoice
+   - الوصف: التحقق من الفواتير المكررة
+
+5. **تحديث المستند** (Sales Invoice)
+   - اسم الأداة: `update_invoice`
+   - نوع المستند المرجعي: Sales Invoice
+   - الوصف: إضافة تعليقات التحقق إلى الفاتورة
+
+6. **طلب HTTP** (Slack Notification)
+   - اسم الأداة: `notify_accounts_team`
+   - الوصف: إرسال إشعار إلى قناة فريق الحسابات في Slack
+
+### تكوين المشغل
+
+<ConfigPanel title="مشغل الوكيل">
+  <ConfigField label="نوع المشغل" value="Doc Event" />
+  <ConfigField label="نوع المستند المرجعي" value="Sales Invoice" />
+  <ConfigField label="حدث المستند" value="On Submit" />
+  <ConfigField label="الشرط" value="بلا (التحقق من جميع الفواتير المرسلة)" />
+  <ConfigSection title="قالب الأمر">
+    ```
+    A sales invoice has been submitted: {name}
+    Customer: {customer}
+    Total Amount: {grand_total}
+
+    Please validate this invoice:
+    1. Check pricing against price list
+    2. Verify customer credit limit
+    3. Validate tax calculations
+    4. Check for duplicates
+    5. Ensure all required fields are correct
+
+    Add comments with validation results.
+    ```
+  </ConfigSection>
+</ConfigPanel>
+
+### السلوك المتوقع
+
+**عند إرسال الفاتورة:**
+1. يتلقى الوكيل المشغّل مع تفاصيل الفاتورة
+2. يسترد مستند الفاتورة
+3. يحصل على معلومات العميل
+4. يتحقق من أسعار قائمة الأسعار لكل صنف
+5. يتحقق من حد الائتمان
+6. يتحقق من حسابات الضرائب
+7. يتحقق من الفواتير المكررة
+8. يضيف تعليقات التحقق
+9. يُبلّغ الفريق في حال العثور على مشاكل
+
+**المخرجات عند النجاح:**
+- يُضاف تعليق: "Invoice validated successfully. All checks passed."
+- لا تُرسل إشعارات
+
+**المخرجات عند الفشل:**
+- يُضاف تعليق يتضمن المشاكل المحددة
+- تُرسل إشعار Slack إلى فريق الحسابات
+- تُدوّن المشاكل بوضوح
+
+---
+
+## وكيل الرد التلقائي على البريد الإلكتروني
+
+**الغرض:** تصنيف رسائل البريد الوارد، وصياغة الردود، وإنشاء تذاكر الدعم تلقائيًا.
+
+### تكوين الوكيل
+
+<ConfigPanel title="تكوين الوكيل">
+  <ConfigField label="اسم الوكيل" value="الرد التلقائي على البريد" />
+  <ConfigField label="المزود" value="Your Anthropic provider" />
+  <ConfigField label="النموذج" value="claude-3-sonnet (good for email understanding)" />
+  <ConfigField label="درجة الحرارة" value="0.7 (ردود متوازنة وطبيعية)" />
+  <ConfigField label="السماح بالدردشة" value="لا" />
+</ConfigPanel>
+
+### التعليمات
+
+<AgentPrompt title="وكيل الرد التلقائي على البريد الإلكتروني">
+```
+You are an email auto-responder agent. Your job is to process incoming 
+emails and handle them appropriately.
+
+When an email is received:
+1. Categorize the email:
+   - Support Request: Technical issues, bugs, problems
+   - Sales Inquiry: Product questions, pricing, demos
+   - General Question: FAQs, information requests
+   - Complaint: Unhappy customers, service issues
+   - Spam: Unwanted emails
+
+2. For Support Requests:
+   - Create a support ticket with email content
+   - Categorize by priority (High, Medium, Low)
+   - Assign to appropriate team
+   - Draft acknowledgment email
+
+3. For Sales Inquiries:
+   - Create a lead if new contact
+   - Update existing lead if known contact
+   - Draft response with product information
+   - Schedule follow-up task
+
+4. For General Questions:
+   - Draft helpful response
+   - Include relevant links or documentation
+   - If FAQ, use standard response
+
+5. For Complaints:
+   - Create high-priority support ticket
+   - Escalate to customer success team
+   - Draft empathetic response
+
+6. For Spam:
+   - Mark as spam
+   - Do not respond
+
+Always be professional, helpful, and empathetic. Match the tone 
+of the original email (formal vs casual).
+```
+</AgentPrompt>
+
+### الأدوات
+
+1. **الحصول على قائمة** (Lead)
+   - اسم الأداة: `check_existing_lead`
+   - نوع المستند المرجعي: Lead
+   - الوصف: التحقق مما إذا كان مرسل البريد عميلًا محتملًا موجودًا
+
+2. **إنشاء مستند** (Lead)
+   - اسم الأداة: `create_lead`
+   - نوع المستند المرجعي: Lead
+   - الوصف: إنشاء عميل محتمل جديد من البريد الإلكتروني
+
+3. **إنشاء مستند** (Support Ticket)
+   - اسم الأداة: `create_support_ticket`
+   - نوع المستند المرجعي: Support Ticket
+   - الوصف: إنشاء تذكرة دعم من البريد الإلكتروني
+
+4. **إنشاء مستند** (Communication)
+   - اسم الأداة: `save_email`
+   - نوع المستند المرجعي: Communication
+   - الوصف: حفظ البريد الإلكتروني في Frappe
+
+5. **طلب HTTP** (Email Send)
+   - اسم الأداة: `send_email_response`
+   - الوصف: إرسال رد البريد الإلكتروني عبر بريد Frappe
+
+6. **إنشاء مستند** (Task)
+   - اسم الأداة: `create_followup_task`
+   - نوع المستند المرجعي: Task
+   - الوصف: جدولة مهام المتابعة
+
+### تكوين المشغل
+
+<ConfigPanel title="مشغل الوكيل">
+  <ConfigField label="نوع المشغل" value="Doc Event" />
+  <ConfigField label="نوع المستند المرجعي" value="Communication" />
+  <ConfigField label="حدث المستند" value="After Insert" />
+  <ConfigField label="الشرط" value={`{"communication_type": "Communication", "sent_or_received": "Received", "email_status": "Open"}`} />
+  <ConfigSection title="قالب الأمر">
+    ```
+    A new email has been received:
+    From: {sender}
+    Subject: {subject}
+    Content: {content}
+
+    Please process this email:
+    1. Categorize it
+    2. Take appropriate action (create ticket, lead, etc.)
+    3. Draft and send response if needed
+    ```
+  </ConfigSection>
+</ConfigPanel>
+
+### السلوك المتوقع
+
+**عند وصول البريد الإلكتروني:**
+1. يتلقى الوكيل تفاصيل البريد
+2. يحلّل المحتوى ويصنّفه
+3. يتحقق مما إذا كان المرسل عميلًا محتملًا/عميلًا موجودًا
+4. يتخذ الإجراء بناءً على التصنيف:
+   - دعم → إنشاء تذكرة
+   - مبيعات → إنشاء/تحديث عميل محتمل
+   - سؤال → صياغة رد
+   - شكوى → تصعيد
+5. يصيغ ردًا مناسبًا
+6. يرسل رد البريد الإلكتروني
+7. ينشئ مهام المتابعة عند الحاجة
+
+**مثال على المخرجات:**
+- تم إنشاء تذكرة دعم: "TICKET-001: Login issue reported"
+- تم إرسال البريد: "Thank you for contacting us. We've created ticket TICKET-001..."
+- تم إنشاء المهمة: "Follow up on TICKET-001 in 24 hours"
+
+---
+
+## وكيل تصنيف العملاء المحتملين للمبيعات
+
+**الغرض:** تقييم العملاء المحتملين، واستخراج المعلومات الأساسية، وتخصيص مندوبي المبيعات، وجدولة المتابعات تلقائيًا.
+
+### تكوين الوكيل
+
+<ConfigPanel title="تكوين الوكيل">
+  <ConfigField label="اسم الوكيل" value="مصنّف العملاء المحتملين" />
+  <ConfigField label="المزود" value="Your OpenAI provider" />
+  <ConfigField label="النموذج" value="gpt-4-turbo (good for analysis)" />
+  <ConfigField label="درجة الحرارة" value="0.5 (تحليل متوازن)" />
+  <ConfigField label="السماح بالدردشة" value="لا" />
+</ConfigPanel>
+
+### التعليمات
+
+<AgentPrompt title="وكيل تصنيف العملاء المحتملين للمبيعات">
+```
+You are a sales lead qualification agent. Your job is to analyze new 
+leads and prepare them for the sales team.
+
+When a new lead is created:
+1. Score the lead (0-100) based on:
+   - Company size indicators (from company_name and description)
+   - Industry match with our ideal customer profile
+   - Source quality (referral = 20 points, website = 10, other = 5)
+   - Budget indicators in description (mentions of budget, pricing questions)
+   - Urgency signals (words like "urgent", "asap", "immediately")
+   - Decision maker presence (titles like CEO, CTO, Director)
+
+2. Extract key information:
+   - Industry/vertical
+   - Company size (if mentioned)
+   - Budget range (if mentioned)
+   - Use case/pain points
+   - Timeline (if mentioned)
+   - Decision maker contact info
+
+3. Assign to sales rep based on:
+   - Territory match (if lead has territory)
+   - Industry expertise (match rep's specialization)
+   - Current workload (prefer reps with fewer active leads)
+   - Lead score (high scores to top performers)
+
+4. Set follow-up priority:
+   - Score 80+: Hot lead - Follow up today
+   - Score 60-79: Warm lead - Follow up tomorrow
+   - Score 40-59: Qualified lead - Follow up this week
+   - Score <40: Cold lead - Follow up next week
+
+5. Add internal notes with:
+   - Lead score and rationale
+   - Key information extracted
+   - Assignment reasoning
+   - Recommended approach
+
+Be thorough in analysis. Better to over-qualify than miss opportunities.
+```
+</AgentPrompt>
+
+### الأدوات
+
+1. **استرداد المستند** (Lead)
+   - اسم الأداة: `get_lead`
+   - نوع المستند المرجعي: Lead
+   - الوصف: الحصول على تفاصيل العميل المحتمل للتصنيف
+
+2. **الحصول على قائمة** (Sales Person)
+   - اسم الأداة: `get_sales_reps`
+   - نوع المستند المرجعي: Sales Person
+   - الوصف: الحصول على مندوبي المبيعات المتاحين مع المناطق وأعباء العمل
+
+3. **الحصول على قائمة** (Lead)
+   - اسم الأداة: `check_existing_leads`
+   - نوع المستند المرجعي: Lead
+   - الوصف: التحقق من العملاء المحتملين المكررين أو المرتبطين
+
+4. **تحديث المستند** (Lead)
+   - اسم الأداة: `update_lead`
+   - نوع المستند المرجعي: Lead
+   - الوصف: تحديث العميل المحتمل بالدرجة والتخصيص والملاحظات
+
+5. **إنشاء مستند** (Task)
+   - اسم الأداة: `create_followup_task`
+   - نوع المستند المرجعي: Task
+   - الوصف: إنشاء مهمة متابعة لمندوب المبيعات
+
+6. **طلب HTTP** (Slack Notification)
+   - اسم الأداة: `notify_sales_rep`
+   - الوصف: إشعار مندوب المبيعات المخصص عبر Slack
+
+### تكوين المشغل
+
+<ConfigPanel title="مشغل الوكيل">
+  <ConfigField label="نوع المشغل" value="Doc Event" />
+  <ConfigField label="نوع المستند المرجعي" value="Lead" />
+  <ConfigField label="حدث المستند" value="After Insert" />
+  <ConfigField label="الشرط" value="بلا (تصنيف جميع العملاء المحتملين الجدد)" />
+  <ConfigSection title="قالب الأمر">
+    ```
+    A new lead has been created:
+    Company: {company_name}
+    Contact: {lead_name}
+    Email: {email_id}
+    Source: {source}
+    Description: {description}
+    Territory: {territory}
+
+    Please:
+    1. Score this lead (0-100)
+    2. Extract key information
+    3. Assign to appropriate sales rep
+    4. Set follow-up priority
+    5. Add qualification notes
+    ```
+  </ConfigSection>
+</ConfigPanel>
+
+### السلوك المتوقع
+
+**عند إنشاء العميل المحتمل:**
+1. يتلقى الوكيل تفاصيل العميل المحتمل
+2. يحلّل اسم الشركة والوصف والمصدر
+3. يحسب درجة العميل المحتمل بناءً على المعايير
+4. يستخرج المعلومات الأساسية
+5. يجد أفضل تطابق لمندوب المبيعات
+6. يحدّث العميل المحتمل بما يلي:
+   - درجة العميل المحتمل
+   - مندوب المبيعات المخصص
+   - ملاحظات داخلية مع التحليل
+7. ينشئ مهمة متابعة
+8. يُبلّغ مندوب المبيعات
+
+**مثال على المخرجات:**
+- درجة العميل المحتمل: 75 (دافئ)
+- مخصص لـ: John Smith (Territory match, Industry expertise)
+- الملاحظات: "High-value prospect in healthcare vertical. Mentions budget 
+         and timeline. Decision maker (CTO) identified. Strong fit."
+- المتابعة: تم إنشاء مهمة للغد
+- الإشعار: رسالة Slack إلى John Smith
+
+---
+
+## روبوت تنبيه المخزون
+
+**الغرض:** مراقبة مستويات المخزون، والتنبؤ بنفاد الأسهم، وإنشاء طلبات الشراء، وإشعار الفرق.
+
+### تكوين الوكيل
+
+<ConfigPanel title="تكوين الوكيل">
+  <ConfigField label="اسم الوكيل" value="روبوت تنبيه المخزون" />
+  <ConfigField label="المزود" value="Your OpenAI provider" />
+  <ConfigField label="النموذج" value="gpt-3.5-turbo (cost-effective for monitoring)" />
+  <ConfigField label="درجة الحرارة" value="0.2 (مركّز جدًا ويعتمد على البيانات)" />
+  <ConfigField label="السماح بالدردشة" value="لا" />
+</ConfigPanel>
+
+### التعليمات
+
+<AgentPrompt title="روبوت تنبيه المخزون">
+```
+You are an inventory monitoring agent. Your job is to monitor stock 
+levels and prevent stockouts.
+
+Every 6 hours, check inventory:
+1. Identify items below reorder level
+2. Calculate required purchase quantity:
+   - Consider current stock
+   - Average daily consumption (last 30 days)
+   - Lead time from suppliers
+   - Safety stock requirements
+   - Minimum order quantities
+
+3. For each item needing reorder:
+   - Check if purchase requisition already exists
+   - Calculate optimal order quantity
+   - Identify preferred supplier
+   - Create purchase requisition if needed
+   - Set priority (Urgent if stockout imminent)
+
+4. Predict stockouts:
+   - Calculate days until stockout based on consumption rate
+   - Flag items with <7 days remaining
+   - Flag items with <3 days remaining as critical
+
+5. Generate summary report:
+   - Items below reorder level
+   - Purchase requisitions created
+   - Critical stockout predictions
+   - Recommended actions
+
+6. Notify procurement team:
+   - Urgent items (<3 days)
+   - New purchase requisitions
+   - Stockout predictions
+
+Be proactive. It's better to order early than run out of stock.
+```
+</AgentPrompt>
+
+### الأدوات
+
+1. **الحصول على قائمة** (Bin)
+   - اسم الأداة: `get_stock_levels`
+   - نوع المستند المرجعي: Bin
+   - الوصف: الحصول على مستويات المخزون الحالية لجميع الأصناف
+
+2. **استرداد المستند** (Item)
+   - اسم الأداة: `get_item_details`
+   - نوع المستند المرجعي: Item
+   - الوصف: الحصول على تفاصيل الصنف بما في ذلك مستوى إعادة الطلب والمخزون الاحتياطي
+
+3. **الحصول على قائمة** (Stock Ledger Entry)
+   - اسم الأداة: `get_consumption_history`
+   - نوع المستند المرجعي: Stock Ledger Entry
+   - الوصف: الحصول على سجل الاستهلاك للتنبؤ بالطلب
+
+4. **الحصول على قائمة** (Purchase Requisition)
+   - اسم الأداة: `check_existing_requisitions`
+   - نوع المستند المرجعي: Purchase Requisition
+   - الوصف: التحقق مما إذا كان هناك طلب شراء موجود للصنف
+
+5. **إنشاء مستند** (Purchase Requisition)
+   - اسم الأداة: `create_purchase_requisition`
+   - نوع المستند المرجعي: Purchase Requisition
+   - الوصف: إنشاء طلب شراء للأصناف منخفضة المخزون
+
+6. **إنشاء مستند** (Communication)
+   - اسم الأداة: `create_alert`
+   - نوع المستند المرجعي: Communication
+   - الوصف: إنشاء إشعار تنبيه
+
+7. **طلب HTTP** (Slack/Email)
+   - اسم الأداة: `send_inventory_alert`
+   - الوصف: إرسال تنبيهات المخزون إلى فريق المشتريات
+
+### تكوين المشغل
+
+<ConfigPanel title="مشغل الوكيل">
+  <ConfigField label="نوع المشغل" value="Schedule" />
+  <ConfigField label="الجدولة" value="كل 6 ساعات (Cron: 0 */6 * * *)" />
+  <ConfigSection title="قالب الأمر">
+    ```
+    It's time to check inventory levels. Please:
+    1. Identify all items below reorder level
+    2. Calculate required purchase quantities
+    3. Create purchase requisitions for items needing reorder
+    4. Predict stockouts and flag critical items
+    5. Generate summary report
+    6. Notify procurement team of urgent items
+    ```
+  </ConfigSection>
+</ConfigPanel>
+
+### السلوك المتوقع
+
+**كل 6 ساعات:**
+1. يعمل الوكيل تلقائيًا
+2. يسترد جميع مستويات المخزون
+3. يحدد الأصناف أقل من مستوى إعادة الطلب
+4. يحسب معدلات الاستهلاك
+5. يتنبأ بتواريخ نفاد المخزون
+6. ينشئ طلبات الشراء
+7. يُنشئ تقرير ملخص
+8. يرسل تنبيهات للأصناف الحرجة
+
+**مثال على المخرجات:**
+- تم إنشاء طلب شراء: "PR-001: Order 500 units of Widget A"
+- تنبيه حرج: "Widget B will stockout in 2 days. Urgent reorder needed."
+- تقرير ملخص: "5 items below reorder level. 2 purchase requisitions created. 
+                   1 critical stockout predicted."
+- إشعار: رسالة Slack إلى فريق المشتريات مع التفاصيل
+
+---
+
+## استخدام هذه الأمثلة
+
+### نسخ وتخصيص
+
+<Checklist items={[
+  "نسخ تكوين الوكيل من المثال",
+  "تعديل التعليمات لتناسب احتياجاتك المحددة",
+  "تعديل الأدوات بناءً على أنواع مستنداتك",
+  "تحديث المشغلات لتتوافق مع سير عملك",
+  "اختبار شامل قبل الإنتاج"
+]} />
+
+### نصائح للتكييف
+
+**للصناعات المختلفة:**
+- اضبط أنواع المستندات لتناسب صناعتك
+- عدّل معايير التقييم
+- حدّث القواعد التجارية
+- غيّر قنوات الإشعارات
+
+**للمقاييس المختلفة:**
+- ابدأ بإصدارات أبسط
+- أضف التعقيد تدريجيًا
+- راقب الأداء
+- حسّن بناءً على النتائج
+
+**للنماذج المختلفة:**
+- استخدم نماذج أرخص للمهام البسيطة
+- استخدم نماذج أقوى للتحليل المعقد
+- وازن بين التكلفة والقدرة
+- راقب استخدام الرموز المميزة
+
+### الاختبار
+
+**قبل الإنتاج:**
+
+<Checklist items={[
+  "الاختبار ببيانات عينة",
+  "التحقق من عمل استدعاءات الأدوات بشكل صحيح",
+  "التحقق من شروط المشغل",
+  "مراجعة ردود الوكيل",
+  "التحقق من منطق العمل",
+  "اختبار معالجة الأخطاء"
+]} />
+
+**في الإنتاج:**
+
+<Checklist items={[
+  "مراقبة سجلات تشغيل الوكيل",
+  "مراجعة نتائج استدعاءات الأدوات",
+  "التحقق من وجود أخطاء",
+  "جمع ملاحظات المستخدمين",
+  "التكرار والتحسين"
+]} />
+
+## ما التالي؟
+
+- **[حالات الاستخدام](/docs/use-cases)** - المزيد من أفكار حالات الاستخدام
+- **[إنشاء الوكلاء](/docs/guides/creating-agents)** - ابنِ وكلاءك الخاصين
+- **[الأدوات](/docs/concepts/tools)** - الأدوات المتاحة
+- **[المراقبة](/docs/guides/monitoring)** - تتبع أداء الوكيل
+
+---
+
+**هل لديك مثال للمشاركة؟** ساهم في [GitHub](https://github.com/tridz-dev/agent_flo)!

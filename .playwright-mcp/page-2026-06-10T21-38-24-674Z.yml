@@ -1,0 +1,1294 @@
+- generic [active] [ref=e1]:
+  - link "Skip to Content" [ref=e2] [cursor=pointer]:
+    - /url: "#nextra-skip-nav"
+  - banner [ref=e3]:
+    - navigation [ref=e5]:
+      - link "Home page" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e7]: Huf
+      - combobox "Search documentation…" [ref=e10]
+      - link "Project repository" [ref=e11] [cursor=pointer]:
+        - /url: https://github.com/tridz-dev/agent_flo
+        - img "Project repository" [ref=e12]
+  - generic [ref=e14]:
+    - complementary [ref=e15]:
+      - list [ref=e18]:
+        - listitem [ref=e19]:
+          - link "Introduction" [ref=e20] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e21]:
+          - button "Docs" [ref=e22] [cursor=pointer]:
+            - text: Docs
+            - img [ref=e23]
+          - list [ref=e26]:
+            - listitem [ref=e27]:
+              - link "Quick Start" [ref=e28] [cursor=pointer]:
+                - /url: /docs/quick-start/
+            - listitem [ref=e29]:
+              - link "Installation" [ref=e30] [cursor=pointer]:
+                - /url: /docs/installation/
+            - listitem [ref=e31]:
+              - button "Concepts" [ref=e32] [cursor=pointer]:
+                - text: Concepts
+                - img [ref=e33]
+              - list [ref=e35]:
+                - listitem [ref=e36]:
+                  - link "Agents" [ref=e37] [cursor=pointer]:
+                    - /url: /docs/concepts/agents/
+                - listitem [ref=e38]:
+                  - link "Conversations & Memory" [ref=e39] [cursor=pointer]:
+                    - /url: /docs/concepts/conversations/
+                - listitem [ref=e40]:
+                  - link "Data Tables" [ref=e41] [cursor=pointer]:
+                    - /url: /docs/concepts/data-tables/
+                - listitem [ref=e42]:
+                  - link "Interfaces" [ref=e43] [cursor=pointer]:
+                    - /url: /docs/concepts/interfaces/
+                - listitem [ref=e44]:
+                  - link "Knowledge & RAG" [ref=e45] [cursor=pointer]:
+                    - /url: /docs/concepts/knowledge/
+                - listitem [ref=e46]:
+                  - link "Agent Orchestration" [ref=e47] [cursor=pointer]:
+                    - /url: /docs/concepts/orchestration/
+                - listitem [ref=e48]:
+                  - link "Permissions" [ref=e49] [cursor=pointer]:
+                    - /url: /docs/concepts/permissions/
+                - listitem [ref=e50]:
+                  - link "Providers & Models" [ref=e51] [cursor=pointer]:
+                    - /url: /docs/concepts/providers-models/
+                - listitem [ref=e52]:
+                  - link "Tools" [ref=e53] [cursor=pointer]:
+                    - /url: /docs/concepts/tools/
+                - listitem [ref=e54]:
+                  - link "Triggers" [ref=e55] [cursor=pointer]:
+                    - /url: /docs/concepts/triggers/
+            - listitem [ref=e56]:
+              - button "Tools" [ref=e57] [cursor=pointer]:
+                - text: Tools
+                - img [ref=e58]
+              - list [ref=e60]:
+                - listitem [ref=e61]:
+                  - link "Built-in Integration Tools" [ref=e62] [cursor=pointer]:
+                    - /url: /docs/tools/built-in/
+                - listitem [ref=e63]:
+                  - link "Custom Tools" [ref=e64] [cursor=pointer]:
+                    - /url: /docs/tools/custom/
+                - listitem [ref=e65]:
+                  - link "Frappe Data Tools" [ref=e66] [cursor=pointer]:
+                    - /url: /docs/tools/frappe-data/
+                - listitem [ref=e67]:
+                  - link "Model Context Protocol (MCP) Tools" [ref=e68] [cursor=pointer]:
+                    - /url: /docs/tools/mcp/
+                - listitem [ref=e69]:
+                  - link "Publishing Tools (App Provided)" [ref=e70] [cursor=pointer]:
+                    - /url: /docs/tools/publishing/
+            - listitem [ref=e71]:
+              - link "Use Cases" [ref=e72] [cursor=pointer]:
+                - /url: /docs/use-cases/
+            - listitem [ref=e73]:
+              - link "Example Agents" [ref=e74] [cursor=pointer]:
+                - /url: /docs/examples/
+            - listitem [ref=e75]:
+              - button "Guides" [ref=e76] [cursor=pointer]:
+                - text: Guides
+                - img [ref=e77]
+              - list [ref=e79]:
+                - listitem [ref=e80]:
+                  - link "Creating Agents" [ref=e81] [cursor=pointer]:
+                    - /url: /docs/guides/creating-agents/
+                - listitem [ref=e82]:
+                  - link "Managing Agents" [ref=e83] [cursor=pointer]:
+                    - /url: /docs/guides/managing-agents/
+                - listitem [ref=e84]:
+                  - link "Monitoring & Debugging" [ref=e85] [cursor=pointer]:
+                    - /url: /docs/guides/monitoring/
+                - listitem [ref=e86]:
+                  - link "Running Agents" [ref=e87] [cursor=pointer]:
+                    - /url: /docs/guides/running-agents/
+            - listitem [ref=e88]:
+              - link "Development" [ref=e89] [cursor=pointer]:
+                - /url: /docs/development/
+            - listitem [ref=e90]:
+              - button "API" [ref=e91] [cursor=pointer]:
+                - text: API
+                - img [ref=e92]
+              - list [ref=e94]:
+                - listitem [ref=e95]:
+                  - link "API Overview" [ref=e96] [cursor=pointer]:
+                    - /url: /docs/api/
+                - listitem [ref=e97]:
+                  - link "Building on HUF" [ref=e98] [cursor=pointer]:
+                    - /url: /docs/api/app-development/
+                - listitem [ref=e99]:
+                  - link "Running Agents via API" [ref=e100] [cursor=pointer]:
+                    - /url: /docs/api/run-agent/
+            - listitem [ref=e101]:
+              - button "Chat" [ref=e102] [cursor=pointer]:
+                - text: Chat
+                - img [ref=e103]
+              - list [ref=e105]:
+                - listitem [ref=e106]:
+                  - link "Chat Overview" [ref=e107] [cursor=pointer]:
+                    - /url: /docs/chat/
+                - listitem [ref=e108]:
+                  - link "Chat Features" [ref=e109] [cursor=pointer]:
+                    - /url: /docs/chat/features/
+                - listitem [ref=e110]:
+                  - link "Voice in Chat" [ref=e111] [cursor=pointer]:
+                    - /url: /docs/chat/voice/
+            - listitem [ref=e112]:
+              - link "Coming Soon" [ref=e113] [cursor=pointer]:
+                - /url: /docs/coming-soon/
+            - listitem [ref=e114]:
+              - link "Flows" [ref=e115] [cursor=pointer]:
+                - /url: /docs/flows/
+            - listitem [ref=e116]:
+              - button "Knowledge" [ref=e117] [cursor=pointer]:
+                - text: Knowledge
+                - img [ref=e118]
+              - list [ref=e120]:
+                - listitem [ref=e121]:
+                  - link "Knowledge Base Overview" [ref=e122] [cursor=pointer]:
+                    - /url: /docs/knowledge/
+                - listitem [ref=e123]:
+                  - link "Storage Backends" [ref=e124] [cursor=pointer]:
+                    - /url: /docs/knowledge/backends/
+                - listitem [ref=e125]:
+                  - link "Retrieval & Chunking" [ref=e126] [cursor=pointer]:
+                    - /url: /docs/knowledge/retrieval/
+                - listitem [ref=e127]:
+                  - link "Knowledge Sources Guide" [ref=e128] [cursor=pointer]:
+                    - /url: /docs/knowledge/sources/
+            - listitem [ref=e129]:
+              - link "Audio, Voice & Vision" [ref=e130] [cursor=pointer]:
+                - /url: /docs/multimodal/
+            - listitem [ref=e131]:
+              - button "Permissions" [ref=e132] [cursor=pointer]:
+                - text: Permissions
+                - img [ref=e133]
+              - list [ref=e135]:
+                - listitem [ref=e136]:
+                  - link "Permissions & Security Overview" [ref=e137] [cursor=pointer]:
+                    - /url: /docs/permissions/
+                - listitem [ref=e138]:
+                  - link "Agent Access Control" [ref=e139] [cursor=pointer]:
+                    - /url: /docs/permissions/agent-access/
+                - listitem [ref=e140]:
+                  - link "Roles" [ref=e141] [cursor=pointer]:
+                    - /url: /docs/permissions/roles/
+            - listitem [ref=e142]:
+              - button "Settings" [ref=e143] [cursor=pointer]:
+                - text: Settings
+                - img [ref=e144]
+              - list [ref=e146]:
+                - listitem [ref=e147]:
+                  - link "Settings Overview" [ref=e148] [cursor=pointer]:
+                    - /url: /docs/settings/
+                - listitem [ref=e149]:
+                  - link "AI Providers & Models" [ref=e150] [cursor=pointer]:
+                    - /url: /docs/settings/providers/
+                - listitem [ref=e151]:
+                  - link "Voice Settings (STT & TTS)" [ref=e152] [cursor=pointer]:
+                    - /url: /docs/settings/stt-tts/
+      - generic [ref=e153]:
+        - button "Light" [ref=e154] [cursor=pointer]:
+          - img [ref=e155]
+          - text: Light
+        - button "Collapse sidebar" [expanded] [ref=e157] [cursor=pointer]:
+          - img [ref=e158]
+    - article [ref=e161]:
+      - generic [ref=e162]:
+        - link "Docs" [ref=e163] [cursor=pointer]:
+          - /url: /docs/quick-start/
+        - img [ref=e164]
+        - generic "Audio, Voice & Vision" [ref=e166]
+      - generic [ref=e167]:
+        - button "Copy page" [ref=e168] [cursor=pointer]:
+          - img [ref=e169]
+          - text: Copy page
+        - button [ref=e172] [cursor=pointer]:
+          - img [ref=e173]
+      - main [ref=e175]:
+        - heading "Audio, Voice & Vision" [level=1] [ref=e176]
+        - paragraph [ref=e177]: HUF agents can generate speech, transcribe audio, generate images, and accept image inputs — all powered by LiteLLM’s unified provider interface.
+        - separator [ref=e178]
+        - heading "Text-to-Speech (TTS)Permalink for this section" [level=2] [ref=e179]:
+          - text: Text-to-Speech (TTS)
+          - link "Permalink for this section" [ref=e180] [cursor=pointer]:
+            - /url: "#text-to-speech-tts"
+            - text: "#"
+        - paragraph [ref=e181]:
+          - text: HUF’s TTS capability is surfaced as the
+          - code [ref=e182]: generate_audio
+          - text: tool (
+          - code [ref=e183]: handle_generate_audio
+          - text: in
+          - code [ref=e184]: sdk_tools.py
+          - text: ). When called, the agent converts text to speech, saves the audio file as a Frappe file attachment, and creates an
+          - code [ref=e185]: Agent Message
+          - text: with
+          - code [ref=e186]: kind = "Audio"
+          - text: so the chat UI can render an audio player.
+        - heading "The generate_audio ToolPermalink for this section" [level=3] [ref=e187]:
+          - text: The
+          - code [ref=e188]: generate_audio
+          - text: Tool
+          - link "Permalink for this section" [ref=e189] [cursor=pointer]:
+            - /url: "#the-generate_audio-tool"
+            - text: "#"
+        - paragraph [ref=e190]:
+          - strong [ref=e191]: "Function:"
+          - code [ref=e192]: huf.ai.sdk_tools.handle_generate_audio
+        - table [ref=e193]:
+          - rowgroup [ref=e194]:
+            - row "Parameter Type Required Description" [ref=e195]:
+              - columnheader "Parameter" [ref=e196]
+              - columnheader "Type" [ref=e197]
+              - columnheader "Required" [ref=e198]
+              - columnheader "Description" [ref=e199]
+          - rowgroup [ref=e200]:
+            - row "input string ✅ Text to convert to speech" [ref=e201]:
+              - cell "input" [ref=e202]:
+                - code [ref=e203]: input
+              - cell "string" [ref=e204]
+              - cell "✅" [ref=e205]
+              - cell "Text to convert to speech" [ref=e206]
+            - row "voice string ❌ Voice identifier (e.g., alloy, nova, echo; or ElevenLabs voice ID)" [ref=e207]:
+              - cell "voice" [ref=e208]:
+                - code [ref=e209]: voice
+              - cell "string" [ref=e210]
+              - cell "❌" [ref=e211]
+              - cell "Voice identifier (e.g., alloy, nova, echo; or ElevenLabs voice ID)" [ref=e212]:
+                - text: Voice identifier (e.g.,
+                - code [ref=e213]: alloy
+                - text: ","
+                - code [ref=e214]: nova
+                - text: ","
+                - code [ref=e215]: echo
+                - text: ; or ElevenLabs voice ID)
+            - row "model string ❌ Override the TTS model (e.g., tts-1-hd, gemini-2.5-flash-preview-tts)" [ref=e216]:
+              - cell "model" [ref=e217]:
+                - code [ref=e218]: model
+              - cell "string" [ref=e219]
+              - cell "❌" [ref=e220]
+              - cell "Override the TTS model (e.g., tts-1-hd, gemini-2.5-flash-preview-tts)" [ref=e221]:
+                - text: Override the TTS model (e.g.,
+                - code [ref=e222]: tts-1-hd
+                - text: ","
+                - code [ref=e223]: gemini-2.5-flash-preview-tts
+                - text: )
+            - 'row "speed float ❌ Speech speed from 0.25 to 4.0 (default: 1.0)" [ref=e224]':
+              - cell "speed" [ref=e225]:
+                - code [ref=e226]: speed
+              - cell "float" [ref=e227]
+              - cell "❌" [ref=e228]
+              - 'cell "Speech speed from 0.25 to 4.0 (default: 1.0)" [ref=e229]'
+            - 'row "response_format string ❌ Audio format: mp3, opus, aac, flac, wav, pcm (default: mp3)" [ref=e230]':
+              - cell "response_format" [ref=e231]:
+                - code [ref=e232]: response_format
+              - cell "string" [ref=e233]
+              - cell "❌" [ref=e234]
+              - 'cell "Audio format: mp3, opus, aac, flac, wav, pcm (default: mp3)" [ref=e235]':
+                - text: "Audio format:"
+                - code [ref=e236]: mp3
+                - text: ","
+                - code [ref=e237]: opus
+                - text: ","
+                - code [ref=e238]: aac
+                - text: ","
+                - code [ref=e239]: flac
+                - text: ","
+                - code [ref=e240]: wav
+                - text: ","
+                - code [ref=e241]: pcm
+                - text: "(default:"
+                - code [ref=e242]: mp3
+                - text: )
+        - paragraph [ref=e243]:
+          - code [ref=e244]: agent_name
+          - text: and
+          - code [ref=e245]: conversation_id
+          - text: are injected automatically from the run context.
+        - heading "TTS Model ResolutionPermalink for this section" [level=3] [ref=e246]:
+          - text: TTS Model Resolution
+          - link "Permalink for this section" [ref=e247] [cursor=pointer]:
+            - /url: "#tts-model-resolution"
+            - text: "#"
+        - paragraph [ref=e248]: "The TTS model is resolved in priority order:"
+        - list [ref=e249]:
+          - listitem [ref=e250]:
+            - strong [ref=e251]:
+              - text: Tool-call
+              - code [ref=e252]: model
+              - text: parameter
+            - text: — highest precedence; lets the agent override per call
+          - listitem [ref=e253]:
+            - strong [ref=e254]:
+              - text: Agent’s
+              - code [ref=e255]: tts_model
+              - text: field
+            - text: — the
+            - code [ref=e256]: AI Model
+            - text: linked to the Agent DocType’s
+            - strong [ref=e257]: TTS Model
+            - text: field; API key is sourced from that model’s own provider (cross-provider TTS)
+          - listitem [ref=e258]:
+            - strong [ref=e259]: Provider default
+            - text: — auto-detected from the agent’s main provider
+        - heading "Default TTS Models by ProviderPermalink for this section" [level=3] [ref=e260]:
+          - text: Default TTS Models by Provider
+          - link "Permalink for this section" [ref=e261] [cursor=pointer]:
+            - /url: "#default-tts-models-by-provider"
+            - text: "#"
+        - table [ref=e262]:
+          - rowgroup [ref=e263]:
+            - row "Provider Default Model" [ref=e264]:
+              - columnheader "Provider" [ref=e265]
+              - columnheader "Default Model" [ref=e266]
+          - rowgroup [ref=e267]:
+            - row "OpenAI tts-1" [ref=e268]:
+              - cell "OpenAI" [ref=e269]
+              - cell "tts-1" [ref=e270]:
+                - code [ref=e271]: tts-1
+            - row "Azure tts-1" [ref=e272]:
+              - cell "Azure" [ref=e273]
+              - cell "tts-1" [ref=e274]:
+                - code [ref=e275]: tts-1
+            - row "Google / Gemini gemini/gemini-2.5-flash-preview-tts" [ref=e276]:
+              - cell "Google / Gemini" [ref=e277]
+              - cell "gemini/gemini-2.5-flash-preview-tts" [ref=e278]:
+                - code [ref=e279]: gemini/gemini-2.5-flash-preview-tts
+            - row "Vertex AI vertex_ai/gemini-2.5-flash-preview-tts" [ref=e280]:
+              - cell "Vertex AI" [ref=e281]
+              - cell "vertex_ai/gemini-2.5-flash-preview-tts" [ref=e282]:
+                - code [ref=e283]: vertex_ai/gemini-2.5-flash-preview-tts
+            - row "ElevenLabs elevenlabs/eleven_multilingual_v2" [ref=e284]:
+              - cell "ElevenLabs" [ref=e285]
+              - cell "elevenlabs/eleven_multilingual_v2" [ref=e286]:
+                - code [ref=e287]: elevenlabs/eleven_multilingual_v2
+            - row "AWS aws/polly" [ref=e288]:
+              - cell "AWS" [ref=e289]
+              - cell "aws/polly" [ref=e290]:
+                - code [ref=e291]: aws/polly
+            - row "MiniMax minimax/speech-01" [ref=e292]:
+              - cell "MiniMax" [ref=e293]
+              - cell "minimax/speech-01" [ref=e294]:
+                - code [ref=e295]: minimax/speech-01
+        - heading "Cross-Provider TTS ConfigurationPermalink for this section" [level=3] [ref=e296]:
+          - text: Cross-Provider TTS Configuration
+          - link "Permalink for this section" [ref=e297] [cursor=pointer]:
+            - /url: "#cross-provider-tts-configuration"
+            - text: "#"
+        - paragraph [ref=e298]: "You can run the main agent on one provider (e.g., Anthropic Claude for reasoning) and use a completely different provider for TTS (e.g., ElevenLabs for high-quality voice):"
+        - list [ref=e299]:
+          - listitem [ref=e300]:
+            - text: Create an
+            - strong [ref=e301]: AI Provider
+            - text: document for ElevenLabs with its API key
+          - listitem [ref=e302]:
+            - text: Create an
+            - strong [ref=e303]: AI Model
+            - text: document (e.g.,
+            - code [ref=e304]: eleven_multilingual_v2
+            - text: ) linked to that provider
+          - listitem [ref=e305]:
+            - text: On your Agent document, set
+            - strong [ref=e306]: TTS Model
+            - text: to that AI Model document
+          - listitem [ref=e307]:
+            - text: Set
+            - strong [ref=e308]: TTS Voice
+            - text: to your preferred ElevenLabs voice ID
+        - paragraph [ref=e309]:
+          - text: The
+          - code [ref=e310]: generate_audio
+          - text: tool will automatically use the ElevenLabs API key, regardless of the agent’s main provider.
+        - heading "Agent DocType TTS FieldsPermalink for this section" [level=3] [ref=e311]:
+          - text: Agent DocType TTS Fields
+          - link "Permalink for this section" [ref=e312] [cursor=pointer]:
+            - /url: "#agent-doctype-tts-fields"
+            - text: "#"
+        - table [ref=e313]:
+          - rowgroup [ref=e314]:
+            - row "Field Fieldname Description" [ref=e315]:
+              - columnheader "Field" [ref=e316]
+              - columnheader "Fieldname" [ref=e317]
+              - columnheader "Description" [ref=e318]
+          - rowgroup [ref=e319]:
+            - row "TTS Model tts_model Link to an AI Model document for dedicated TTS. When set, API key comes from this model’s own provider." [ref=e320]:
+              - cell "TTS Model" [ref=e321]:
+                - strong [ref=e322]: TTS Model
+              - cell "tts_model" [ref=e323]:
+                - code [ref=e324]: tts_model
+              - cell "Link to an AI Model document for dedicated TTS. When set, API key comes from this model’s own provider." [ref=e325]:
+                - text: Link to an
+                - code [ref=e326]: AI Model
+                - text: document for dedicated TTS. When set, API key comes from this model’s own provider.
+            - row "TTS Voice tts_voice Default voice identifier for the configured TTS model. Overridden by voice parameter passed to generate_audio." [ref=e327]:
+              - cell "TTS Voice" [ref=e328]:
+                - strong [ref=e329]: TTS Voice
+              - cell "tts_voice" [ref=e330]:
+                - code [ref=e331]: tts_voice
+              - cell "Default voice identifier for the configured TTS model. Overridden by voice parameter passed to generate_audio." [ref=e332]:
+                - text: Default voice identifier for the configured TTS model. Overridden by
+                - code [ref=e333]: voice
+                - text: parameter passed to
+                - code [ref=e334]: generate_audio
+                - text: .
+        - heading "Supported TTS VoicesPermalink for this section" [level=3] [ref=e335]:
+          - text: Supported TTS Voices
+          - link "Permalink for this section" [ref=e336] [cursor=pointer]:
+            - /url: "#supported-tts-voices"
+            - text: "#"
+        - paragraph [ref=e337]: "Each provider uses its own voice naming scheme:"
+        - list [ref=e338]:
+          - listitem [ref=e339]:
+            - strong [ref=e340]: "OpenAI:"
+            - code [ref=e341]: alloy
+            - text: ","
+            - code [ref=e342]: echo
+            - text: ","
+            - code [ref=e343]: fable
+            - text: ","
+            - code [ref=e344]: onyx
+            - text: ","
+            - code [ref=e345]: nova
+            - text: ","
+            - code [ref=e346]: shimmer
+          - listitem [ref=e347]:
+            - strong [ref=e348]: "Google Gemini:"
+            - code [ref=e349]: Aoede
+            - text: ","
+            - code [ref=e350]: Charon
+            - text: ","
+            - code [ref=e351]: Fenrir
+            - text: ","
+            - code [ref=e352]: Kore
+            - text: ","
+            - code [ref=e353]: Puck
+            - text: (and others — check Gemini docs)
+          - listitem [ref=e354]:
+            - strong [ref=e355]: "ElevenLabs:"
+            - text: Use voice IDs from your ElevenLabs account (e.g.,
+            - code [ref=e356]: 21m00Tcm4TlvDq8ikWAM
+            - text: )
+        - heading "Audio Player in ChatPermalink for this section" [level=3] [ref=e357]:
+          - text: Audio Player in Chat
+          - link "Permalink for this section" [ref=e358] [cursor=pointer]:
+            - /url: "#audio-player-in-chat"
+            - text: "#"
+        - paragraph [ref=e359]:
+          - text: When
+          - code [ref=e360]: generate_audio
+          - text: runs inside a chat conversation, it creates an
+          - code [ref=e361]: Agent Message
+          - text: with
+          - code [ref=e362]: kind = "Audio"
+          - text: . The chat frontend (
+          - code [ref=e363]: audio-player.tsx
+          - text: ) renders a native audio player for these messages, allowing users to play the generated audio inline.
+        - separator [ref=e364]
+        - heading "Speech-to-Text (STT)Permalink for this section" [level=2] [ref=e365]:
+          - text: Speech-to-Text (STT)
+          - link "Permalink for this section" [ref=e366] [cursor=pointer]:
+            - /url: "#speech-to-text-stt"
+            - text: "#"
+        - paragraph [ref=e367]:
+          - text: HUF supports speech-to-text transcription via the
+          - code [ref=e368]: handle_speech_to_text
+          - text: function in
+          - code [ref=e369]: transcription_handler.py
+          - text: . This is used to transcribe audio uploaded by users in the chat interface.
+        - heading "How STT WorksPermalink for this section" [level=3] [ref=e370]:
+          - text: How STT Works
+          - link "Permalink for this section" [ref=e371] [cursor=pointer]:
+            - /url: "#how-stt-works"
+            - text: "#"
+        - paragraph [ref=e372]:
+          - text: STT in HUF is
+          - strong [ref=e373]: provider-driven
+          - text: ": it dispatches to the"
+          - code [ref=e374]: transcribe_audio()
+          - text: method on a
+          - code [ref=e375]: "*Settings"
+          - text: singleton DocType (e.g.,
+          - code [ref=e376]: OpenAI Settings
+          - text: ","
+          - code [ref=e377]: Groq Settings
+          - text: "). The flow is:"
+        - list [ref=e378]:
+          - listitem [ref=e379]:
+            - text: User uploads an audio file (e.g.,
+            - code [ref=e380]: .webm
+            - text: recorded in browser)
+          - listitem [ref=e381]:
+            - text: Frontend calls
+            - code [ref=e382]: handle_speech_to_text
+            - text: with the Frappe
+            - code [ref=e383]: file_id
+          - listitem [ref=e384]: The function determines the provider from the conversation’s agent
+          - listitem [ref=e385]:
+            - text: It loads the corresponding
+            - code [ref=e386]: <Provider> Settings
+            - text: document
+          - listitem [ref=e387]:
+            - text: Calls
+            - code [ref=e388]: settings_doc.transcribe_audio(file_doc, kwargs)
+          - listitem [ref=e389]:
+            - text: The transcribed text is saved as an
+            - code [ref=e390]: Agent Message
+            - text: with
+            - code [ref=e391]: role = "user"
+        - heading "handle_speech_to_text ParametersPermalink for this section" [level=3] [ref=e392]:
+          - code [ref=e393]: handle_speech_to_text
+          - text: Parameters
+          - link "Permalink for this section" [ref=e394] [cursor=pointer]:
+            - /url: "#handle_speech_to_text-parameters"
+            - text: "#"
+        - table [ref=e395]:
+          - rowgroup [ref=e396]:
+            - row "Parameter Type Description" [ref=e397]:
+              - columnheader "Parameter" [ref=e398]
+              - columnheader "Type" [ref=e399]
+              - columnheader "Description" [ref=e400]
+          - rowgroup [ref=e401]:
+            - row "file_id string Frappe File document name of the uploaded audio" [ref=e402]:
+              - cell "file_id" [ref=e403]:
+                - code [ref=e404]: file_id
+              - cell "string" [ref=e405]
+              - cell "Frappe File document name of the uploaded audio" [ref=e406]
+            - 'row "file_url string Alternative: URL of the audio file" [ref=e407]':
+              - cell "file_url" [ref=e408]:
+                - code [ref=e409]: file_url
+              - cell "string" [ref=e410]
+              - 'cell "Alternative: URL of the audio file" [ref=e411]'
+            - row "language string Language code (optional; provider-dependent)" [ref=e412]:
+              - cell "language" [ref=e413]:
+                - code [ref=e414]: language
+              - cell "string" [ref=e415]
+              - cell "Language code (optional; provider-dependent)" [ref=e416]
+            - row "translate boolean Whether to translate to English (optional)" [ref=e417]:
+              - cell "translate" [ref=e418]:
+                - code [ref=e419]: translate
+              - cell "boolean" [ref=e420]
+              - cell "Whether to translate to English (optional)" [ref=e421]
+            - row "provider string Override provider (auto-detected from conversation if not set)" [ref=e422]:
+              - cell "provider" [ref=e423]:
+                - code [ref=e424]: provider
+              - cell "string" [ref=e425]
+              - cell "Override provider (auto-detected from conversation if not set)" [ref=e426]
+            - row "conversation string Agent Conversation name (used to auto-detect provider)" [ref=e427]:
+              - cell "conversation" [ref=e428]:
+                - code [ref=e429]: conversation
+              - cell "string" [ref=e430]
+              - cell "Agent Conversation name (used to auto-detect provider)" [ref=e431]:
+                - code [ref=e432]: Agent Conversation
+                - text: name (used to auto-detect provider)
+            - row "message_id string If set, updates an existing message; otherwise creates a new one" [ref=e433]:
+              - cell "message_id" [ref=e434]:
+                - code [ref=e435]: message_id
+              - cell "string" [ref=e436]
+              - cell "If set, updates an existing message; otherwise creates a new one" [ref=e437]
+        - heading "STT Model ResolutionPermalink for this section" [level=3] [ref=e438]:
+          - text: STT Model Resolution
+          - link "Permalink for this section" [ref=e439] [cursor=pointer]:
+            - /url: "#stt-model-resolution"
+            - text: "#"
+        - paragraph [ref=e440]: "Similar to TTS, the STT model follows a priority order:"
+        - list [ref=e441]:
+          - listitem [ref=e442]:
+            - strong [ref=e443]:
+              - text: Tool-call
+              - code [ref=e444]: model
+              - text: parameter
+          - listitem [ref=e445]:
+            - strong [ref=e446]:
+              - text: Agent’s
+              - code [ref=e447]: stt_model
+              - text: field
+            - text: (if configured)
+          - listitem [ref=e448]:
+            - strong [ref=e449]: Provider default
+            - text: — auto-detected from the agent’s main provider
+        - heading "Default STT Models by ProviderPermalink for this section" [level=3] [ref=e450]:
+          - text: Default STT Models by Provider
+          - link "Permalink for this section" [ref=e451] [cursor=pointer]:
+            - /url: "#default-stt-models-by-provider"
+            - text: "#"
+        - table [ref=e452]:
+          - rowgroup [ref=e453]:
+            - row "Provider Default Model" [ref=e454]:
+              - columnheader "Provider" [ref=e455]
+              - columnheader "Default Model" [ref=e456]
+          - rowgroup [ref=e457]:
+            - row "OpenAI whisper-1" [ref=e458]:
+              - cell "OpenAI" [ref=e459]
+              - cell "whisper-1" [ref=e460]:
+                - code [ref=e461]: whisper-1
+            - row "Azure whisper-1" [ref=e462]:
+              - cell "Azure" [ref=e463]
+              - cell "whisper-1" [ref=e464]:
+                - code [ref=e465]: whisper-1
+            - row "Groq groq/whisper-large-v3" [ref=e466]:
+              - cell "Groq" [ref=e467]
+              - cell "groq/whisper-large-v3" [ref=e468]:
+                - code [ref=e469]: groq/whisper-large-v3
+            - row "Deepgram deepgram/nova-2" [ref=e470]:
+              - cell "Deepgram" [ref=e471]
+              - cell "deepgram/nova-2" [ref=e472]:
+                - code [ref=e473]: deepgram/nova-2
+        - paragraph [ref=e474]:
+          - text: If no STT model is available for the provider, HUF falls back to
+          - code [ref=e475]: whisper-1
+          - text: .
+        - separator [ref=e476]
+        - heading "ElevenLabs SettingsPermalink for this section" [level=2] [ref=e477]:
+          - text: ElevenLabs Settings
+          - link "Permalink for this section" [ref=e478] [cursor=pointer]:
+            - /url: "#elevenlabs-settings"
+            - text: "#"
+        - paragraph [ref=e479]:
+          - code [ref=e480]: Elevenlabs Settings
+          - text: is a singleton DocType (
+          - code [ref=e481]: "issingle: 1"
+          - text: ) used for ElevenLabs integration configuration.
+        - table [ref=e482]:
+          - rowgroup [ref=e483]:
+            - row "Field Fieldname Type Description" [ref=e484]:
+              - columnheader "Field" [ref=e485]
+              - columnheader "Fieldname" [ref=e486]
+              - columnheader "Type" [ref=e487]
+              - columnheader "Description" [ref=e488]
+          - rowgroup [ref=e489]:
+            - row "Provider provider Link (AI Provider) Link to the ElevenLabs AI Provider document (API key is fetched from here)" [ref=e490]:
+              - cell "Provider" [ref=e491]:
+                - strong [ref=e492]: Provider
+              - cell "provider" [ref=e493]:
+                - code [ref=e494]: provider
+              - cell "Link (AI Provider)" [ref=e495]
+              - cell "Link to the ElevenLabs AI Provider document (API key is fetched from here)" [ref=e496]:
+                - text: Link to the ElevenLabs
+                - code [ref=e497]: AI Provider
+                - text: document (API key is fetched from here)
+            - row "Agent ID agent_id Data ElevenLabs conversational AI agent ID (for ElevenLabs voice agent integration)" [ref=e498]:
+              - cell "Agent ID" [ref=e499]:
+                - strong [ref=e500]: Agent ID
+              - cell "agent_id" [ref=e501]:
+                - code [ref=e502]: agent_id
+              - cell "Data" [ref=e503]
+              - cell "ElevenLabs conversational AI agent ID (for ElevenLabs voice agent integration)" [ref=e504]
+            - row "Webhook Secret webhook_secret Password Secret for verifying ElevenLabs webhook payloads" [ref=e505]:
+              - cell "Webhook Secret" [ref=e506]:
+                - strong [ref=e507]: Webhook Secret
+              - cell "webhook_secret" [ref=e508]:
+                - code [ref=e509]: webhook_secret
+              - cell "Password" [ref=e510]
+              - cell "Secret for verifying ElevenLabs webhook payloads" [ref=e511]
+        - paragraph [ref=e512]:
+          - text: "Access via:"
+          - strong [ref=e513]: HUF → Elevenlabs Settings
+        - separator [ref=e514]
+        - heading "Groq SettingsPermalink for this section" [level=2] [ref=e515]:
+          - text: Groq Settings
+          - link "Permalink for this section" [ref=e516] [cursor=pointer]:
+            - /url: "#groq-settings"
+            - text: "#"
+        - paragraph [ref=e517]:
+          - code [ref=e518]: Groq Settings
+          - text: is a singleton DocType for configuring the Groq STT endpoint.
+        - table [ref=e519]:
+          - rowgroup [ref=e520]:
+            - row "Field Fieldname Type Description" [ref=e521]:
+              - columnheader "Field" [ref=e522]
+              - columnheader "Fieldname" [ref=e523]
+              - columnheader "Type" [ref=e524]
+              - columnheader "Description" [ref=e525]
+          - rowgroup [ref=e526]:
+            - row "Provider provider Link (AI Provider) Link to the Groq AI Provider document" [ref=e527]:
+              - cell "Provider" [ref=e528]:
+                - strong [ref=e529]: Provider
+              - cell "provider" [ref=e530]:
+                - code [ref=e531]: provider
+              - cell "Link (AI Provider)" [ref=e532]
+              - cell "Link to the Groq AI Provider document" [ref=e533]:
+                - text: Link to the Groq
+                - code [ref=e534]: AI Provider
+                - text: document
+            - row "API URL api_url Data Groq transcription API endpoint" [ref=e535]:
+              - cell "API URL" [ref=e536]:
+                - strong [ref=e537]: API URL
+              - cell "api_url" [ref=e538]:
+                - code [ref=e539]: api_url
+              - cell "Data" [ref=e540]
+              - cell "Groq transcription API endpoint" [ref=e541]
+            - row "Method method Select POST or GET" [ref=e542]:
+              - cell "Method" [ref=e543]:
+                - strong [ref=e544]: Method
+              - cell "method" [ref=e545]:
+                - code [ref=e546]: method
+              - cell "Select" [ref=e547]
+              - cell "POST or GET" [ref=e548]:
+                - code [ref=e549]: POST
+                - text: or
+                - code [ref=e550]: GET
+            - row "Auth Type auth_type Select Bearer Token, API Key Header, or None" [ref=e551]:
+              - cell "Auth Type" [ref=e552]:
+                - strong [ref=e553]: Auth Type
+              - cell "auth_type" [ref=e554]:
+                - code [ref=e555]: auth_type
+              - cell "Select" [ref=e556]
+              - cell "Bearer Token, API Key Header, or None" [ref=e557]:
+                - code [ref=e558]: Bearer Token
+                - text: ","
+                - code [ref=e559]: API Key Header
+                - text: ", or"
+                - code [ref=e560]: None
+            - row "File Param file_param Data Multipart form field name for the audio file" [ref=e561]:
+              - cell "File Param" [ref=e562]:
+                - strong [ref=e563]: File Param
+              - cell "file_param" [ref=e564]:
+                - code [ref=e565]: file_param
+              - cell "Data" [ref=e566]
+              - cell "Multipart form field name for the audio file" [ref=e567]
+            - row "Model model Data Groq model to use for transcription (e.g., whisper-large-v3)" [ref=e568]:
+              - cell "Model" [ref=e569]:
+                - strong [ref=e570]: Model
+              - cell "model" [ref=e571]:
+                - code [ref=e572]: model
+              - cell "Data" [ref=e573]
+              - cell "Groq model to use for transcription (e.g., whisper-large-v3)" [ref=e574]:
+                - text: Groq model to use for transcription (e.g.,
+                - code [ref=e575]: whisper-large-v3
+                - text: )
+            - 'row "Enabled enabled Check Whether this Groq STT configuration is active (default: off)" [ref=e576]':
+              - cell "Enabled" [ref=e577]:
+                - strong [ref=e578]: Enabled
+              - cell "enabled" [ref=e579]:
+                - code [ref=e580]: enabled
+              - cell "Check" [ref=e581]
+              - 'cell "Whether this Groq STT configuration is active (default: off)" [ref=e582]'
+            - row "API Key api_key Password Fetched from the linked AI Provider (read-only)" [ref=e583]:
+              - cell "API Key" [ref=e584]:
+                - strong [ref=e585]: API Key
+              - cell "api_key" [ref=e586]:
+                - code [ref=e587]: api_key
+              - cell "Password" [ref=e588]
+              - cell "Fetched from the linked AI Provider (read-only)" [ref=e589]
+            - row "Response Path response_path Data Dot-path to extract transcript from response JSON (e.g., text)" [ref=e590]:
+              - cell "Response Path" [ref=e591]:
+                - strong [ref=e592]: Response Path
+              - cell "response_path" [ref=e593]:
+                - code [ref=e594]: response_path
+              - cell "Data" [ref=e595]
+              - cell "Dot-path to extract transcript from response JSON (e.g., text)" [ref=e596]:
+                - text: Dot-path to extract transcript from response JSON (e.g.,
+                - code [ref=e597]: text
+                - text: )
+        - paragraph [ref=e598]:
+          - text: "Access via:"
+          - strong [ref=e599]: HUF → Groq Settings
+        - separator [ref=e600]
+        - heading "OpenAI SettingsPermalink for this section" [level=2] [ref=e601]:
+          - text: OpenAI Settings
+          - link "Permalink for this section" [ref=e602] [cursor=pointer]:
+            - /url: "#openai-settings"
+            - text: "#"
+        - paragraph [ref=e603]:
+          - code [ref=e604]: OpenAI Settings
+          - text: is a singleton DocType for configuring the OpenAI STT endpoint (Whisper).
+        - table [ref=e605]:
+          - rowgroup [ref=e606]:
+            - row "Field Fieldname Type Description" [ref=e607]:
+              - columnheader "Field" [ref=e608]
+              - columnheader "Fieldname" [ref=e609]
+              - columnheader "Type" [ref=e610]
+              - columnheader "Description" [ref=e611]
+          - rowgroup [ref=e612]:
+            - row "Provider provider Link (AI Provider) Link to the OpenAI AI Provider document" [ref=e613]:
+              - cell "Provider" [ref=e614]:
+                - strong [ref=e615]: Provider
+              - cell "provider" [ref=e616]:
+                - code [ref=e617]: provider
+              - cell "Link (AI Provider)" [ref=e618]
+              - cell "Link to the OpenAI AI Provider document" [ref=e619]:
+                - text: Link to the OpenAI
+                - code [ref=e620]: AI Provider
+                - text: document
+            - 'row "API URL api_url Data OpenAI transcription API endpoint (default: https://api.openai.com/v1/audio/transcriptions)" [ref=e621]':
+              - cell "API URL" [ref=e622]:
+                - strong [ref=e623]: API URL
+              - cell "api_url" [ref=e624]:
+                - code [ref=e625]: api_url
+              - cell "Data" [ref=e626]
+              - 'cell "OpenAI transcription API endpoint (default: https://api.openai.com/v1/audio/transcriptions)" [ref=e627]':
+                - text: "OpenAI transcription API endpoint (default:"
+                - code [ref=e628]: https://api.openai.com/v1/audio/transcriptions
+                - text: )
+            - row "Method method Select POST or GET" [ref=e629]:
+              - cell "Method" [ref=e630]:
+                - strong [ref=e631]: Method
+              - cell "method" [ref=e632]:
+                - code [ref=e633]: method
+              - cell "Select" [ref=e634]
+              - cell "POST or GET" [ref=e635]:
+                - code [ref=e636]: POST
+                - text: or
+                - code [ref=e637]: GET
+            - row "Auth Type auth_type Select Bearer Token, API Key Header, or None" [ref=e638]:
+              - cell "Auth Type" [ref=e639]:
+                - strong [ref=e640]: Auth Type
+              - cell "auth_type" [ref=e641]:
+                - code [ref=e642]: auth_type
+              - cell "Select" [ref=e643]
+              - cell "Bearer Token, API Key Header, or None" [ref=e644]:
+                - code [ref=e645]: Bearer Token
+                - text: ","
+                - code [ref=e646]: API Key Header
+                - text: ", or"
+                - code [ref=e647]: None
+            - row "File Param file_param Data Multipart form field name for the audio file (e.g., file)" [ref=e648]:
+              - cell "File Param" [ref=e649]:
+                - strong [ref=e650]: File Param
+              - cell "file_param" [ref=e651]:
+                - code [ref=e652]: file_param
+              - cell "Data" [ref=e653]
+              - cell "Multipart form field name for the audio file (e.g., file)" [ref=e654]:
+                - text: Multipart form field name for the audio file (e.g.,
+                - code [ref=e655]: file
+                - text: )
+            - row "Model model Data Whisper model to use (e.g., whisper-1)" [ref=e656]:
+              - cell "Model" [ref=e657]:
+                - strong [ref=e658]: Model
+              - cell "model" [ref=e659]:
+                - code [ref=e660]: model
+              - cell "Data" [ref=e661]
+              - cell "Whisper model to use (e.g., whisper-1)" [ref=e662]:
+                - text: Whisper model to use (e.g.,
+                - code [ref=e663]: whisper-1
+                - text: )
+            - 'row "Enabled enabled Check Whether this OpenAI STT configuration is active (default: on)" [ref=e664]':
+              - cell "Enabled" [ref=e665]:
+                - strong [ref=e666]: Enabled
+              - cell "enabled" [ref=e667]:
+                - code [ref=e668]: enabled
+              - cell "Check" [ref=e669]
+              - 'cell "Whether this OpenAI STT configuration is active (default: on)" [ref=e670]'
+            - row "API Key api_key Password Fetched from the linked AI Provider (read-only)" [ref=e671]:
+              - cell "API Key" [ref=e672]:
+                - strong [ref=e673]: API Key
+              - cell "api_key" [ref=e674]:
+                - code [ref=e675]: api_key
+              - cell "Password" [ref=e676]
+              - cell "Fetched from the linked AI Provider (read-only)" [ref=e677]
+            - row "Response Path response_path Data Dot-path to extract transcript from response JSON (e.g., text)" [ref=e678]:
+              - cell "Response Path" [ref=e679]:
+                - strong [ref=e680]: Response Path
+              - cell "response_path" [ref=e681]:
+                - code [ref=e682]: response_path
+              - cell "Data" [ref=e683]
+              - cell "Dot-path to extract transcript from response JSON (e.g., text)" [ref=e684]:
+                - text: Dot-path to extract transcript from response JSON (e.g.,
+                - code [ref=e685]: text
+                - text: )
+        - paragraph [ref=e686]:
+          - text: "Access via:"
+          - strong [ref=e687]: HUF → OpenAI Settings
+        - separator [ref=e688]
+        - heading "Image GenerationPermalink for this section" [level=2] [ref=e689]:
+          - text: Image Generation
+          - link "Permalink for this section" [ref=e690] [cursor=pointer]:
+            - /url: "#image-generation"
+            - text: "#"
+        - paragraph [ref=e691]:
+          - text: HUF agents can generate images using the
+          - code [ref=e692]: generate_image
+          - text: tool (
+          - code [ref=e693]: handle_generate_image
+          - text: in
+          - code [ref=e694]: sdk_tools.py
+          - text: ). Generated images are saved as Frappe file attachments and linked to the conversation.
+        - heading "The generate_image ToolPermalink for this section" [level=3] [ref=e695]:
+          - text: The
+          - code [ref=e696]: generate_image
+          - text: Tool
+          - link "Permalink for this section" [ref=e697] [cursor=pointer]:
+            - /url: "#the-generate_image-tool"
+            - text: "#"
+        - paragraph [ref=e698]:
+          - strong [ref=e699]: "Function:"
+          - code [ref=e700]: huf.ai.sdk_tools.handle_generate_image
+        - table [ref=e701]:
+          - rowgroup [ref=e702]:
+            - row "Parameter Type Required Description" [ref=e703]:
+              - columnheader "Parameter" [ref=e704]
+              - columnheader "Type" [ref=e705]
+              - columnheader "Required" [ref=e706]
+              - columnheader "Description" [ref=e707]
+          - rowgroup [ref=e708]:
+            - row "prompt string ✅ Text description of the image to generate" [ref=e709]:
+              - cell "prompt" [ref=e710]:
+                - code [ref=e711]: prompt
+              - cell "string" [ref=e712]
+              - cell "✅" [ref=e713]
+              - cell "Text description of the image to generate" [ref=e714]
+            - 'row "size string ❌ Image dimensions: 1024x1024, 1792x1024, 1024x1792, etc. (default: 1024x1024)" [ref=e715]':
+              - cell "size" [ref=e716]:
+                - code [ref=e717]: size
+              - cell "string" [ref=e718]
+              - cell "❌" [ref=e719]
+              - 'cell "Image dimensions: 1024x1024, 1792x1024, 1024x1792, etc. (default: 1024x1024)" [ref=e720]':
+                - text: "Image dimensions:"
+                - code [ref=e721]: 1024x1024
+                - text: ","
+                - code [ref=e722]: 1792x1024
+                - text: ","
+                - code [ref=e723]: 1024x1792
+                - text: ", etc. (default:"
+                - code [ref=e724]: 1024x1024
+                - text: )
+            - 'row "quality string ❌ Image quality: standard, hd, high, medium, low (default: standard)" [ref=e725]':
+              - cell "quality" [ref=e726]:
+                - code [ref=e727]: quality
+              - cell "string" [ref=e728]
+              - cell "❌" [ref=e729]
+              - 'cell "Image quality: standard, hd, high, medium, low (default: standard)" [ref=e730]':
+                - text: "Image quality:"
+                - code [ref=e731]: standard
+                - text: ","
+                - code [ref=e732]: hd
+                - text: ","
+                - code [ref=e733]: high
+                - text: ","
+                - code [ref=e734]: medium
+                - text: ","
+                - code [ref=e735]: low
+                - text: "(default:"
+                - code [ref=e736]: standard
+                - text: )
+            - 'row "n integer ❌ Number of images to generate (1–10; default: 1)" [ref=e737]':
+              - cell "n" [ref=e738]:
+                - code [ref=e739]: "n"
+              - cell "integer" [ref=e740]
+              - cell "❌" [ref=e741]
+              - 'cell "Number of images to generate (1–10; default: 1)" [ref=e742]'
+        - paragraph [ref=e743]:
+          - code [ref=e744]: agent_name
+          - text: and
+          - code [ref=e745]: conversation_id
+          - text: are injected automatically from context.
+        - heading "Image Model ResolutionPermalink for this section" [level=3] [ref=e746]:
+          - text: Image Model Resolution
+          - link "Permalink for this section" [ref=e747] [cursor=pointer]:
+            - /url: "#image-model-resolution"
+            - text: "#"
+        - paragraph [ref=e748]: "The image generation model is resolved in priority order:"
+        - list [ref=e749]:
+          - listitem [ref=e750]:
+            - strong [ref=e751]:
+              - text: Agent’s
+              - code [ref=e752]: image_generation_model
+              - text: field
+            - text: — link to a specific
+            - code [ref=e753]: AI Model
+            - text: document
+          - listitem [ref=e754]:
+            - strong [ref=e755]: Provider default
+            - text: — auto-detected from the agent’s main provider
+        - heading "Default Image Models by ProviderPermalink for this section" [level=3] [ref=e756]:
+          - text: Default Image Models by Provider
+          - link "Permalink for this section" [ref=e757] [cursor=pointer]:
+            - /url: "#default-image-models-by-provider"
+            - text: "#"
+        - table [ref=e758]:
+          - rowgroup [ref=e759]:
+            - row "Provider Default Model" [ref=e760]:
+              - columnheader "Provider" [ref=e761]
+              - columnheader "Default Model" [ref=e762]
+          - rowgroup [ref=e763]:
+            - row "OpenAI dall-e-3" [ref=e764]:
+              - cell "OpenAI" [ref=e765]
+              - cell "dall-e-3" [ref=e766]:
+                - code [ref=e767]: dall-e-3
+            - row "Azure dall-e-3" [ref=e768]:
+              - cell "Azure" [ref=e769]
+              - cell "dall-e-3" [ref=e770]:
+                - code [ref=e771]: dall-e-3
+            - row "OpenRouter dall-e-3" [ref=e772]:
+              - cell "OpenRouter" [ref=e773]
+              - cell "dall-e-3" [ref=e774]:
+                - code [ref=e775]: dall-e-3
+            - row "Google google/gemini-2.5-flash-image" [ref=e776]:
+              - cell "Google" [ref=e777]
+              - cell "google/gemini-2.5-flash-image" [ref=e778]:
+                - code [ref=e779]: google/gemini-2.5-flash-image
+            - row "Vertex AI vertex_ai/imagegeneration@006" [ref=e780]:
+              - cell "Vertex AI" [ref=e781]
+              - cell "vertex_ai/imagegeneration@006" [ref=e782]:
+                - code [ref=e783]: vertex_ai/imagegeneration@006
+            - row "AWS Bedrock bedrock/stability.stable-diffusion-xl-v0" [ref=e784]:
+              - cell "AWS Bedrock" [ref=e785]
+              - cell "bedrock/stability.stable-diffusion-xl-v0" [ref=e786]:
+                - code [ref=e787]: bedrock/stability.stable-diffusion-xl-v0
+            - row "Recraft recraft/recraftv3" [ref=e788]:
+              - cell "Recraft" [ref=e789]
+              - cell "recraft/recraftv3" [ref=e790]:
+                - code [ref=e791]: recraft/recraftv3
+        - heading "How Generated Images Are StoredPermalink for this section" [level=3] [ref=e792]:
+          - text: How Generated Images Are Stored
+          - link "Permalink for this section" [ref=e793] [cursor=pointer]:
+            - /url: "#how-generated-images-are-stored"
+            - text: "#"
+        - paragraph [ref=e794]: "Each generated image is:"
+        - list [ref=e795]:
+          - listitem [ref=e796]: Downloaded (URL) or decoded (base64) from the provider response
+          - listitem [ref=e797]:
+            - text: Saved as a Frappe
+            - code [ref=e798]: File
+            - text: document (attached to the
+            - code [ref=e799]: Agent Message
+            - text: )
+          - listitem [ref=e800]:
+            - text: An
+            - code [ref=e801]: Agent Message
+            - text: is created with
+            - code [ref=e802]: kind = "Image"
+            - text: pointing to the file
+          - listitem [ref=e803]: The image URL is returned to the agent in the tool response
+        - heading "Agent image_generation_model FieldPermalink for this section" [level=3] [ref=e804]:
+          - text: Agent
+          - code [ref=e805]: image_generation_model
+          - text: Field
+          - link "Permalink for this section" [ref=e806] [cursor=pointer]:
+            - /url: "#agent-image_generation_model-field"
+            - text: "#"
+        - paragraph [ref=e807]:
+          - text: Set this on the
+          - strong [ref=e808]: Agent
+          - text: "document (Advanced Settings section) to pin the agent to a specific image model:"
+        - list [ref=e809]:
+          - listitem [ref=e810]:
+            - text: Create an
+            - strong [ref=e811]: AI Model
+            - text: document for your image model (e.g.,
+            - code [ref=e812]: dall-e-3
+            - text: linked to OpenAI provider)
+          - listitem [ref=e813]:
+            - text: On the Agent, set
+            - strong [ref=e814]: Image Generation Model
+            - text: to that AI Model
+          - listitem [ref=e815]:
+            - text: The agent will use that model for all
+            - code [ref=e816]: generate_image
+            - text: calls
+        - separator [ref=e817]
+        - heading "Vision / Image InputPermalink for this section" [level=2] [ref=e818]:
+          - text: Vision / Image Input
+          - link "Permalink for this section" [ref=e819] [cursor=pointer]:
+            - /url: "#vision--image-input"
+            - text: "#"
+        - paragraph [ref=e820]:
+          - text: HUF agents can process images passed as part of conversation messages. Vision is handled natively through LiteLLM’s
+          - code [ref=e821]: image_url
+          - text: message format — no special tool is needed.
+        - heading "Supported Vision ModelsPermalink for this section" [level=3] [ref=e822]:
+          - text: Supported Vision Models
+          - link "Permalink for this section" [ref=e823] [cursor=pointer]:
+            - /url: "#supported-vision-models"
+            - text: "#"
+        - paragraph [ref=e824]: "Any model that supports vision through LiteLLM works automatically:"
+        - list [ref=e825]:
+          - listitem [ref=e826]:
+            - strong [ref=e827]: "OpenAI:"
+            - code [ref=e828]: gpt-4o
+            - text: ","
+            - code [ref=e829]: gpt-4o-mini
+            - text: ","
+            - code [ref=e830]: gpt-4-turbo
+          - listitem [ref=e831]:
+            - strong [ref=e832]: "Anthropic:"
+            - code [ref=e833]: claude-3-5-sonnet-20241022
+            - text: ","
+            - code [ref=e834]: claude-3-opus
+            - text: ","
+            - code [ref=e835]: claude-3-haiku
+          - listitem [ref=e836]:
+            - strong [ref=e837]: "Google:"
+            - code [ref=e838]: gemini-1.5-pro
+            - text: ","
+            - code [ref=e839]: gemini-1.5-flash
+            - text: ","
+            - code [ref=e840]: gemini-2.0-flash
+        - heading "How Image Input WorksPermalink for this section" [level=3] [ref=e841]:
+          - text: How Image Input Works
+          - link "Permalink for this section" [ref=e842] [cursor=pointer]:
+            - /url: "#how-image-input-works"
+            - text: "#"
+        - paragraph [ref=e843]: "When a user uploads an image in the chat, the frontend:"
+        - list [ref=e844]:
+          - listitem [ref=e845]: Uploads the file to Frappe and gets a file URL
+          - listitem [ref=e846]:
+            - text: Includes the image in the message content as an
+            - code [ref=e847]: image_url
+            - text: "object in LiteLLM’s format:"
+        - code [ref=e850]:
+          - generic [ref=e851]: "{"
+          - generic [ref=e852]: "\"role\": \"user\","
+          - generic [ref=e853]: "\"content\": ["
+          - generic [ref=e854]: "{\"type\": \"text\", \"text\": \"What is in this image?\"},"
+          - generic [ref=e855]: "{\"type\": \"image_url\", \"image_url\": {\"url\": \"data:image/jpeg;base64,...\"}}"
+          - generic [ref=e856]: "]"
+          - generic [ref=e857]: "}"
+        - list [ref=e858]:
+          - listitem [ref=e859]: The agent’s vision-capable model processes the image and responds
+        - heading "File Attachment TriggersPermalink for this section" [level=3] [ref=e860]:
+          - text: File Attachment Triggers
+          - link "Permalink for this section" [ref=e861] [cursor=pointer]:
+            - /url: "#file-attachment-triggers"
+            - text: "#"
+        - paragraph [ref=e862]:
+          - text: The Agent Trigger system supports
+          - code [ref=e863]: after_insert
+          - text: and other doc events on the
+          - code [ref=e864]: File
+          - text: DocType. You can configure an agent to automatically process uploaded files using a
+          - strong [ref=e865]: Doc Event
+          - text: trigger on
+          - code [ref=e866]: File
+          - text: .
+        - separator [ref=e867]
+        - heading "Audio Message KindPermalink for this section" [level=2] [ref=e868]:
+          - text: Audio Message Kind
+          - link "Permalink for this section" [ref=e869] [cursor=pointer]:
+            - /url: "#audio-message-kind"
+            - text: "#"
+        - paragraph [ref=e870]:
+          - text: Agent messages in a conversation can have a
+          - code [ref=e871]: kind
+          - text: "field that determines how the chat UI renders them:"
+        - table [ref=e872]:
+          - rowgroup [ref=e873]:
+            - row "kind Value Rendering" [ref=e874]:
+              - columnheader "kind Value" [ref=e875]:
+                - code [ref=e876]: kind
+                - text: Value
+              - columnheader "Rendering" [ref=e877]
+          - rowgroup [ref=e878]:
+            - row "Message Standard text bubble" [ref=e879]:
+              - cell "Message" [ref=e880]:
+                - code [ref=e881]: Message
+              - cell "Standard text bubble" [ref=e882]
+            - row "Tool Call Collapsible tool call display" [ref=e883]:
+              - cell "Tool Call" [ref=e884]:
+                - code [ref=e885]: Tool Call
+              - cell "Collapsible tool call display" [ref=e886]
+            - row "Tool Result Collapsible tool result display" [ref=e887]:
+              - cell "Tool Result" [ref=e888]:
+                - code [ref=e889]: Tool Result
+              - cell "Collapsible tool result display" [ref=e890]
+            - row "Audio Audio player (rendered by audio-player.tsx)" [ref=e891]:
+              - cell "Audio" [ref=e892]:
+                - code [ref=e893]: Audio
+              - cell "Audio player (rendered by audio-player.tsx)" [ref=e894]:
+                - text: Audio player (rendered by
+                - code [ref=e895]: audio-player.tsx
+                - text: )
+            - row "Image Inline image display" [ref=e896]:
+              - cell "Image" [ref=e897]:
+                - code [ref=e898]: Image
+              - cell "Inline image display" [ref=e899]
+            - row "Error Error message display" [ref=e900]:
+              - cell "Error" [ref=e901]:
+                - code [ref=e902]: Error
+              - cell "Error message display" [ref=e903]
+        - paragraph [ref=e904]:
+          - text: Audio messages (
+          - code [ref=e905]: kind = "Audio"
+          - text: ) created by
+          - code [ref=e906]: handle_generate_audio
+          - text: are displayed with a native HTML5 audio player in the HUF chat interface. The audio file URL is fetched from the Frappe File attachment linked to the message.
+        - separator [ref=e907]
+        - heading "Setup ChecklistPermalink for this section" [level=2] [ref=e908]:
+          - text: Setup Checklist
+          - link "Permalink for this section" [ref=e909] [cursor=pointer]:
+            - /url: "#setup-checklist"
+            - text: "#"
+        - generic [ref=e910]:
+          - heading "Configure your AI ProviderPermalink for this section" [level=3] [ref=e911]:
+            - text: Configure your AI Provider
+            - link "Permalink for this section" [ref=e912] [cursor=pointer]:
+              - /url: "#configure-your-ai-provider"
+              - text: "#"
+          - paragraph [ref=e913]:
+            - text: Go to
+            - strong [ref=e914]: HUF → AI Provider
+            - text: and ensure the provider you want to use for TTS/STT/image generation has its
+            - strong [ref=e915]: API Key
+            - text: set.
+          - heading "Set up provider-specific SettingsPermalink for this section" [level=3] [ref=e916]:
+            - text: Set up provider-specific Settings
+            - link "Permalink for this section" [ref=e917] [cursor=pointer]:
+              - /url: "#set-up-provider-specific-settings"
+              - text: "#"
+          - paragraph [ref=e918]:
+            - text: "For OpenAI STT:"
+            - strong [ref=e919]: HUF → OpenAI Settings
+            - text: → link to your OpenAI provider, set API URL and model.
+          - paragraph [ref=e920]:
+            - text: "For Groq STT:"
+            - strong [ref=e921]: HUF → Groq Settings
+            - text: → link to your Groq provider, enable it.
+          - paragraph [ref=e922]:
+            - text: "For ElevenLabs TTS:"
+            - strong [ref=e923]: HUF → Elevenlabs Settings
+            - text: → link to your ElevenLabs provider.
+          - heading "Configure the AgentPermalink for this section" [level=3] [ref=e924]:
+            - text: Configure the Agent
+            - link "Permalink for this section" [ref=e925] [cursor=pointer]:
+              - /url: "#configure-the-agent"
+              - text: "#"
+          - paragraph [ref=e926]:
+            - text: On your
+            - strong [ref=e927]: Agent
+            - text: "document:"
+          - list [ref=e928]:
+            - listitem [ref=e929]:
+              - text: Set
+              - strong [ref=e930]: TTS Model
+              - text: and
+              - strong [ref=e931]: TTS Voice
+              - text: for cross-provider TTS (optional)
+            - listitem [ref=e932]:
+              - text: Set
+              - strong [ref=e933]: Image Generation Model
+              - text: to pin to a specific image model (optional)
+          - heading "Add audio/vision toolsPermalink for this section" [level=3] [ref=e934]:
+            - text: Add audio/vision tools
+            - link "Permalink for this section" [ref=e935] [cursor=pointer]:
+              - /url: "#add-audiovision-tools"
+              - text: "#"
+          - paragraph [ref=e936]:
+            - text: Create
+            - code [ref=e937]: Agent Tool Function
+            - text: documents pointing to
+            - code [ref=e938]: huf.ai.sdk_tools.handle_generate_audio
+            - text: and/or
+            - code [ref=e939]: huf.ai.sdk_tools.handle_generate_image
+            - text: ", then add them to your agent’s tool list."
+      - generic [ref=e940]:
+        - text: Last updated on
+        - time [ref=e941]: June 11, 2026
+      - generic [ref=e942]:
+        - link "Knowledge Sources Guide" [ref=e943] [cursor=pointer]:
+          - /url: /docs/knowledge/sources/
+          - img [ref=e944]
+          - text: Knowledge Sources Guide
+        - link "Permissions & Security Overview" [ref=e946] [cursor=pointer]:
+          - /url: /docs/permissions/
+          - text: Permissions & Security Overview
+          - img [ref=e947]
+  - generic [ref=e949]:
+    - separator [ref=e950]
+    - contentinfo [ref=e951]:
+      - text: AGPL 2026 ©
+      - link "Tridz Technologies Ltd" [ref=e952] [cursor=pointer]:
+        - /url: https://tridz.com

@@ -1,0 +1,648 @@
+---
+sidebarTitle: حالات الاستخدام
+---
+
+import { Callout } from 'nextra/components'
+
+# حالات الاستخدام الشائعة
+
+يمكن لوكلاء Huf أتمتة مجموعة واسعة من المهام عبر نظام Frappe الخاص بك. فيما يلي حالات استخدام شائعة لإلهام تنفيذاتك الخاصة.
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## أتمتة دعم العملاء
+
+أتمتة سير عمل الدعم الشائعة حتى يتمكن فريقك من التركيز على المشكلات المعقدة والعالية التفاعل مع العملاء.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        يقضي فريق الدعم وقتاً طويلاً في الأسئلة المتكررة وتوجيه التذاكر.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يتولى الوكيل الذكي الاستفسارات الشائعة، ويوجه المشكلات المعقدة، ويقدم ردوداً فورية.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">الإجابة على الأسئلة الشائعة</span> الأسئلة الشائعة حول المنتجات والخدمات والسياسات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">توجيه التذاكر</span> تحليل التذاكر وتعيينها للفريق الصحيح</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">البحث عن المعلومات</span> استرداد سجل العميل، وحالة الطلب، وتفاصيل الحساب</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التصعيد</span> تحديد المشكلات العاجلة وتصعيدها بالشكل المناسب</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">المتابعة</span> جدولة المتابعات والتذكيرات</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get Document (Customer, Support Ticket) · Get List (Support Ticket with filters) · Create Document (Support Ticket) · Update Document (Support Ticket) · HTTP Request (for Slack/Email notifications)" />
+      <AgentPrompt title="مساعد دعم العملاء">
+        أنت مساعد دعم العملاء. مهمتك هي:
+        1. الإجابة على الأسئلة الشائعة حول المنتجات والطلبات والسياسات
+        2. البحث عن معلومات العملاء عند الطلب
+        3. إنشاء تذاكر دعم للمشكلات التي لا يمكنك حلها
+        4. توجيه التذاكر إلى الفرق المناسبة بناءً على نوع المشكلة
+        5. تصعيد المشكلات العاجلة فوراً
+
+        كن دائماً مهذباً ومحترفاً ومفيداً. إذا لم تكن تعرف
+        شيئاً، أنشئ تذكرة دعم وأبلغ المستخدم بذلك.
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Support Ticket</div>
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">التواصل على مدار الساعة</span> ردود فورية في أي وقت</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">حل أسرع</span> حل المشكلات الشائعة فوراً</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">توجيه أفضل</span> وصول التذاكر إلى الفريق الصحيح من المرة الأولى</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">جودة متسقة</span> نفس الردود عالية الجودة في كل مرة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تركيز الفريق</span> يتولى الوكلاء البشريون الحالات المعقدة</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## أتمتة المستندات
+
+دع الوكلاء يتحققون من المستندات ويثريونها ويوجهونها حتى لا يعود المعالجة اليدوية عائقاً أمام عملياتك.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        المعالجة اليدوية للمستندات بطيئة وعرضة للأخطاء ولا تتوسع.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يتحقق الوكلاء من المستندات ويثريونها ويوجهونها تلقائياً.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">التحقق من النماذج</span> التحقق من الحقول المطلوبة والتنسيقات وقواعد العمل</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">إثراء البيانات</span> البحث عن المعلومات الناقصة وإضافتها</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التوجيه التلقائي</span> إرسال المستندات إلى المعتمدين/سير العمل الصحيحة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">اكتشاف التكرار</span> تحديد الإدخالات المكررة وتمييزها</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التصحيح التلقائي</span> تصحيح الأخطاء الشائعة تلقائياً</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get Document (various DocTypes) · Get List (for duplicate checking) · Create Document (for related records) · Update Document (for corrections) · Submit Document (for approvals)" />
+      <AgentPrompt title="وكيل التحقق من الفواتير">
+        أنت وكيل التحقق من الفواتير. عند إرسال الفواتير:
+        1. تحقق من تطابق الأسعار مع قائمة الأسعار الحالية
+        2. تحقق من حد الائتمان للعميل
+        3. تحقق من حسابات الضرائب
+        4. تأكد من ملء جميع الحقول المطلوبة
+        5. تحقق من وجود فواتير مكررة
+
+        إذا نجح التحقق، أضف تعليقاً يؤكد التحقق.
+        إذا وُجدت مشكلات، أضف تعليقات توضح المشكلات المحددة وأبلغ
+        فريق الحسابات.
+      </AgentPrompt>
+      <div className="huf-trigger-badge">On Submit of Sales Invoice DocType</div>
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">معالجة أسرع</span> التحقق الفوري بدلاً من المراجعة اليدوية</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تقليل الأخطاء</span> اكتشاف المشكلات قبل الإرسال</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الاتساق</span> تطبيق نفس القواعد في كل مرة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">سجل التدقيق</span> تسجيل جميع عمليات التحقق</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">القابلية للتوسع</span> التعامل مع أي حجم</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## سير عمل معالجة البيانات
+
+استخدم الوكلاء لتحويل البيانات الأولية إلى تقارير منظمة وسجلات متزامنة.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        تحتاج البيانات إلى تحويل وحساب أو تجميع عبر مصادر متعددة.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يعالج الوكلاء البيانات، ويجرون الحسابات، وينشئون التقارير تلقائياً.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">تجميع البيانات</span> دمج البيانات من مصادر متعددة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">الحسابات</span> إجراء الحسابات والصيغ المعقدة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">تحويل البيانات</span> تحويل التنسيقات وتوحيد البيانات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">إنشاء التقارير</span> إنشاء الملخصات والتحليلات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">مزامنة البيانات</span> إبقاء السجلات المرتبطة متزامنة</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get List (for data retrieval) · Get Document (for details) · Create Document (for reports) · Custom Tools (for calculations) · HTTP Request (for external data)" />
+      <AgentPrompt title="مولد تقارير المبيعات">
+        أنشئ تقارير مبيعات يومية عن طريق:
+        1. استرداد جميع فواتير المبيعات لليوم الحالي
+        2. حساب الإجماليات حسب العميل والمنتج والمنطقة
+        3. المقارنة باليوم والأسبوع السابقين
+        4. تحديد أفضل الأداء والاتجاهات
+        5. إنشاء مستند ملخص
+        6. إرسال التقرير عبر البريد الإلكتروني إلى فريق المبيعات
+
+        قم بتنسيق التقرير بوضوح مع أقسام لـ:
+        - الملخص العام
+        - أفضل العملاء
+        - أفضل المنتجات
+        - التحليل الإقليمي
+        - الاتجاهات والرؤى
+      </AgentPrompt>
+      <div className="huf-trigger-badge">Scheduled (Daily at 9 AM)</div>
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">توفير الوقت</span> إنشاء التقارير تلقائياً</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الدقة</span> عدم وجود أخطاء في الحسابات اليدوية</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الاتساق</span> نفس التنسيق في كل مرة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الالتزام بالمواعيد</span> التقارير جاهزة عند الحاجة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الرؤى</span> يمكن للذكاء الاصطناعي تحديد الأنماط والاتجاهات</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## الإشعارات الذكية
+
+أرسل تنبيهات سياقية عبر قنوات متعددة كلما حدثت أحداث مهمة على المستندات.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        تحدث أحداث مهمة لكن أصحاب المصلحة لا يتم إخطارهم في الوقت المناسب أو بالشكل المناسب.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يراقب الوكلاء الأحداث ويرسلون إشعارات ذكية وسياقية.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">مراقبة الأحداث</span> مراقبة التغييرات المحددة على المستندات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التنبيهات السياقية</span> تضمين المعلومات ذات الصلة في الإشعارات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">القنوات المتعددة</span> الإرسال عبر Slack والبريد الإلكتروني والرسائل النصية وغيرها</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التصفية الذكية</span> الإخطار فقط عند استيفاء الشروط</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التصعيد</span> التصعيد في حال عدم استلام رد</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get Document (for context) · Get List (for related records) · HTTP Request (for Slack/Email/SMS) · Custom Tools (for notification logic)" />
+      <AgentPrompt title="تنبيه التذاكر عالية الأولوية">
+        عند إنشاء تذكرة دعم عالية الأولوية:
+        1. استرداد تفاصيل التذكرة
+        2. التحقق من معلومات العميل وسجله
+        3. تحديد الفريق المناسب بناءً على نوع المشكلة
+        4. تنسيق الإشعار مع:
+           - معرف التذكرة وموضوعها
+           - اسم العميل وفئته
+           - وصف المشكلة
+           - المسؤول المقترح
+        5. الإرسال إلى قناة Slack ذات الصلة
+        6. إرسال بريد إلكتروني أيضاً إلى قائد الفريق إذا كان العميل من فئة VIP
+
+        أرسل الإشعارات فقط للتذاكر المحددة بأولوية "High" أو "Critical".
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Support Ticket (with condition: priority = "High")</div>
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تنبيهات فورية</span> إشعار فوري بالأحداث المهمة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">غني بالسياق</span> تضمين المعلومات ذات الصلة تلقائياً</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">الجمهور المناسب</span> إخطار الأشخاص المناسبين بناءً على السياق</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تقليل الضوضاء</span> الإخطار فقط عند الضرورة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">القنوات المتعددة</span> الوصول إلى الأشخاص أينما كانوا</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## إدارة العملاء المتوقعين وتأهيلهم
+
+قيّم وثرّح ووزّع العملاء المتوقعين الوافدين تلقائياً حتى يركز ممثلو المبيعات على أفضل الفرص.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        يصل العملاء المتوقعون لكن لا يتم تأهيلهم أو تقييمهم أو توزيعهم بكفاءة.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يحلل الوكلاء العملاء المتوقعين، ويقيمونهم، ويوجهونهم إلى ممثلي المبيعات المناسبين.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">تقييم العملاء المتوقعين</span> تقييم العملاء المتوقعين بناءً على معايير متعددة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">إثراء البيانات</span> البحث عن معلومات الشركة وملفاتها الاجتماعية</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">منطق التوزيع</span> توزيع العميل على أفضل ممثل مبيعات بناءً على المنطقة وحجم العمل والخبرة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">جدولة المتابعة</span> تحديد تواريخ المتابعة المناسبة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التأهيل</span> تحديد ما إذا كان العميل المحتمل يستوفي المعايير</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get Document (Lead, Customer, Territory) · Get List (Sales Person, existing leads) · Create Document (Lead, Task) · Update Document (Lead assignment) · Custom Tools (for scoring algorithm)" />
+      <AgentPrompt title="وكيل تأهيل العملاء المتوقعين">
+        عند إنشاء عميل محتمل جديد:
+        1. قيّم العميل بناءً على:
+           - حجم الشركة (من البحث عن company_name)
+           - تطابق الصناعة مع ملف العميل المثالي لدينا
+           - جودة المصدر (الإحالة > الموقع الإلكتروني > الاتصال البارد)
+           - مؤشرات الميزانية في description
+        2. وزّعه على ممثل مبيعات بناءً على:
+           - تطابق المنطقة
+           - حجم العمل الحالي (كلما قل عدد العملاء النشطين = أولوية أعلى)
+           - الخبرة في الصناعة
+        3. حدد تاريخ المتابعة:
+           - العملاء الساخنون: في نفس اليوم
+           - العملاء الدافئون: يوم العمل التالي
+           - العملاء الباردون: الأسبوع القادم
+        4. أضف ملاحظات داخلية مع مبررات التقييم
+        5. أبلغ ممثل المبيعات المسؤول
+      </AgentPrompt>
+      <div className="huf-trigger-badge">After Insert on Lead DocType</div>
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">استجابة أسرع</span> العملاء الساخنون يحصلون على اهتمام فوري</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">توزيع أفضل</span> وصول العملاء المتوقعين إلى الممثل المناسب تلقائياً</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تقييم متسق</span> تطبيق نفس المعايير على جميع العملاء المتوقعين</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">تحويل أعلى</span> التأهيل الأفضل = معدلات إغلاق أفضل</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">توفير الوقت</span> يركز ممثلو المبيعات على العملاء المؤهلين</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+<div className="huf-use-case">
+
+<div className="huf-eyebrow" style={{ marginBottom: '1rem' }}>حالة استخدام</div>
+
+## إنشاء التقارير من اللغة الطبيعية
+
+دع المستخدمين يطلبون التقارير بلغة بسيطة ودع الوكيل يبنيها وينسقها تلقائياً.
+
+<Tabs defaultValue="overview">
+  <TabList>
+    <Tab value="overview">نظرة عامة</Tab>
+    <Tab value="config">الإعدادات</Tab>
+    <Tab value="benefits">الفوائد</Tab>
+  </TabList>
+
+  <TabPanel value="overview">
+    <div className="huf-ps-grid">
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">المشكلة</span>
+        يحتاج المستخدمون إلى تقارير لكنهم لا يعرفون كيفية إنشائها أو استخدام أدوات إنشاء التقارير المعقدة.
+      </div>
+      <div className="huf-ps-cell">
+        <span className="huf-ps-label">الحل</span>
+        يفهم الوكلاء الطلبات باللغة الطبيعية وينشئون التقارير تلقائياً.
+      </div>
+    </div>
+
+    <div className="huf-cap-grid">
+      <div className="huf-cap-cell"><span className="huf-cap-term">فهم اللغة الطبيعية</span> تحليل طلبات المستخدمين مثل "Show me sales this month"</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">بناء الاستعلامات</span> تحويل الطلبات إلى استعلامات قاعدة بيانات</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">استرداد البيانات</span> جلب البيانات ذات الصلة</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التنسيق</span> عرض البيانات بتنسيق مقروء</div>
+      <div className="huf-cap-cell"><span className="huf-cap-term">التصور</span> اقتراح الرسوم البيانية عندما يكون ذلك مناسباً</div>
+    </div>
+  </TabPanel>
+
+  <TabPanel value="config">
+    <ConfigPanel title="إعدادات الوكيل">
+      <ConfigField label="الأدوات المطلوبة" value="Get List (with dynamic filters) · Get Document (for details) · Custom Tools (for report formatting) · HTTP Request (for exporting to Excel/PDF)" />
+      <AgentPrompt title="وكيل إنشاء التقارير">
+        أنت مساعد إنشاء التقارير. يطلب المستخدمون التقارير باللغة
+        الطبيعية، وأنت تنشئها.
+
+        عندما يطلب المستخدمون تقارير:
+        1. افهم البيانات التي يريدونها (المبيعات، المخزون، العملاء، وغيرها)
+        2. حدد الفترة الزمنية (اليوم، هذا الأسبوع، هذا الشهر، نطاق مخصص)
+        3. حدد عوامل التصفية (حسب العميل، المنتج، المنطقة، وغيرها)
+        4. استرد البيانات باستخدام الأدوات المناسبة
+        5. قم بتنسيق النتائج بوضوح:
+           - إحصائيات ملخصة
+           - تفصيل مفصل
+           - مقارنات عند الطلب
+        6. اعرض خيار التصدير إلى Excel أو PDF عند الحاجة
+
+        كن محادثاً واطرح أسئلة توضيحية إذا كان الطلب
+        غامضاً.
+      </AgentPrompt>
+      <ConfigField label="الأدوات" value="get_list (for data retrieval) · generate_report (custom tool for formatting) · export_to_excel (custom tool)" />
+    </ConfigPanel>
+  </TabPanel>
+
+  <TabPanel value="benefits">
+    <div className="huf-benefit-strip">
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">سهولة الوصول</span> يمكن للمستخدمين غير التقنيين الحصول على التقارير</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">السرعة</span> إنشاء التقارير فورياً</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">المرونة</span> التعامل مع طلبات متنوعة</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">التفاعل الطبيعي</span> يسأل المستخدمون بشكل طبيعي بدلاً من صياغة الاستعلامات</div>
+      <div className="huf-benefit-cell"><span className="huf-benefit-label">توفير الوقت</span> لا حاجة لإنشاء التقارير يدوياً</div>
+    </div>
+  </TabPanel>
+</Tabs>
+
+</div>
+
+---
+
+## حالات استخدام إضافية
+
+تُظهر هذه الأنماط الأقصر كيف يمكن لوكلاء Huf التوسع إلى أقسام أخرى.
+
+### إدارة المخزون
+
+حافظ على مستويات المخزون الصحية وقم بمواءمة المشتريات مع الطلب.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">مراقبة المخزون</span> التنبيه عندما تكون العناصر تحت مستوى إعادة الطلب</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">التنبؤ بالطلب</span> التنبؤ بالطلب المستقبلي بناءً على السجل</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">اقتراحات الشراء</span> التوصية بما يجب طلبه ومتى</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">تحسين المستودع</span> اقتراح التخصيص الأمثل للمستودع</div>
+</div>
+
+### العمليات المالية
+
+بسّط مهام التحقق والمطابقة وتتبع الميزانية.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">التحقق من الفواتير</span> التحقق من الفواتير قبل الدفع</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">مطابقة المدفوعات</span> مطابقة المدفوعات بالفواتير تلقائياً</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">مراقبة الميزانية</span> تتبع الإنفاق مقابل الميزانيات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">تصنيف النفقات</span> تصنيف النفقات تلقائياً</div>
+</div>
+
+### أتمتة الموارد البشرية
+
+قلّل العمل اليدوي في الموارد البشرية عبر التوظيف والإجازات والانضمام.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">فرز السير الذاتية</span> تحليل السير الذاتية وتقييم المرشحين</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">تتبع رصيد الإجازات</span> مراقبة رصيد الإجازات والإبلاغ عنه</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">ملخصات الأداء</span> إنشاء ملخصات مراجعات الأداء</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">أتمتة الانضمام</span> توجيه الموظفين الجدد خلال عملية الانضمام</div>
+</div>
+
+### عمليات المبيعات
+
+ساعد فرق المبيعات على تحديد أولويات الفرص وإدارة نشاط خط الأنابيب (pipeline).
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">تقييم الفرص</span> تقييم فرص المبيعات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">إنشاء عروض الأسعار</span> إنشاء عروض أسعار من المتطلبات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">مراجعة العقود</span> مراجعة العقود للشروط الرئيسية</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">إدارة خط الأنابيب</span> تحديث خط الأنابيب بناءً على الأنشطة</div>
+</div>
+
+### العمليات
+
+حسّن الجودة والصيانة والامتثال وتوثيق العمليات.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">مراقبة الجودة</span> التحقق من جودة الإنتاج</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">جدولة الصيانة</span> جدولة صيانة المعدات</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">التحقق من الامتثال</span> التحقق من الامتثال للوائح</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">التوثيق</span> إنشاء توثيق العمليات تلقائياً</div>
+</div>
+
+## اختيار حالة الاستخدام المناسبة
+
+اختر نقطة البداية المناسبة بناءً على نضج مؤسستك وقدرتها على تحمل المخاطر.
+
+### ابدأ ببساطة
+
+ابدأ بأتمتات منخفضة المخاطر يسهل اختبارها والتحقق منها.
+
+<p><strong>حالات استخدام أولى جيدة:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">أتمتة الأسئلة الشائعة</span> منخفضة المخاطر، عالية القيمة، سهلة الاختبار</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">عمليات البحث البسيطة عن البيانات</span> منخفضة المخاطر، عالية القيمة، سهلة الاختبار</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">التحقق الأساسي</span> منخفضة المخاطر، عالية القيمة، سهلة الاختبار</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">إرسال الإشعارات</span> منخفضة المخاطر، عالية القيمة، سهلة الاختبار</div>
+</div>
+
+<p><strong>لماذا:</strong> منخفضة المخاطر، عالية القيمة، سهلة الاختبار</p>
+
+### بناء التعقيد
+
+انتقل إلى سير عمل متعددة الخطوات بمجرد اكتساب الثقة في الوكلاء البسطاء.
+
+<p><strong>حالات استخدام متوسطة:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">سير عمل متعددة الخطوات</span> قيمة أكبر، تتطلب التخطيط</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">معالجة البيانات</span> قيمة أكبر، تتطلب التخطيط</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">إنشاء التقارير</span> قيمة أكبر، تتطلب التخطيط</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">التوجيه الشرطي</span> قيمة أكبر، تتطلب التخطيط</div>
+</div>
+
+<p><strong>لماذا:</strong> قيمة أكبر، تتطلب التخطيط</p>
+
+### الأتمتة المتقدمة
+
+تعامل مع التدفقات المعقدة والمزدحمة بالتكاملات بعد اكتساب الخبرة.
+
+<p><strong>حالات استخدام معقدة:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">سير عمل متعددة الوكلاء</span> أقصى قيمة، تتطلب الخبرة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">أشجار قرار معقدة</span> أقصى قيمة، تتطلب الخبرة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">تكاملات مكثفة</span> أقصى قيمة، تتطلب الخبرة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">المعالجة في الوقت الفعلي</span> أقصى قيمة، تتطلب الخبرة</div>
+</div>
+
+<p><strong>لماذا:</strong> أقصى قيمة، تتطلب الخبرة</p>
+
+## نصائح التنفيذ
+
+اتبع هذه الإرشادات لإطلاق الوكلاء بنجاح.
+
+<div className="huf-procedure-step">
+  <span className="huf-step-counter">1</span>
+  <div className="huf-step-body">
+    <div className="huf-step-title">ابدأ بحالة استخدام واحدة</div>
+    <p>لا تحاول أتمتة كل شيء دفعة واحدة:</p>
+    <ul>
+      <li>اختر حالة استخدام واحدة ذات قيمة عالية</li>
+      <li>ابنِ واختبر بشكل شامل</li>
+      <li>كرّر بناءً على الملاحظات</li>
+      <li>توسع إلى حالات استخدام أخرى</li>
+    </ul>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <span className="huf-step-counter">2</span>
+  <div className="huf-step-body">
+    <div className="huf-step-title">حدد مقاييس النجاح</div>
+    <p>قسّم التأثير:</p>
+    <ul>
+      <li>الوقت الموفّر</li>
+      <li>تقليل الأخطاء</li>
+      <li>تحسين وقت الاستجابة</li>
+      <li>رضا المستخدم</li>
+    </ul>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <span className="huf-step-counter">3</span>
+  <div className="huf-step-body">
+    <div className="huf-step-title">شارك المستخدمين النهائيين</div>
+    <p>احصل على مدخلات من الأشخاص الذين سيستخدمونه:</p>
+    <ul>
+      <li>افهم سير عملهم</li>
+      <li>احصل على ملاحظات حول سلوك الوكيل</li>
+      <li>كرّر بناءً على الاستخدام الفعلي</li>
+      <li>درّب المستخدمين على كيفية التفاعل</li>
+    </ul>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <span className="huf-step-counter">4</span>
+  <div className="huf-step-body">
+    <div className="huf-step-title">راقب وحسّن</div>
+    <p>حسّن باستمرار:</p>
+    <ul>
+      <li>راجع سجلات تشغيل الوكيل</li>
+      <li>حدد أنماط الفشل</li>
+      <li>حسّن التعليمات</li>
+      <li>أضف الأدوات الناقصة</li>
+      <li>حسّن التعليمات النصية (prompts)</li>
+    </ul>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <span className="huf-step-counter">5</span>
+  <div className="huf-step-body">
+    <div className="huf-step-title">وثّق كل شيء</div>
+    <p>احتفظ بسجلات لـ:</p>
+    <ul>
+      <li>متطلبات حالة الاستخدام</li>
+      <li>إعدادات الوكيل</li>
+      <li>تعيينات الأدوات</li>
+      <li>مقاييس النجاح</li>
+      <li>الدروس المستفادة</li>
+    </ul>
+  </div>
+</div>
+
+## الخطوات التالية
+
+استكشف هذه الموارد للاستمرار في البناء مع وكلاء Huf.
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label"><a href="/docs/examples">أمثلة على الوكلاء</a></span> اطلع على إعدادات الوكيل الكاملة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label"><a href="/docs/guides/creating-agents">إنشاء الوكلاء</a></span> تعلم كيفية بناء الوكلاء</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label"><a href="/docs/concepts/tools">الأدوات</a></span> تعرف على الأدوات المتاحة</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label"><a href="/docs/concepts/triggers">المحفزات</a></span> أتمتة تنفيذ الوكيل</div>
+</div>
+
+---
+
+<Callout type="info">
+  **هل لديك فكرة لحالة استخدام؟** شاركها في [مناقشات GitHub](https://github.com/tridz-dev/agent_flo/discussions)!
+</Callout>

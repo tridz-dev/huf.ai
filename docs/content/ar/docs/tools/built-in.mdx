@@ -1,0 +1,825 @@
+---
+sidebarTitle: الأدوات المدمجة
+---
+
+# الأدوات المدمجة
+
+توفر Huf أدوات مدمجة للعمليات الشائعة في Frappe. تتيح هذه الأدوات للوكلاء التفاعل مع DocTypes، وإجراء طلبات HTTP، والربط مع وكلاء آخرين—كل ذلك دون كتابة كود مخصص.
+
+## نظرة عامة
+
+الأدوات المدمجة مُعدّة مسبقًا وجاهزة للاستخدام. ما عليك سوى إنشاء Agent Tool Function، وتحديد نوع الأداة، وتعيينها لوكيلك.
+
+**الأدوات المدمجة المتاحة:**
+- Get Document
+- Create Document
+- Update Document
+- Delete Document
+- Submit Document
+- Get List
+- Run Agent
+- HTTP Request
+
+كل أداة مُحسّنة لغرضها المحدد وتحترم نظام أذونات Frappe.
+
+## Get Document
+
+**الغرض:** استرجاع مستند واحد باستخدام اسمه أو معرّفه
+
+**حالات الاستخدام:**
+- "أرني العميل CUST-001"
+- "ما حالة أمر البيع SO-2024-123؟"
+- "احصل على تفاصيل الموظف EMP-00045"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Get Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value='The DocType to query (e.g., "Customer", "Sales Order")' />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: get_customer
+Description: Retrieve detailed information about a customer by their ID or name
+Types: Get Document
+Reference DocType: Customer
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">أرني معلومات العميل ABC Corporation</ChatMessage>
+  <ChatMessage role="agent">سأبحث عن ذلك العميل لك.</ChatMessage>
+  <ChatMessage role="tool-call">get_customer("ABC Corporation")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...full customer document with all fields...}'}</ChatMessage>
+  <ChatMessage role="agent">ABC Corporation هو عميل تجاري جملة مقره نيويورك...</ChatMessage>
+</ChatTranscript>
+
+### قيمة الإرجاع
+
+المستند الكامل بصيغة JSON مع جميع الحقول القياسية والمخصصة:
+
+```json
+{
+  "name": "CUST-001",
+  "customer_name": "ABC Corporation",
+  "customer_type": "Company",
+  "customer_group": "Wholesale",
+  "territory": "United States",
+  "email_id": "contact@abc.com",
+  ...
+}
+```
+
+### أفضل الممارسات
+
+- استخدم أنواع مستندات محددة لكل أداة (ليس "الحصول على أي مستند" بشكل عام)
+- سمِّ الأدوات بوضوح: `get_customer`، `get_invoice`، `get_lead`
+- أشر إلى اسم DocType في الوصف لتوضيح الغرض
+- دوّن تنسيق المعرّف المتوقع في الوصف
+
+---
+
+## Create Document
+
+**الغرض:** إنشاء مستند جديد في Frappe
+
+**حالات الاستخدام:**
+- "أنشئ lead جديد لشركة XYZ"
+- "أنشئ تذكرة دعم لهذه المشكلة"
+- "أضف سجل موظف جديد"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Create Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to create" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="fields" value="Object with field name/value pairs" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: create_lead
+Description: Create a new lead in the system with company name, contact info, and source
+Types: Create Document
+Reference DocType: Lead
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">أنشئ lead لـ John Doe في XYZ Corp، البريد john@xyz.com</ChatMessage>
+  <ChatMessage role="agent">سأنشئ ذلك الـ lead لك.</ChatMessage>
+  <ChatMessage role="tool-call">{'create_lead({ lead_name: "John Doe", company_name: "XYZ Corp", email_id: "john@xyz.com" })'}</ChatMessage>
+  <ChatMessage role="tool-result">{'{...created document with name...}'}</ChatMessage>
+  <ChatMessage role="agent">لقد أنشأت الـ lead LEAD-2024-001 لـ John Doe في XYZ Corp.</ChatMessage>
+</ChatTranscript>
+
+### تنسيق المعلمات
+
+```json
+{
+  "lead_name": "John Doe",
+  "company_name": "XYZ Corp",
+  "email_id": "john@xyz.com",
+  "source": "Website",
+  "status": "Lead"
+}
+```
+
+### الحقول المطلوبة
+
+يجب على الوكيل توفير جميع الحقول الإلزامية لـ DocType:
+- تحقق من تعريف DocType للحقول المطلوبة
+- سيفشل الوكيل إذا كانت الحقول المطلوبة ناقصة
+- أدرج متطلبات الحقول في وصف الأداة
+
+### قيمة الإرجاع
+
+المستند المنشأ مع الحقول المُنشأة تلقائيًا:
+
+```json
+{
+  "name": "LEAD-2024-001",
+  "lead_name": "John Doe",
+  "creation": "2024-01-15 10:30:00",
+  "owner": "user@example.com",
+  ...
+}
+```
+
+### أفضل الممارسات
+
+- اذكر الحقول المطلوبة في وصف الأداة
+- قدّم أمثلة للقيم في الوصف
+- استخدم أدوات منفصلة لأنواع المستندات المختلفة
+- فكّر في القيم الافتراضية للحقول الاختيارية
+- أشر إلى أي قواعد تحقق في الوصف
+
+---
+
+## Update Document
+
+**الغرض:** تعديل مستند موجود
+
+**حالات الاستخدام:**
+- "حدّث عنوان البريد الإلكتروني للعميل"
+- "غيّر حالة أمر البيع إلى Confirmed"
+- "أضف تعليقًا إلى تذكرة الدعم هذه"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Update Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to update" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name" />
+    <ConfigField label="fields" value="Object with fields to update" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: update_customer
+Description: Update customer information like email, phone, address, or custom fields
+Types: Update Document
+Reference DocType: Customer
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">حدّث البريد الإلكتروني للعميل CUST-001 إلى newemail@company.com</ChatMessage>
+  <ChatMessage role="agent">سأحدّث ذلك البريد الإلكتروني لك.</ChatMessage>
+  <ChatMessage role="tool-call">{'update_customer("CUST-001", { email_id: "newemail@company.com" })'}</ChatMessage>
+  <ChatMessage role="tool-result">{'{...updated document...}'}</ChatMessage>
+  <ChatMessage role="agent">لقد حدّثت البريد الإلكتروني لـ ABC Corporation إلى newemail@company.com.</ChatMessage>
+</ChatTranscript>
+
+### تنسيق المعلمات
+
+```json
+{
+  "name": "CUST-001",
+  "fields": {
+    "email_id": "newemail@company.com",
+    "phone": "+1-555-0123"
+  }
+}
+```
+
+### التحديثات الجزئية
+
+قدّم فقط الحقول التي تحتاج إلى التغيير:
+- تبقى الحقول الأخرى دون تغيير
+- لا حاجة لتمرير المستند بالكامل
+- لا تزال عمليات التحقق سارية
+
+### قيمة الإرجاع
+
+المستند المحدّث مع التعديلات:
+
+```json
+{
+  "name": "CUST-001",
+  "customer_name": "ABC Corporation",
+  "email_id": "newemail@company.com",
+  "phone": "+1-555-0123",
+  "modified": "2024-01-15 11:00:00",
+  "modified_by": "agent@example.com",
+  ...
+}
+```
+
+### أفضل الممارسات
+
+- اذكر بوضوح الحقول التي يمكن تحديثها
+- حذّر من الحقول للقراءة فقط أو المحسوبة تلقائيًا
+- أشر إلى أي قيود على التحديث (حالات سير العمل، إلخ)
+- فكّر في أدوات منفصلة لأنواع التحديثات المختلفة
+
+---
+
+## Delete Document
+
+**الغرض:** إزالة مستند من النظام
+
+**حالات الاستخدام:**
+- "احذف أمر المسودة SO-2024-999"
+- "أزِل العميل التجريبي"
+- "احذف الفاتورة الملغاة INV-TEST-001"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Delete Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to delete from" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name to delete" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: delete_draft_order
+Description: Delete a draft sales order that hasn't been submitted yet
+Types: Delete Document
+Reference DocType: Sales Order
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">احذف أمر المسودة SO-2024-999</ChatMessage>
+  <ChatMessage role="agent">سأحذف ذلك أمر المسودة لك.</ChatMessage>
+  <ChatMessage role="tool-call">delete_draft_order("SO-2024-999")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...confirmation...}'}</ChatMessage>
+  <ChatMessage role="agent">لقد حذفت أمر المسودة SO-2024-999.</ChatMessage>
+</ChatTranscript>
+
+### قيمة الإرجاع
+
+رسالة نجاح أو خطأ إذا فشل الحذف:
+
+```json
+{
+  "message": "Document deleted successfully"
+}
+```
+
+### اعتبارات السلامة
+
+**الحذف دائم.** أفضل الممارسات:
+- اسمح فقط بحذف حالات مستندات محددة (مسودات، ملغاة)
+- أضف تحذيرات واضحة في وصف الأداة
+- فكّر في طلب تأكيد من تعليمات الوكيل
+- سجّل عمليات الحذف لأغراض التدقيق
+- اقتصر الأمر على الوكلاء الموثوق بهم فقط
+
+<AgentPrompt title="Before deleting any document">
+1. تحقق من أنه في حالة Draft
+2. تأكد من أنه لم يُرسل
+3. حذّر المستخدم بأن الحذف دائم
+4. اطلب تأكيدًا صريحًا
+5. ثم فقط انتقل إلى الحذف
+</AgentPrompt>
+
+### الأذونات
+
+يحترم الحذف أذونات Frappe:
+- يجب أن يكون لدى المستخدم إذن الحذف لـ DocType
+- يجب أن يكون المستند قابلًا للحذف (غير مُرسل، غير مرتبط، إلخ)
+- قد يمنع Frappe الحذف إذا كانت هناك مستندات مرتبطة
+
+---
+
+## Submit Document
+
+**الغرض:** إرسال DocType قابل للإرسال (الانتقال من حالة Draft إلى Submitted)
+
+**حالات الاستخدام:**
+- "أرسل أمر البيع"
+- "أرسل الفاتورة INV-2024-001"
+- "وافق وأرسل أمر الشراء"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Submit Document" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The submittable DocType" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="name" value="The document ID/name to submit" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: submit_sales_order
+Description: Submit a sales order to confirm it and make it official
+Types: Submit Document
+Reference DocType: Sales Order
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">أرسل أمر البيع SO-2024-123</ChatMessage>
+  <ChatMessage role="agent">سأرسل ذلك الأمر لك.</ChatMessage>
+  <ChatMessage role="tool-call">submit_sales_order("SO-2024-123")</ChatMessage>
+  <ChatMessage role="tool-result">{'{...submitted document...}'}</ChatMessage>
+  <ChatMessage role="agent">تم إرسال أمر البيع SO-2024-123 بنجاح.</ChatMessage>
+</ChatTranscript>
+
+### أنواع المستندات القابلة للإرسال
+
+يمكن إرسال أنواع معينة فقط من المستندات:
+- Sales Order، Purchase Order
+- Sales Invoice، Purchase Invoice
+- Delivery Note، Purchase Receipt
+- Payroll Entry، Journal Entry
+- أنواع مخصصة قابلة للإرسال
+
+تحقق من تعريف DocType: `is_submittable = 1`
+
+### قيمة الإرجاع
+
+المستند المُرسل مع الحالة المحدثة:
+
+```json
+{
+  "name": "SO-2024-123",
+  "docstatus": 1,
+  "status": "To Deliver and Bill",
+  ...
+}
+```
+
+**قيم حالة المستند (Docstatus):**
+- `0` = Draft
+- `1` = Submitted
+- `2` = Cancelled
+
+### أفضل الممارسات
+
+- تحقق من جاهزية المستند قبل الإرسال
+- تأكد من ملء الحقول المطلوبة
+- أشر إلى أي عمليات تحقق عند الإرسال في وصف الأداة
+- فكّر في عمليات التحقق قبل الإرسال في تعليمات الوكيل
+
+---
+
+## Get List
+
+**الغرض:** الاستعلام عن مستندات متعددة مع التصفية والفرز وتقسيم الصفحات
+
+**حالات الاستخدام:**
+- "اعرض جميع تذاكر الدعم المفتوحة"
+- "اعرض أفضل 10 عملاء حسب الإيرادات"
+- "ابحث عن العملاء المحتملين الذين تم إنشاؤهم هذا الأسبوع"
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Get List" />
+  <ConfigSection title="Required Fields">
+    <ConfigField label="Reference DocType" value="The DocType to query" />
+  </ConfigSection>
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="filters" value="Filter conditions (optional)" />
+    <ConfigField label="fields" value="Fields to return (optional, default: all)" />
+    <ConfigField label="order_by" value="Sort order (optional, default: creation desc)" />
+    <ConfigField label="limit" value="Max results (optional, default: 20)" />
+    <ConfigField label="limit_start" value="Pagination offset (optional, default: 0)" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: list_support_tickets
+Description: Search and filter support tickets by status, priority, customer, or date
+Types: Get List
+Reference DocType: Support Ticket
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">أرني جميع تذاكر الأولوية العالية المفتوحة</ChatMessage>
+  <ChatMessage role="agent">سأجد تلك التذاكر لك.</ChatMessage>
+  <ChatMessage role="tool-call">list_support_tickets({'{ status: "Open", priority: "High" }'})</ChatMessage>
+  <ChatMessage role="tool-result">{'{...array of matching tickets...}'}</ChatMessage>
+  <ChatMessage role="agent">إليك 5 تذاكر مفتوحة ذات أولوية عالية: ...</ChatMessage>
+</ChatTranscript>
+
+### بنية التصفية
+
+**عوامل التصفية البسيطة:**
+```json
+{
+  "status": "Open",
+  "priority": "High"
+}
+```
+→ `status = "Open" AND priority = "High"`
+
+**عوامل التصفية بالمشغّلات:**
+```json
+{
+  "creation": [">", "2024-01-01"],
+  "grand_total": [">=", 10000]
+}
+```
+
+**المشغّلات المتاحة:**
+- `=`، `!=`: المساواة
+- `>`، `<`، `>=`، `<=`: المقارنة
+- `like`، `not like`: مطابقة النمط
+- `in`، `not in`: العضوية في القائمة
+- `is`، `is not`: التحقق من NULL
+- `between`: النطاق
+
+**عوامل التصفية المعقدة:**
+```json
+{
+  "status": ["in", ["Open", "Working"]],
+  "priority": ["!=", "Low"],
+  "creation": ["between", ["2024-01-01", "2024-01-31"]]
+}
+```
+
+### اختيار الحقول
+
+أعد فقط الحقول المطلوبة لتقليل استخدام الرموز:
+
+```json
+{
+  "filters": {"status": "Open"},
+  "fields": ["name", "subject", "priority", "creation"]
+}
+```
+
+**الفوائد:**
+- استعلامات أسرع
+- تكاليف رموز أقل
+- نتائج أكثر تركيزًا
+
+### الفرز
+
+**التنسيق:** `"fieldname asc"` أو `"fieldname desc"`
+
+**أمثلة:**
+```json
+"order_by": "creation desc"  // Newest first
+"order_by": "name asc"       // Alphabetical
+"order_by": "priority desc, creation desc"  // Multi-level sort
+```
+
+### تقسيم الصفحات
+
+للمجموعات الكبيرة من النتائج:
+
+```json
+{
+  "limit": 20,        // Results per page
+  "limit_start": 0    // Offset (0, 20, 40, ...)
+}
+```
+
+**الصفحة 1:** `limit=20, limit_start=0`  
+**الصفحة 2:** `limit=20, limit_start=20`  
+**الصفحة 3:** `limit=20, limit_start=40`
+
+### قيمة الإرجاع
+
+مصفوفة من المستندات:
+
+```json
+[
+  {
+    "name": "TICKET-001",
+    "subject": "Login issue",
+    "priority": "High",
+    "status": "Open"
+  },
+  {
+    "name": "TICKET-002",
+    "subject": "Payment failed",
+    "priority": "High",
+    "status": "Open"
+  }
+]
+```
+
+### أفضل الممارسات
+
+- ابدأ بـ limit=10 أو 20 لتجنب إرباك الوكيل
+- استخدم عوامل التصفية لتضييق النتائج
+- اختر الحقول الضرورية فقط
+- أدرج ترتيب فرز ذي معنى
+- تعامل مع النتائج الفارغة بأدب في تعليمات الوكيل
+
+---
+
+## Run Agent
+
+**الغرض:** الربط مع وكيل متخصص آخر
+
+**حالات الاستخدام:**
+- التفويض إلى وكلاء متخصصين
+- سير العمل متعدد المجالات
+- العمليات المعقدة متعددة الخطوات
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="Run Agent" />
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="agent_name" value="Name of the agent to run" />
+    <ConfigField label="prompt" value="Message to send to that agent" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: ask_sales_agent
+Description: Delegate sales-related questions to the specialized sales agent
+Types: Run Agent
+```
+
+### مثال على الاستخدام
+
+<ChatTranscript>
+  <ChatMessage role="user">ما هو توقع المبيعات للربع الثاني؟</ChatMessage>
+  <ChatMessage role="agent">سأفوض ذلك إلى وكيل توقع المبيعات لدينا.</ChatMessage>
+  <ChatMessage role="tool-call">ask_sales_agent("Sales Forecast Agent", "What's our sales forecast for Q2?")</ChatMessage>
+  <ChatMessage role="tool-result">{'{ response: "Based on current pipeline and historical data, Q2 forecast is $2.5M with 15% growth over Q1. Key drivers are..." }'}</ChatMessage>
+  <ChatMessage role="agent">وفقًا لوكيل توقع المبيعات لدينا، يُتوقع أن يحقق الربع الثاني 2.5 مليون دولار...</ChatMessage>
+</ChatTranscript>
+
+### استراتيجيات ربط الوكلاء
+
+**التخصص:**
+```
+Main Agent (general)
+  ├─> Sales Agent (sales queries)
+  ├─> Support Agent (technical issues)
+  └─> HR Agent (employee questions)
+```
+
+**المعالجة التسلسلية:**
+```
+Intake Agent
+  └─> Validation Agent
+      └─> Processing Agent
+          └─> Notification Agent
+```
+
+**الاستشارة المتوازية:**
+```
+Decision Agent
+  ├─> Risk Assessment Agent
+  ├─> Financial Analysis Agent
+  └─> Legal Review Agent
+→ Decision Agent synthesizes all responses
+```
+
+### قيمة الإرجاع
+
+استجابة الوكيل الآخر:
+
+```json
+{
+  "response": "Based on current pipeline and historical data, Q2 forecast is $2.5M with 15% growth over Q1. Key drivers are..."
+}
+```
+
+### أفضل الممارسات
+
+- أنشئ وكلاء متخصصين وموجهين
+- حدّد معايير تسليم واضحة
+- تجنب الاستدعاء الدوري للوكلاء (A ينادي B ينادي A)
+- فكّر في إدارة سجل المحادثة
+- راقب التكاليف (وكلاء متعددون = عمليات تشغيل متعددة)
+
+### القيود
+
+- كل استدعاء وكيل مرتبط يضيف زمن استجابة
+- التكاليف تتضاعف مع كل وكيل
+- السلاسل العميقة قد تفقد السياق
+- فكّر في تسطيح السلاسل إذا تأثر الأداء
+
+---
+
+## HTTP Request
+
+**الغرض:** استدعاء واجهات برمجة التطبيقات الخارجية وWebhooks
+
+**حالات الاستخدام:**
+- إرسال إشعارات Slack
+- البحث عن بيانات خارجية
+- تشغيل Webhooks
+- التكامل مع خدمات الطرف الثالث
+
+### الإعدادات
+
+<ConfigPanel title="Configuration">
+  <ConfigField label="Tool Type" value="HTTP Request" />
+  <ConfigSection title="Agent-Supplied Parameters">
+    <ConfigField label="url" value="The endpoint URL" />
+    <ConfigField label="method" value="HTTP method (GET, POST, PUT, DELETE)" />
+    <ConfigField label="headers" value="Request headers (optional)" />
+    <ConfigField label="body" value="Request body for POST/PUT (optional)" />
+  </ConfigSection>
+</ConfigPanel>
+
+### مثال على تعريف الأداة
+
+```
+Tool Name: send_slack_notification
+Description: Send a message to a Slack channel via webhook URL
+Types: HTTP Request
+```
+
+### مثال على الاستخدام
+
+<AgentPrompt title="When you need to notify the team">
+1. صغّر الرسالة بوضوح
+2. استخدم أداة send_slack_notification
+3. انشر إلى webhook URL: https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+</AgentPrompt>
+
+<ToolCallResult call={`{
+  "url": "https://hooks.slack.com/services/T00/B00/XXXX",
+  "method": "POST",
+  "headers": {"Content-Type": "application/json"},
+  "body": {
+    "text": "New high-priority ticket: TICKET-123",
+    "channel": "#support"
+  }
+}`} />
+
+### اعتبارات الأمان
+
+**عناوين Webhook تحتوي على أسرار:**
+- احتفظ بالعناوين في تعليمات الوكيل (وليس في الأداة)
+- استخدم متغيرات البيئة للنقاط النهائية الحساسة
+- قيّد وصول الوكيل بشكل مناسب
+- راجع سجلات طلبات HTTP
+
+### التكاملات الشائعة
+
+**Slack:**
+```json
+{
+  "url": "https://hooks.slack.com/...",
+  "method": "POST",
+  "body": {"text": "Message"}
+}
+```
+
+**Twilio SMS:**
+```json
+{
+  "url": "https://api.twilio.com/2010-04-01/Accounts/ACCOUNT_SID/Messages.json",
+  "method": "POST",
+  "headers": {"Authorization": "Basic ..."},
+  "body": {"To": "+1555...", "Body": "Message"}
+}
+```
+
+**REST API:**
+```json
+{
+  "url": "https://api.example.com/v1/resource",
+  "method": "GET",
+  "headers": {"Authorization": "Bearer TOKEN"}
+}
+```
+
+### قيمة الإرجاع
+
+استجابة HTTP:
+
+```json
+{
+  "status_code": 200,
+  "body": {
+    "success": true,
+    "message_id": "12345"
+  }
+}
+```
+
+### أفضل الممارسات
+
+- تحقق من عناوين URL في تعليمات الوكيل
+- تعامل مع أخطاء واجهة برمجة التطبيقات بأدب
+- قيّد معدل الاستدعاءات الخارجية
+- خزّن الاستجابات عندما يكون ذلك مناسبًا
+- سجّل جميع الطلبات الخارجية
+
+---
+
+## الأذونات
+
+جميع الأدوات المدمجة تحترم نظام أذونات Frappe:
+
+- **تنطبق أذونات المستخدم**: يعمل الوكيل بأذونات المستخدم
+- **الوصول القائم على الأدوار**: تتحكم أدوار Frappe القياسية في الوصول
+- **لا مصعد**: لا يمكن للأدوات تجاوز الأذونات
+- **سجل التدقيق**: تُسجّل جميع العمليات
+
+**مثال:**
+
+المستخدم لديه دور "Sales User" يشغّل الوكيل:
+
+<DoDont
+  doItems={[
+    'Can read Customers, Leads',
+    'Can create Leads'
+  ]}
+  dontItems={[
+    'Cannot delete Customers',
+    'Cannot read Purchase Orders'
+  ]}
+/>
+
+## معالجة الأخطاء
+
+تُرجع الأدوات أخطاء عندما:
+- المستند غير موجود
+- الإذن مرفوض
+- فشل التحقق من الصحة
+- الحقول المطلوبة ناقصة
+- DocType غير موجود
+
+**يجب على الوكيل التعامل مع الأخطاء بأدب:**
+
+<AgentPrompt title="If a tool fails">
+1. اشرح الخطأ للمستخدم
+2. اقترح إجراءات بديلة
+3. لا تكرر نفس العملية الفاشلة مرارًا
+4. اطلب من المستخدم التحقق من الأذونات إذا تم رفض الوصول
+</AgentPrompt>
+
+## نصائح الأداء
+
+1. **استخدم Get List بكفاءة**: صفِّ النتائج وحدّها
+2. **اختر الحقول**: لا تجلب بيانات غير ضرورية
+3. **عمليات الدفعة**: جمّع الاستعلامات المتشابهة
+4. **خزّن النتائج**: في ذاكرة المحادثة للتفاعلات متعددة الأدوار
+5. **قلّل من استدعاءات الأدوات**: استعلام جيد واحد أفضل من عدة استعلامات صغيرة
+
+## ما التالي؟
+
+- **[إنشاء أدوات مخصصة](/docs/tools/custom)** - أنشئ أدواتك الخاصة
+- **[نشر الأدوات](/docs/tools/publishing)** - شارك الأدوات عبر التطبيقات
+- **[مفهوم الأدوات](/docs/concepts/tools)** - أساسيات الأدوات
+- **[إنشاء الوكلاء](/docs/guides/creating-agents)** - عيّن الأدوات للوكلاء
+
+---
+
+**هل لديك أسئلة؟** قم بزيارة [مناقشات GitHub](https://github.com/tridz-dev/agent_flo/discussions).

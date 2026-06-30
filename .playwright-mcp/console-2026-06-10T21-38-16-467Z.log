@@ -1,0 +1,83 @@
+[    3605ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[    8053ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  125945ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  126592ms] [LOG] [Fast Refresh] done in 648ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  126796ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  127259ms] [LOG] [Fast Refresh] done in 462ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  127479ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  127482ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  359157ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  360764ms] [LOG] [Fast Refresh] done in 1608ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  360825ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  361004ms] [LOG] [Fast Refresh] done in 179ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  361561ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/?_rsc=rlu6j:0
+[  362452ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  362453ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  362776ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  364969ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  365704ms] [LOG] [Fast Refresh] done in 736ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  365715ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  366958ms] [LOG] [Fast Refresh] done in 1244ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  368334ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/?_rsc=muw3v:0
+[  369085ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  369088ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  369533ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  370171ms] [LOG] [Fast Refresh] done in 1781127866637ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  370184ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/?_rsc=muw3v:0
+[  370275ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  370302ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  371319ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  372329ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  373341ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  374351ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  376670ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  376670ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  377002ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  379023ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  379310ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/_next/static/webpack/dab43438def4aa9a.webpack.hot-update.json:0
+[  380724ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  380725ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  381099ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  383327ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  383992ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/_next/static/webpack/f1adf3a87ef35521.webpack.hot-update.json:0
+[  384033ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/?_rsc=muw3v:0
+[  384201ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  384264ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  385286ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  386297ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  387310ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  388325ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  389396ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  390408ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  391420ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  392466ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  393708ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  394724ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  395739ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  396751ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  397762ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  398774ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  399786ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  400796ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  401809ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  402844ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  403856ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  404870ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  405882ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  406891ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  407902ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  408915ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  409925ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  411927ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  411930ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  412258ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  436910ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  437920ms] [LOG] [Fast Refresh] done in 1011ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  437930ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/?_rsc=muw3v:0
+[  438065ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  438123ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  439139ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  440152ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3333/docs/installation/:0
+[  443276ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-marketplace-app.fea30173.png&w=8&q=70:0
+[  443276ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://localhost:3333/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Fadd-from-github.648285e8.png&w=8&q=70:0
+[  443629ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630

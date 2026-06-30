@@ -1,0 +1,751 @@
+---
+sidebarTitle: Publishing Tools
+---
+
+import { Callout } from 'nextra/components'
+
+# نشر الأدوات من تطبيقك
+
+إذا كنت تبني تطبيق Frappe، يمكنك نشر أدوات يمكن للوكلاء اكتشافها واستخدامها تلقائيًا. يتيح لك ذلك مشاركة قدرات الوكلاء القابلة لإعادة الاستخدام عبر المشاريع ومع المجتمع.
+
+## ما هي الأدوات المنشورة؟
+
+**الأدوات المنشورة** هي دوال Python في تطبيق Frappe يمكن للوكلاء اكتشافها واستخدامها تلقائيًا. بدلًا من إنشاء دوال أداة الوكيل يدويًا، تقوم بتزيين دوالك بـ `@agent_tool`، ويقوم Huf بمزامنتها تلقائيًا عند تثبيت تطبيقك.
+
+توفر الأدوات المنشورة عدة مزايا مقارنةً بالدوال المُعدّة يدويًا.
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">الاكتشاف التلقائي</span>تظهر الأدوات تلقائيًا عند تثبيت التطبيق</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">بلا إعداد يدوي</span>لا حاجة لإنشاء سجلات Agent Tool Function</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">التحكم بالإصدارات</span>تخضع الأدوات لنفس إصدار تطبيقك</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">قابلة لإعادة الاستخدام</span>شارك الأدوات عبر مواقع/مشاريع متعددة</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">سهلة الصيانة</span>حدّث الأدوات بتحديث تطبيقك</div>
+</div>
+
+## كيفية العمل
+
+يتم اكتشاف الأدوات المنشورة ومزامنتها تلقائيًا عبر دورة حياة بسيطة.
+
+### التدفق
+
+يتبع نشر الأداة مسارًا واضحًا من الكود إلى توفرها للوكيل.
+
+<Mermaid>{`
+flowchart LR
+    A["Write a Python function<br/>in your app"] --> B["Decorate it with<br/>@agent_tool"]
+    B --> C["Install your app on<br/>a Frappe site"]
+    C --> D["Huf discovers the<br/>decorated functions"]
+    D --> E["Huf creates Agent Tool<br/>Function records automatically"]
+    E --> F["Agents can use the<br/>tools immediately"]
+`}</Mermaid>
+
+### عملية المزامنة التلقائية
+
+عند تثبيت تطبيقك أو تحديثه، يقوم Huf بعدة إجراءات للمزامنة.
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">فحص</span>يفحص Huf تطبيقك بحثًا عن الدوال المزيّنة بـ <code>@agent_tool</code></div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">إنشاء أو تحديث</span>ينشئ أو يحدّث سجلات Agent Tool Function</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">ربط</span>يربط الأدوات بتطبيقك للتتبع</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">التوفر</span>يجعل الأدوات متاحة لجميع الوكلاء</div>
+</div>
+
+<div className="huf-cli-note">
+<strong>تحدث المزامنة تلقائيًا أثناء:</strong>
+<ul>
+<li>تثبيت التطبيق (<code>bench install-app</code>)</li>
+<li>ترحيل التطبيق (<code>bench migrate</code>)</li>
+<li>المزامنة اليدوية (عبر hooks في Huf)</li>
+</ul>
+</div>
+
+## إنشاء أداة منشورة
+
+اتبع هذه الخطوات لنشر أداة من تطبيق Frappe الخاص بك.
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">1</div>
+  <div>
+    <h3 className="huf-step-title" id="write-your-function">اكتب دالتك</h3>
+    <div className="huf-step-body">
+
+أنشئ دالة في تطبيقك بالبنية الصحيحة:
+
+**الملف:** `my_app/api/tools.py`
+
+```python
+import frappe
+from huf.ai.tool_discovery import agent_tool
+
+@agent_tool
+def calculate_discount(customer_type: str, order_total: float) -> dict:
+    """
+    Calculate discount percentage and amount based on customer type and order total.
+    
+    This tool helps agents determine appropriate discounts for customers.
+    
+    Args:
+        customer_type (str): Type of customer (Wholesale, Retail, Distributor)
+        order_total (float): Total order amount before discount
+        
+    Returns:
+        dict: Discount details including percentage, amount, and final total
+        
+    Example:
+        >>> calculate_discount("Wholesale", 1000.0)
+        {"discount_pct": 15.0, "discount_amount": 150.0, "final_total": 850.0}
+    """
+    # Define discount rules
+    discount_rules = {
+        "Wholesale": 0.15,      # 15% discount
+        "Distributor": 0.20,    # 20% discount
+        "Retail": 0.05          # 5% discount
+    }
+    
+    # Get base discount from customer type
+    base_discount = discount_rules.get(customer_type, 0.0)
+    
+    # Additional discount for large orders
+    if order_total > 10000:
+        base_discount += 0.05  # Extra 5% for orders over $10k
+    
+    # Calculate discount amount
+    discount_amount = order_total * base_discount
+    final_total = order_total - discount_amount
+    
+    return {
+        "customer_type": customer_type,
+        "order_total": order_total,
+        "discount_pct": round(base_discount * 100, 2),
+        "discount_amount": round(discount_amount, 2),
+        "final_total": round(final_total, 2)
+    }
+```
+
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">2</div>
+  <div>
+    <h3 className="huf-step-title" id="import-the-decorator">استورد المُزيّن</h3>
+    <div className="huf-step-body">
+
+تأكد من استيراد `agent_tool` من Huf:
+
+```python
+from huf.ai.tool_discovery import agent_tool
+```
+
+<Callout type="info">
+إذا لم يكن Huf مثبتًا، تعامل مع الأمر بسلاسة:
+
+```python
+try:
+    from huf.ai.tool_discovery import agent_tool
+except ImportError:
+    # Huf not installed, define a no-op decorator
+    def agent_tool(func):
+        return func
+```
+</Callout>
+
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">3</div>
+  <div>
+    <h3 className="huf-step-title" id="add-metadata-optional">أضف البيانات الوصفية (اختياري)</h3>
+    <div className="huf-step-body">
+
+يقبل المُزيّن بيانات وصفية اختيارية لتحسين الاكتشاف.
+
+```python
+@agent_tool(
+    category="Pricing",
+    description="Calculate discounts for customers",
+    tags=["pricing", "discount", "customer"]
+)
+def calculate_discount(customer_type: str, order_total: float) -> dict:
+    # Function implementation
+    pass
+```
+
+| الخيار | الغرض |
+|---|---|
+| `category` | تجميع الأدوات حسب الفئة (مثل "Pricing"، "Inventory"، "Sales") |
+| `description` | تجاوز الوصف الذي يُنشأ تلقائيًا |
+| `tags` | وسوم قابلة للبحث لاكتشاف الأداة |
+
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">4</div>
+  <div>
+    <h3 className="huf-step-title" id="install-your-app">ثبّت تطبيقك</h3>
+    <div className="huf-step-body">
+
+ثبّت تطبيقك على موقع Frappe يعمل عليه Huf.
+
+```bash
+bench --site sitename install-app my_app
+```
+
+يقوم Huf تلقائيًا بما يلي:
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">فحص</span>يفحص تطبيقك بحثًا عن دوال <code>@agent_tool</code></div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">إنشاء</span>ينشئ سجلات Agent Tool Function</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">ربط</span>يربطها بتطبيقك</div>
+</div>
+
+**تحقق من Desk:** انتقل إلى **Huf → Agent Tool Function** وقم بالتصفية حسب اسم تطبيقك.
+
+    </div>
+  </div>
+</div>
+
+## بيانات الأداة الوصفية من Docstrings
+
+يستخرج Huf البيانات الوصفية من docstring الخاص بالدالة لبناء سجلات الأدوات.
+
+### وصف الدالة
+
+يصبح docstring الرئيسي وصف الأداة.
+
+```python
+@agent_tool
+def get_customer_orders(customer_id: str):
+    """
+    Retrieve all sales orders for a customer with order details,
+    status, and totals. Use this when users ask about customer
+    order history or purchase patterns.
+    """
+    pass
+```
+
+اتبع هذه الإرشادات عند كتابة الأوصاف:
+
+**أفضل الممارسات:**
+- ابدأ بوظيفة الأداة
+- اذكر متى يجب على الوكلاء استخدامها
+- أضف أمثلة لحالات الاستخدام
+- كن محددًا وواضحًا
+
+### توثيق المعاملات
+
+وثّق المعاملات في docstring حتى يعرف الوكلاء ما يجب تمريره.
+
+```python
+@agent_tool
+def create_quote(items: list, customer_id: str, valid_until: str = None):
+    """
+    Create a sales quote with items for a customer.
+    
+    Args:
+        items (list): List of items with 'item_code', 'qty', 'rate'
+        customer_id (str): Customer ID to quote for
+        valid_until (str, optional): Quote expiry date (YYYY-MM-DD)
+        
+    Returns:
+        dict: Created quote details with quote ID
+    """
+    pass
+```
+
+ضع هذه الإرشادات في اعتبارك عند توثيق المعاملات:
+
+**أنواع المعاملات:**
+- وثّق الأنواع بوضوح (`str`، `int`، `float`، `list`، `dict`)
+- علّم المعاملات الاختيارية
+- قدّم قيمًا مثالية
+- اشرح البنى المعقدة
+
+### توثيق قيمة الإرجاع
+
+وثّق ما تُرجعه الدالة لمساعدة الوكلاء في تفسير النتائج.
+
+```python
+@agent_tool
+def analyze_sales_trends(period_days: int = 30):
+    """
+    Analyze sales trends over a period.
+    
+    Returns:
+        dict: Analysis results with:
+            - total_revenue (float): Total sales in period
+            - order_count (int): Number of orders
+            - top_customers (list): Top 5 customers by revenue
+            - growth_rate (float): Percentage growth vs previous period
+    """
+    pass
+```
+
+## الأنماط المتقدمة
+
+تساعدك هذه الأنماط على تنظيم الأدوات وإتاحتها بشكل شرطي.
+
+### فئات الأدوات
+
+جمّع الأدوات المرتبطة في فئات حتى يتمكن الوكلاء من اكتشافها حسب السياق.
+
+```python
+# Pricing tools
+@agent_tool(category="Pricing")
+def calculate_discount(...):
+    pass
+
+@agent_tool(category="Pricing")
+def apply_promotion_code(...):
+    pass
+
+# Inventory tools
+@agent_tool(category="Inventory")
+def check_stock_levels(...):
+    pass
+
+@agent_tool(category="Inventory")
+def calculate_reorder_quantity(...):
+    pass
+```
+
+يمكن للوكلاء اكتشاف الأدوات حسب الفئة، مما يسهل العثور على القدرات المناسبة.
+
+### تسجيل الأدوات بشكل شرطي
+
+سجّل الأدوات فقط عندما تكون التبعيات موجودة.
+
+```python
+import frappe
+
+@agent_tool
+def advanced_analytics(...):
+    """Advanced analytics (requires Analytics app)."""
+    if not frappe.db.exists("Module Def", {"name": "Analytics"}):
+        frappe.throw("Analytics module not installed")
+    # Implementation
+    pass
+```
+
+### تبعيات الأدوات
+
+وثّق التبعيات في docstrings حتى يعرف الوكلاء المتطلبات المسبقة.
+
+```python
+@agent_tool
+def sync_with_external_system(...):
+    """
+    Sync data with external system.
+    
+    Requires:
+        - External API credentials configured
+        - Network access to external system
+        - Valid API key in app settings
+    """
+    pass
+```
+
+## عملية اكتشاف الأدوات
+
+يجد Huf ويسجّل أدواتك عبر فحص منظم.
+
+### كيف يجد Huf أدواتك
+
+تمر عملية الاكتشاف بهذه المراحل.
+
+<Mermaid>{`
+flowchart LR
+    A["Scan app directory<br/>Huf scans your app's Python modules"] --> B["Import modules<br/>Attempts to import modules (handles errors gracefully)"]
+    B --> C["Find decorators<br/>Looks for @agent_tool decorated functions"]
+    C --> D["Extract metadata<br/>Reads function signature, docstring, decorator args"]
+    D --> E["Create records<br/>Creates Agent Tool Function records"]
+    E --> F["Link to app<br/>Associates tools with your app"]
+`}</Mermaid>
+
+### فحص الوحدات
+
+يفحص Huf مواقع محددة في تطبيقك.
+
+يفحص Huf هذه المواقع:
+- مجلد `{app_name}/api/`
+- مجلد `{app_name}/utils/`
+- أي وحدة يستوردها hooks الخاص بتطبيقك
+
+**أفضل ممارسة:** ضع الأدوات في `{app_name}/api/tools.py` لتحقيق الوضوح.
+
+### معالجة الأخطاء
+
+يستمر الاكتشاف حتى عند فشل أدوات فردية.
+
+إذا كانت دالة أداة تحتوي على أخطاء:
+- يسجّل Huf الخطأ ويستمر في الفحص
+- لا تزال الأدوات الأخرى مسجّلة
+- راجع السجلات للحصول على أخطاء أداة محددة
+- أصلح الأخطاء وأعد تشغيل الترحيل
+
+## تحديث الأدوات المنشورة
+
+تبقى الأدوات متزامنة مع تطبيقك مع إصدار التحديثات.
+
+### تعديل الأدوات
+
+عند تحديث دالة أداة، ينشر الترحيل التغييرات.
+
+<Mermaid>{`
+flowchart LR
+    A["Update your code<br/>in the app"] --> B["Run migration<br/>bench --site sitename migrate"]
+    B --> C["Huf syncs<br/>Automatically updates Agent Tool Function records"]
+    C --> D["Agents get updates<br/>New version available immediately"]
+`}</Mermaid>
+
+تتم مزامنة التغييرات التالية:
+
+**التغييرات التي تتم مزامنتها:**
+- توقيع الدالة (المعاملات)
+- docstring (الوصف)
+- البيانات الوصفية للمزيّن
+- تنفيذ الدالة (لا يُخزّن، لكن يُستخدم)
+
+### التحكم بالإصدارات
+
+تخضع الأدوات لإصدار تطبيقك.
+
+- **إصدار التطبيق** يتتبع إصدارات الأدوات
+- **حدّث التطبيق** لتحديث الأدوات
+- **استرجع التطبيق** لاسترجاع الأدوات
+
+### التغييرات الكسرية
+
+إذا أجريت تغييرات كسرية، اختر إحدى هذه الاستراتيجيات.
+
+**الخيار 1: إهمال واستبدال**
+```python
+@agent_tool
+def old_tool_name(...):
+    """DEPRECATED: Use new_tool_name instead."""
+    frappe.msgprint("This tool is deprecated. Use new_tool_name.")
+    return new_tool_name(...)
+
+@agent_tool
+def new_tool_name(...):
+    """Improved version of old tool."""
+    pass
+```
+
+**الخيار 2: الحفاظ على التوافق**
+```python
+@agent_tool
+def tool_name(param1, param2=None, **kwargs):
+    """Handle both old and new parameter formats."""
+    # Support old format
+    if param2 is None and 'old_param' in kwargs:
+        param2 = kwargs['old_param']
+    # New implementation
+    pass
+```
+
+## أفضل الممارسات
+
+تساعدك هذه الإرشادات على تصميم أدوات موثوقة وسهلة الصيانة.
+
+### تصميم الدوال
+
+حافظ على دوال الأدوات مركّزة وموثقة جيدًا.
+
+**افعل:**
+- اكتب دوالًا مركّزة ذات هدف واحد
+- استخدم أسماء واضحة ووصفية
+- وثّق كل شيء في docstrings
+- تعامل مع الأخطاء بسلاسة
+- أرجع بيانات منظمة (dicts)
+- أضف تلميحات الأنواع للمعاملات
+
+**لا تفعل:**
+- لا تنشئ دوالًا ضخمة تفعل كل شيء
+- لا تستخدم أسماء معاملات غامضة
+- لا تهمل معالجة الأخطاء
+- لا تُرجع كائنات قاعدة بيانات خام
+- لا تجعل الدوال تعتمد على الحالة العامة
+
+### التوثيق
+
+تجعل docstrings الشاملة الأدوات أسهل للوكلاء.
+
+```python
+@agent_tool
+def process_order(order_id: str, payment_method: str) -> dict:
+    """
+    Process a sales order with payment and inventory updates.
+    
+    This tool handles the complete order processing workflow including
+    payment validation, inventory deduction, and order confirmation.
+    
+    Args:
+        order_id (str): The sales order ID to process
+        payment_method (str): Payment method (Card, Bank Transfer, Cash)
+        
+    Returns:
+        dict: Processing result with:
+            - success (bool): Whether processing succeeded
+            - invoice_id (str): Generated invoice ID if successful
+            - errors (list): Any errors encountered
+            
+    Raises:
+        frappe.ValidationError: If order is invalid or cannot be processed
+        
+    Example:
+        >>> process_order("SO-2024-001", "Card")
+        {"success": True, "invoice_id": "INV-2024-001", "errors": []}
+        
+    Note:
+        This tool requires:
+        - Order must be in Draft status
+        - Sufficient inventory available
+        - Valid payment method configured
+    """
+    pass
+```
+
+### معالجة الأخطاء
+
+تعامل دائمًا مع الأخطاء حتى يحصل الوكلاء على ملاحظات مفيدة.
+
+```python
+@agent_tool
+def safe_operation(param: str) -> dict:
+    """Safe operation with error handling."""
+    try:
+        # Validate input
+        if not param:
+            frappe.throw("Parameter is required")
+        
+        # Perform operation
+        result = perform_operation(param)
+        
+        return {"success": True, "result": result}
+        
+    except frappe.ValidationError as e:
+        # User errors - return to agent
+        return {"success": False, "error": str(e)}
+        
+    except Exception as e:
+        # System errors - log and return generic message
+        frappe.log_error(f"Tool error: {str(e)}")
+        return {"success": False, "error": "An error occurred processing your request"}
+```
+
+### اختبار الأدوات
+
+اختبر أدواتك قبل النشر للتقاط الانحدارات مبكرًا.
+
+```python
+# In your app's test file
+import unittest
+
+class TestTools(unittest.TestCase):
+    def test_calculate_discount(self):
+        from my_app.api.tools import calculate_discount
+        
+        result = calculate_discount("Wholesale", 1000.0)
+        
+        self.assertEqual(result["discount_pct"], 15.0)
+        self.assertEqual(result["discount_amount"], 150.0)
+        self.assertEqual(result["final_total"], 850.0)
+```
+
+## مشاركة الأدوات
+
+يمكن مشاركة الأدوات المنشورة داخل مؤسستك أو مع المجتمع الأوسع.
+
+### داخل مؤسستك
+
+ثبّت تطبيقك على مواقع متعددة لمشاركة الأدوات داخليًا.
+
+**مواقع متعددة:**
+- ثبّت تطبيقك على جميع المواقع
+- تصبح الأدوات متاحة تلقائيًا في كل مكان
+- مجموعة أدوات متسقة عبر المواقع
+
+**التحكم بالإصدارات:**
+- الأدوات في git مع تطبيقك
+- تحت السيطرة الإصدارية
+- سهلة الاسترجاع
+
+### مع المجتمع
+
+اجعل تطبيقك مفتوح المصدر ليسمح للآخرين باستخدام أدواتك والمساهمة فيها.
+
+**تطبيقات مفتوحة المصدر:**
+- انشر تطبيقك على GitHub
+- يمكن للآخرين تثبيت أدواتك واستخدامها
+- اساهم في نظام Huf البيئي
+
+**التوثيق:**
+- وثّق أدواتك في README الخاص بالتطبيق
+- اشرح حالات الاستخدام
+- قدّم أمثلة
+
+## استكشاف الأخطاء وإصلاحها
+
+إذا لم تظهر الأدوات أو لم تُحدّث كما هو متوقع، راجع هذه الأسباب الشائعة.
+
+**الأدوات لا تظهر:**
+- تحقق من تثبيت التطبيق: `bench --site sitename list-apps`
+- تحقق من استيراد المُزيّن: `from huf.ai.tool_discovery import agent_tool`
+- شغّل الترحيل: `bench --site sitename migrate`
+- راجع السجلات بحثًا عن أخطاء الاكتشاف
+
+**الأدوات لا تُحدّث:**
+- شغّل الترحيل بعد تغييرات الكود
+- امسح ذاكرة التخزين المؤقت: `bench --site sitename clear-cache`
+- راجع سجلات Agent Tool Function في Desk
+
+**أخطاء الاستيراد:**
+- تأكد من تثبيت Huf: `bench --site sitename list-apps | grep huf`
+- تحقق من مسار Python والاستيرادات
+- تأكد من أن الدالة موجودة في المجلد المفحوص
+
+**أخطاء الصلاحيات:**
+- تحترم الأدوات صلاحيات Frappe
+- تحقق من أن المستخدم لديه وصول إلى DocTypes الأساسية
+- تأكد من أن الدالة لا تتجاوز الصلاحيات
+
+## مثال: حزمة أدوات كاملة
+
+إليك مثالًا كاملاً لحزمة أدوات في وحدة واحدة.
+
+**الملف:** `my_app/api/tools.py`
+
+```python
+"""
+Agent tools for My App.
+
+This module provides reusable tools for Huf agents.
+"""
+
+import frappe
+from huf.ai.tool_discovery import agent_tool
+from typing import List, Dict, Optional
+
+@agent_tool(category="Sales")
+def get_customer_orders(customer_id: str, status: Optional[str] = None) -> Dict:
+    """
+    Retrieve sales orders for a customer.
+    
+    Args:
+        customer_id (str): Customer ID
+        status (str, optional): Filter by status (Draft, Submitted, etc.)
+        
+    Returns:
+        dict: List of orders with details
+    """
+    filters = {"customer": customer_id}
+    if status:
+        filters["status"] = status
+        
+    orders = frappe.get_all(
+        "Sales Order",
+        filters=filters,
+        fields=["name", "grand_total", "status", "delivery_date"]
+    )
+    
+    return {
+        "customer_id": customer_id,
+        "order_count": len(orders),
+        "orders": orders
+    }
+
+@agent_tool(category="Inventory")
+def check_item_availability(item_code: str, warehouse: Optional[str] = None) -> Dict:
+    """
+    Check item stock availability.
+    
+    Args:
+        item_code (str): Item code to check
+        warehouse (str, optional): Specific warehouse, or all if None
+        
+    Returns:
+        dict: Stock levels and availability
+    """
+    filters = {"item_code": item_code}
+    if warehouse:
+        filters["warehouse"] = warehouse
+        
+    bins = frappe.get_all(
+        "Bin",
+        filters=filters,
+        fields=["warehouse", "actual_qty", "reserved_qty"]
+    )
+    
+    total_qty = sum(bin.actual_qty for bin in bins)
+    total_reserved = sum(bin.reserved_qty for bin in bins)
+    available = total_qty - total_reserved
+    
+    return {
+        "item_code": item_code,
+        "total_quantity": total_qty,
+        "reserved_quantity": total_reserved,
+        "available_quantity": available,
+        "warehouses": [
+            {
+                "warehouse": bin.warehouse,
+                "quantity": bin.actual_qty,
+                "available": bin.actual_qty - bin.reserved_qty
+            }
+            for bin in bins
+        ]
+    }
+
+@agent_tool(category="Pricing")
+def calculate_order_total(items: List[Dict], customer_id: str) -> Dict:
+    """
+    Calculate total order amount with discounts and taxes.
+    
+    Args:
+        items (list): List of items with 'item_code', 'qty', 'rate'
+        customer_id (str): Customer ID for pricing rules
+        
+    Returns:
+        dict: Calculated totals with breakdown
+    """
+    # Implementation
+    subtotal = sum(item["qty"] * item["rate"] for item in items)
+    
+    # Get customer discount
+    customer = frappe.get_doc("Customer", customer_id)
+    discount_pct = customer.default_discount_percentage or 0
+    discount_amount = subtotal * (discount_pct / 100)
+    
+    # Calculate tax (simplified)
+    tax_rate = 0.10  # 10% tax
+    tax_amount = (subtotal - discount_amount) * tax_rate
+    
+    total = subtotal - discount_amount + tax_amount
+    
+    return {
+        "subtotal": round(subtotal, 2),
+        "discount_percentage": discount_pct,
+        "discount_amount": round(discount_amount, 2),
+        "tax_rate": tax_rate,
+        "tax_amount": round(tax_amount, 2),
+        "grand_total": round(total, 2)
+    }
+```
+
+## ما التالي؟
+
+واصل مع هذه الأدلة المرتبطة.
+
+- **[الأدوات المخصصة](/docs/tools/custom)** - إنشاء الأدوات يدويًا
+- **[الأدوات المدمجة](/docs/tools/built-in)** - استخدام أدوات Huf المدمجة
+- **[إنشاء الوكلاء](/docs/guides/creating-agents)** - تعيين الأدوات المنشورة للوكلاء
+- **[التطوير](/docs/development)** - المزيد من موارد تطوير التطبيقات
+
+---
+
+**هل لديك أسئلة؟** قم بزيارة [مناقشات GitHub](https://github.com/tridz-dev/agent_flo/discussions) أو راجع [شفرة Huf المصدرية](https://github.com/tridz-dev/agent_flo).
