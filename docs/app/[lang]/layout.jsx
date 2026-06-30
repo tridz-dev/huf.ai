@@ -1,6 +1,7 @@
 import fs from 'node:fs'
+import path from 'node:path'
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
-import { Head } from 'nextra/components'
+import { Head, Search, SkipNavLink } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { Noto_Kufi_Arabic } from 'next/font/google'
 import 'nextra-theme-docs/style.css'
@@ -66,18 +67,62 @@ function sortPageMap(pageMap, metaOrder) {
   })
 }
 
-function localizePageMap(pageMap, lang) {
+async function loadMetaTitles(lang) {
+  const titles = {}
+  const contentDir = path.join(process.cwd(), 'content', lang)
+
+  async function scan(dir) {
+    let entries
+    try {
+      entries = await fs.promises.readdir(dir, { withFileTypes: true })
+    } catch {
+      return
+    }
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        await scan(fullPath)
+      } else if (entry.name === '_meta.json') {
+        let meta
+        try {
+          meta = JSON.parse(await fs.promises.readFile(fullPath, 'utf-8'))
+        } catch {
+          continue
+        }
+        const relativeDir = path.relative(contentDir, dir)
+        const baseRoute = relativeDir
+          ? `/${lang}/${relativeDir.replace(/\\/g, '/')}`
+          : `/${lang}`
+        for (const [key, value] of Object.entries(meta)) {
+          if (typeof value === 'string') {
+            const route = path.posix.join(baseRoute, key)
+            titles[route] = value
+          }
+        }
+      }
+    }
+  }
+
+  await scan(contentDir)
+  return titles
+}
+
+function localizePageMap(pageMap, lang, metaTitles) {
   if (!pageMap || !Array.isArray(pageMap)) return pageMap
   return pageMap.flatMap(item => {
     if (item.name === '[lang]' && item.children) {
-      return localizePageMap(item.children, lang)
+      return localizePageMap(item.children, lang, metaTitles)
     }
     const localized = { ...item }
     if (localized.route) localized.route = localized.route.replace(/\[lang\]/g, lang)
     if (localized.route && !localized.route.startsWith(`/${lang}`) && localized.route !== '/') {
       localized.route = `/${lang}${localized.route}`
     }
-    if (localized.children) localized.children = localizePageMap(localized.children, lang)
+    if (localized.children) {
+      const title = metaTitles?.[localized.route]
+      if (title) localized.title = title
+      localized.children = localizePageMap(localized.children, lang, metaTitles)
+    }
     return [localized]
   })
 }
@@ -93,21 +138,47 @@ export default async function RootLayout({ children, params }) {
     'quick-start', 'installation', 'concepts', 'tools',
     'use-cases', 'examples', 'guides', 'development'
   ]
-  const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang)
+  const metaTitles = await loadMetaTitles(lang)
+  const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang, metaTitles)
   fs.writeFileSync(`/tmp/pagemap-${lang}.json`, JSON.stringify(sortedPageMap, null, 2))
 
+  const isArabic = lang === 'ar'
+
+  const ui = {
+    searchPlaceholder: isArabic ? 'البحث في الوثائق...' : 'Search documentation...',
+    themeSwitch: isArabic
+      ? { system: 'النظام', dark: 'داكن', light: 'فاتح' }
+      : { system: 'System', dark: 'Dark', light: 'Light' },
+    toc: isArabic
+      ? { title: 'على هذه الصفحة', backToTop: 'العودة إلى الأعلى' }
+      : { title: 'On This Page', backToTop: 'Scroll to top' },
+    editLink: isArabic ? 'تعديل هذه الصفحة على GitHub →' : 'Edit this page on GitHub →',
+    feedback: isArabic
+      ? { content: 'هل لديك سؤال؟ أرسل لنا ملاحظات →', labels: 'feedback' }
+      : { content: 'Question? Give us feedback →', labels: 'feedback' },
+    skipLink: isArabic ? 'تخطي إلى المحتوى' : 'Skip to Content'
+  }
+
   return (
-    <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
+    <html lang={lang} dir={isArabic ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <Head />
-      <body className={lang === 'ar' ? notoKufiArabic.className : ''}>
-        <Layout
-          navbar={navbar}
-          pageMap={sortedPageMap}
-          docsRepositoryBase="https://github.com/tridz-dev/agent_flo/tree/main/docs"
-          footer={footer}
-        >
-          {children}
-        </Layout>
+      <body className={isArabic ? notoKufiArabic.className : ''}>
+        <div className="huf-layout-wrapper">
+          <SkipNavLink>{ui.skipLink}</SkipNavLink>
+          <Layout
+            navbar={navbar}
+            pageMap={sortedPageMap}
+            docsRepositoryBase="https://github.com/tridz-dev/agent_flo/tree/main/docs"
+            footer={footer}
+            search={<Search placeholder={ui.searchPlaceholder} />}
+            themeSwitch={ui.themeSwitch}
+            toc={ui.toc}
+            editLink={ui.editLink}
+            feedback={ui.feedback}
+          >
+            {children}
+          </Layout>
+        </div>
       </body>
     </html>
   )
