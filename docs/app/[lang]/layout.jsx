@@ -1,5 +1,5 @@
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
-import { Head, Search } from 'nextra/components'
+import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import { Noto_Kufi_Arabic } from 'next/font/google'
 import 'nextra-theme-docs/style.css'
@@ -94,16 +94,6 @@ export default async function RootLayout({ children, params }) {
   ]
   const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang)
 
-  const search = (
-    <Search placeholder={lang === 'ar' ? 'البحث في الوثائق...' : 'Search documentation...'} />
-  )
-
-  const themeSwitch = {
-    dark: lang === 'ar' ? 'داكن' : 'Dark',
-    light: lang === 'ar' ? 'فاتح' : 'Light',
-    system: lang === 'ar' ? 'النظام' : 'System'
-  }
-
   return (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <Head />
@@ -113,8 +103,6 @@ export default async function RootLayout({ children, params }) {
           pageMap={sortedPageMap}
           docsRepositoryBase="https://github.com/tridz-dev/agent_flo/tree/main/docs"
           footer={footer}
-          search={search}
-          themeSwitch={themeSwitch}
         >
           {children}
         </Layout>
