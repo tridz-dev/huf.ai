@@ -72,11 +72,9 @@ function localizePageMap(pageMap, lang) {
       return localizePageMap(item.children, lang)
     }
     const localized = { ...item }
-    if (localized.route) {
-      localized.route = localized.route.replace(/\[lang\]/g, lang)
-      if (!localized.route.startsWith(`/${lang}`)) {
-        localized.route = `/${lang}${localized.route}`
-      }
+    if (localized.route) localized.route = localized.route.replace(/\[lang\]/g, lang)
+    if (localized.route && !localized.route.startsWith(`/${lang}`) && localized.route !== '/') {
+      localized.route = `/${lang}${localized.route}`
     }
     if (localized.children) localized.children = localizePageMap(localized.children, lang)
     return [localized]
