@@ -72,7 +72,12 @@ function localizePageMap(pageMap, lang) {
       return localizePageMap(item.children, lang)
     }
     const localized = { ...item }
-    if (localized.route) localized.route = localized.route.replace(/\[lang\]/g, lang)
+    if (localized.route) {
+      localized.route = localized.route.replace(/\[lang\]/g, lang)
+      if (!localized.route.startsWith(`/${lang}`)) {
+        localized.route = `/${lang}${localized.route}`
+      }
+    }
     if (localized.children) localized.children = localizePageMap(localized.children, lang)
     return [localized]
   })
@@ -89,7 +94,7 @@ export default async function RootLayout({ children, params }) {
     'quick-start', 'installation', 'concepts', 'tools',
     'use-cases', 'examples', 'guides', 'development'
   ]
-  const sortedPageMap = sortPageMap(pageMap, docsOrder)
+  const sortedPageMap = localizePageMap(sortPageMap(pageMap, docsOrder), lang)
 
   return (
     <html lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
