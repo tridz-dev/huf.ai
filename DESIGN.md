@@ -411,7 +411,7 @@ The design system overrides default Nextra chrome:
 | Navbar | `--color-bg` background, `--color-border` bottom border |
 | Logo | HUF wordmark + signal square via `::before` |
 | Nav links | Martian Mono, 11px, uppercase, wide tracking |
-| Sidebar | `--color-sidebar-bg` background, signal left rail on active |
+| Sidebar | `--color-sidebar-bg` background, signal left rail on active. **Muted Density**: Tighter vertical rhythm, inactive text subdued (`--color-text-muted`) to mirror product UI. |
 | Sidebar folders | Martian Mono, 9.5px, uppercase, muted color |
 | TOC heading | Martian Mono, widest tracking, muted |
 | TOC active link | `--color-accent` |
@@ -559,6 +559,31 @@ flowchart LR
 
 Use Mermaid for execution flows and lifecycle diagrams instead of ASCII art or numbered lists. The component renders client-side using the HUF color tokens.
 
+### 10.11 Execution Profile Config
+
+```mdx
+<ExecutionProfileConfig title="Local Python Sandbox">
+  <ConfigField label="Environment" value="venv" />
+  <ConfigField label="Executable" value="/usr/bin/python3" />
+  <ConfigSection title="Sandbox Restrictions">
+    <ConfigField label="Allowlist" value="pandas, numpy, math" />
+  </ConfigSection>
+</ExecutionProfileConfig>
+```
+
+Used to document Execution Profiles. Renders with an infrastructure/terminal feel using heavy `IBM Plex Mono`.
+
+### 10.12 Chat PWA Preview
+
+```mdx
+<ChatPWAPreview mode="desktop">
+  <ChatMessage role="user">What is the status of ticket T-49?</ChatMessage>
+  <ChatMessage role="agent" status="running">Checking...</ChatMessage>
+</ChatPWAPreview>
+```
+
+Renders a live preview of the Chat PWA control-room ledger interface. Avoids consumer chat bubbles.
+
 ---
 
 ## 11. Responsive Behavior
@@ -619,4 +644,4 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
 
 ---
 
-*Last updated: 2026-06-11 · Branch: `feat/huf-instrument-redesign`*
+*Last updated: 2026-07-28 · Branch: `docs/update-huf-readme-architecture`*
