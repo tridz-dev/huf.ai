@@ -2,6 +2,8 @@
 sidebarTitle: Agents
 ---
 
+import { Callout } from 'nextra/components'
+
 # Agents
 
 **Agents are AI-powered team members for your Frappe site.** Think of each agent as a specialist with a specific role, equipped with tools to work with your data, and ready to assist users or automate tasks.
@@ -33,7 +35,7 @@ The most important part of your agent. This is where you define:
 
 **Example Instructions:**
 
-```
+<AgentPrompt title="Customer Support Specialist">
 You are a customer support specialist for our Frappe-based business. Your job is to:
 
 1. Help users find and understand customer information
@@ -47,7 +49,7 @@ When a user asks about a customer:
 
 Always be polite, professional, and concise. If you cannot help with something,
 explain why and suggest alternatives.
-```
+</AgentPrompt>
 
 ### AI Model
 
@@ -61,7 +63,9 @@ The model determines the agent's intelligence and capabilities:
 | **Claude 3 Sonnet** | Balanced performance and cost | $$ | Fast |
 | **Gemini Pro** | Multimodal, Google ecosystem | $$ | Fast |
 
-> **Tip**: Start with a cheaper model (GPT-3.5, Gemini) for testing, then upgrade to more powerful models (GPT-4, Claude Opus) for production if needed.
+<Callout type="info">
+  Start with a cheaper model (GPT-3.5, Gemini) for testing, then upgrade to more powerful models (GPT-4, Claude Opus) for production if needed.
+</Callout>
 
 ### Tools
 
@@ -101,15 +105,22 @@ Fine-tune agent behavior with these parameters:
 - Start with `1.0` for most use cases
 - Lower values make output more focused
 
-> **Note**: Use either temperature OR top_p, not both. Temperature is more commonly used.
+<Callout type="warning">
+  Use either temperature OR top_p, not both. Temperature is more commonly used.
+</Callout>
 
 ## Agent States
 
 Agents have a lifecycle:
 
-```
-Draft → Active → Running → Completed
-```
+<div className="huf-state-row">
+  {["Draft", "Active", "Running", "Completed"].map((s, i, arr) => (
+    <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+      <span className="huf-state-pill">{s}</span>
+      {i < arr.length - 1 && <span className="huf-state-arrow">→</span>}
+    </span>
+  ))}
+</div>
 
 - **Draft**: Being configured, not ready for use
 - **Active**: Ready to run (manually, scheduled, or triggered)
@@ -225,53 +236,63 @@ Learn more in [Running Agents - Multi-Run Orchestration](/docs/guides/running-ag
 
 Navigate to: **Desk → Huf → Agent**
 
-**1. Basic Information**
-- **Agent Name**: Descriptive, unique name
-- **Description**: Brief summary of the agent's purpose
-- **Provider**: Select your AI provider
-- **Model**: Select the AI model
+<ConfigPanel title="Agent Configuration">
+  <ConfigSection title="1. Basic Information">
+    <ConfigField label="Agent Name" value="Descriptive, unique name" />
+    <ConfigField label="Description" value="Brief summary of the agent's purpose" />
+    <ConfigField label="Provider" value="Select your AI provider" />
+    <ConfigField label="Model" value="Select the AI model" />
+  </ConfigSection>
 
-**2. Instructions**
-- Write clear, detailed instructions
-- Define role, scope, and behavior
-- Include examples of desired responses
-- Set constraints and boundaries
+  <ConfigSection title="2. Instructions">
+    <ConfigField label="Instructions" value="Write clear, detailed instructions" />
+    <ConfigField label="Role" value="Define role, scope, and behavior" />
+    <ConfigField label="Examples" value="Include examples of desired responses" />
+    <ConfigField label="Constraints" value="Set constraints and boundaries" />
+  </ConfigSection>
 
-**3. Settings**
-- **Temperature**: Start with `0.7`
-- **Top P**: Start with `1.0`
-- **Allow Chat**: Enable if users should chat with this agent
-- **Enable Multi Run**: Enable for multi-step orchestration workflows
-- **Persist Conversation**: Keep history across runs (recommended)
-- **Persist per User**: Separate history for each user (recommended for chat)
+  <ConfigSection title="3. Settings">
+    <ConfigField label="Temperature" value="Start with 0.7" />
+    <ConfigField label="Top P" value="Start with 1.0" />
+    <ConfigField label="Allow Chat" value="Enable if users should chat with this agent" />
+    <ConfigField label="Enable Multi Run" value="Enable for multi-step orchestration workflows" />
+    <ConfigField label="Persist Conversation" value="Keep history across runs (recommended)" />
+    <ConfigField label="Persist per User" value="Separate history for each user (recommended for chat)" />
+  </ConfigSection>
 
-**4. Tools**
-- Click **Add Row** in the **Agent Tool** table
-- Select tools this agent needs
-- Start minimal—add more as needed
+  <ConfigSection title="4. Tools">
+    <ConfigField label="Agent Tool table" value="Click Add Row in the Agent Tool table" />
+    <ConfigField label="Tool selection" value="Select tools this agent needs" />
+    <ConfigField label="Start minimal" value="Start minimal—add more tools as needed" />
+  </ConfigSection>
 
-**5. Save and Test**
-- Save the agent
-- Test via **Agent Chat** or **Agent Console**
-- Review **Agent Run** logs
-- Iterate on instructions and settings
+  <ConfigSection title="5. Save and Test">
+    <ConfigField label="Save" value="Save the agent" />
+    <ConfigField label="Test" value="Test via Agent Chat or Agent Console" />
+    <ConfigField label="Review" value="Review Agent Run logs" />
+    <ConfigField label="Iterate" value="Iterate on instructions and settings" />
+  </ConfigSection>
+</ConfigPanel>
 
 ## Best Practices
 
 ### Writing Great Instructions
 
-**Do:**
-- Be specific about the agent's role and scope
-- Include step-by-step guidance for common tasks
-- Provide examples of good responses
-- Define clear boundaries (what NOT to do)
-- Use natural, conversational language
-
-**Don't:**
-- Be vague ("help users")
-- Assume the AI knows your business logic
-- Forget to mention tool usage
-- Mix multiple unrelated roles in one agent
+<DoDont
+  doItems={[
+    "Be specific about the agent's role and scope",
+    "Include step-by-step guidance for common tasks",
+    "Provide examples of good responses",
+    "Define clear boundaries (what NOT to do)",
+    "Use natural, conversational language"
+  ]}
+  dontItems={[
+    'Be vague ("help users")',
+    "Assume the AI knows your business logic",
+    "Forget to mention tool usage",
+    "Mix multiple unrelated roles in one agent"
+  ]}
+/>
 
 **Example Comparison:**
 
@@ -281,7 +302,7 @@ Help with sales.
 ```
 
 **Good:**
-```
+<AgentPrompt title="Sales Assistant">
 You are a sales assistant. Help users:
 1. Look up customer information by name or ID
 2. Find recent orders for a customer
@@ -290,7 +311,7 @@ You are a sales assistant. Help users:
 Always ask clarifying questions if the request is ambiguous.
 Use the get_customer and get_list_sales_orders tools as needed.
 Present information in bullet points for clarity.
-```
+</AgentPrompt>
 
 ### Tool Selection
 
@@ -332,7 +353,9 @@ Navigate to: **Desk → Huf → Agent**
 
 Changes to agents take effect immediately for new runs. Ongoing conversations or scheduled runs may use the old configuration until they complete.
 
-> **Tip**: Test changes in a draft/duplicate agent before modifying production agents.
+<Callout type="info">
+  Test changes in a draft/duplicate agent before modifying production agents.
+</Callout>
 
 ### Monitoring Performance
 
@@ -342,7 +365,7 @@ Check **Agent Run** for every execution:
 - Track token usage and costs
 - Identify errors and issues
 
-Learn more in [Monitoring](/docs/monitoring).
+Learn more in [Monitoring](/docs/guides/monitoring/).
 
 ### Permissions
 
@@ -451,16 +474,17 @@ Set up permissions via Frappe's **Role Permission Manager**.
 
 ## What's Next?
 
-Now that you understand agents, dive deeper into specific topics:
+Now that you understand agents, dive deeper into specific topics or jump to practical guides.
 
-- **[Providers & Models](/docs/concepts/providers-models)** - Choose and configure AI models
-- **[Tools](/docs/concepts/tools)** - Give agents powerful capabilities
-- **[Conversations](/docs/concepts/conversations)** - Understand how context is maintained
-- **[Triggers](/docs/concepts/triggers)** - Automate agents with schedules and events
+<div className="huf-next-steps">
 
-Or jump to practical guides:
+- **[Providers & Models](/docs/concepts/providers-models)** — Choose and configure AI models
+- **[Tools](/docs/concepts/tools)** — Give agents powerful capabilities
+- **[Conversations](/docs/concepts/conversations)** — Understand how context is maintained
+- **[Triggers](/docs/concepts/triggers)** — Automate agents with schedules and events
+- **[Creating Agents](/docs/guides/creating-agents)** — Step-by-step agent creation
+- **[Managing Agents](/docs/guides/managing-agents)** — Agent lifecycle management
+- **[Monitoring](/docs/guides/monitoring)** — Track performance and costs
 
-- **[Creating Agents](/docs/guides/creating-agents)** - Step-by-step agent creation
-- **[Managing Agents](/docs/guides/managing-agents)** - Agent lifecycle management
-- **[Monitoring](/docs/guides/monitoring)** - Track performance and costs
+</div>
 

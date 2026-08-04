@@ -19,10 +19,13 @@ Before creating an agent, plan its purpose, scope, and capabilities.
 - Who will use it?
 
 **Example:**
-- **Role:** Customer Support Assistant
-- **Purpose:** Answer customer questions and create support tickets
-- **Users:** End customers and support team
-- **Scope:** FAQ, ticket creation, basic information lookup
+
+<ConfigPanel title="Agent Profile">
+  <ConfigField label="Role" value="Customer Support Assistant" />
+  <ConfigField label="Purpose" value="Answer customer questions and create support tickets" />
+  <ConfigField label="Users" value="End customers and support team" />
+  <ConfigField label="Scope" value="FAQ, ticket creation, basic information lookup" />
+</ConfigPanel>
 
 ### Define Success Criteria
 
@@ -70,35 +73,35 @@ Instructions are the most important part of your agent. They define behavior, to
 
 ### Example: Well-Structured Instructions
 
-```
-You are a customer support assistant for an e-commerce platform.
+<AgentPrompt title="Customer Support Assistant">
+  You are a customer support assistant for an e-commerce platform.
 
-Your responsibilities:
-1. Answer questions about products, orders, and policies
-2. Look up customer and order information
-3. Create support tickets for issues you cannot resolve
-4. Provide clear, helpful responses
+  Your responsibilities:
+  1. Answer questions about products, orders, and policies
+  2. Look up customer and order information
+  3. Create support tickets for issues you cannot resolve
+  4. Provide clear, helpful responses
 
-Available tools:
-- get_customer: Look up customer information
-- get_order: Retrieve order details
-- create_support_ticket: Create tickets for complex issues
-- check_product_availability: Check if products are in stock
+  Available tools:
+  - get_customer: Look up customer information
+  - get_order: Retrieve order details
+  - create_support_ticket: Create tickets for complex issues
+  - check_product_availability: Check if products are in stock
 
-Guidelines:
-- Always be polite and professional
-- If you don't know something, say so and create a ticket
-- Provide specific information, not vague answers
-- Use customer names when addressing them
-- Escalate urgent issues immediately
+  Guidelines:
+  - Always be polite and professional
+  - If you don't know something, say so and create a ticket
+  - Provide specific information, not vague answers
+  - Use customer names when addressing them
+  - Escalate urgent issues immediately
 
-Examples:
-User: "What's the status of my order?"
-You: "I'll check that for you. What's your order number?"
+  Examples:
+  User: "What's the status of my order?"
+  You: "I'll check that for you. What's your order number?"
 
-User: "I need to return an item"
-You: "I can help with that. Let me look up your order details..."
-```
+  User: "I need to return an item"
+  You: "I can help with that. Let me look up your order details..."
+</AgentPrompt>
 
 ### Common Mistakes
 
@@ -211,13 +214,15 @@ context for support.
 
 ### Testing Checklist
 
-- [ ] Agent understands common questions
-- [ ] Tools are called correctly
-- [ ] Responses are accurate
-- [ ] Error handling works
-- [ ] Instructions are followed
-- [ ] Tone is appropriate
-- [ ] Escalation works when needed
+<Checklist items={[
+  "Agent understands common questions",
+  "Tools are called correctly",
+  "Responses are accurate",
+  "Error handling works",
+  "Instructions are followed",
+  "Tone is appropriate",
+  "Escalation works when needed"
+]} />
 
 ### Iterative Improvement
 
@@ -235,48 +240,57 @@ context for support.
 
 ### Instructions
 
-**Do:**
-- Be specific about role and responsibilities
-- Include step-by-step guidance
-- Provide examples of good responses
-- Define clear boundaries
-- Mention available tools
-- Set tone and style expectations
-
-**Don't:**
-- Be vague or ambiguous
-- Assume the AI knows your business logic
-- Forget to mention tool usage
-- Mix multiple unrelated roles
-- Use technical jargon users won't understand
+<DoDont
+  doItems={[
+    "Be specific about role and responsibilities",
+    "Include step-by-step guidance",
+    "Provide examples of good responses",
+    "Define clear boundaries",
+    "Mention available tools",
+    "Set tone and style expectations"
+  ]}
+  dontItems={[
+    "Be vague or ambiguous",
+    "Assume the AI knows your business logic",
+    "Forget to mention tool usage",
+    "Mix multiple unrelated roles",
+    "Use technical jargon users won't understand"
+  ]}
+/>
 
 ### Tool Assignment
 
-**Do:**
-- Assign only necessary tools
-- Use specific DocTypes per tool
-- Write clear tool descriptions
-- Test tool calls thoroughly
-
-**Don't:**
-- Assign too many tools
-- Use generic "get any document" tools
-- Forget to test tool permissions
-- Overlook tool parameter requirements
+<DoDont
+  doItems={[
+    "Assign only necessary tools",
+    "Use specific DocTypes per tool",
+    "Write clear tool descriptions",
+    "Test tool calls thoroughly"
+  ]}
+  dontItems={[
+    "Assign too many tools",
+    "Use generic \"get any document\" tools",
+    "Forget to test tool permissions",
+    "Overlook tool parameter requirements"
+  ]}
+/>
 
 ### Model Selection
 
-**Do:**
-- Match model to task complexity
-- Consider cost vs capability
-- Test with cheaper models first
-- Upgrade if needed
-
-**Don't:**
-- Use expensive models for simple tasks
-- Underestimate model requirements
-- Ignore token costs
-- Forget to monitor performance
+<DoDont
+  doItems={[
+    "Match model to task complexity",
+    "Consider cost vs capability",
+    "Test with cheaper models first",
+    "Upgrade if needed"
+  ]}
+  dontItems={[
+    "Use expensive models for simple tasks",
+    "Underestimate model requirements",
+    "Ignore token costs",
+    "Forget to monitor performance"
+  ]}
+/>
 
 ## Common Patterns
 
@@ -357,5 +371,4 @@ context for support.
 
 ---
 
-**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
-
+**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/huf/discussions).

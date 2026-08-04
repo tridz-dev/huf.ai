@@ -3,10 +3,17 @@ import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import Script from 'next/script'
 import 'nextra-theme-docs/style.css'
+import './globals.css'
 
 export const metadata = {
-  title: 'Huf Documentation',
-  description: 'Documentation for Huf - AI agents for Frappe Framework'
+  title: {
+    default: 'Introduction',
+    template: '%s – HUF'
+  },
+  description: 'Documentation for HUF — the AI engine you actually control. Open-source agent infrastructure built on Frappe.',
+  icons: {
+    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }]
+  }
 }
 
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
@@ -19,10 +26,10 @@ const navbar = (
   <Navbar
     logo={
       <>
-        <span style={{ fontWeight: 800, fontSize: '1.2em' }}>Huf</span>
+        <span style={{ fontFamily: "'Big Shoulders', sans-serif" }}>HUF</span>
       </>
     }
-    projectLink="https://github.com/tridz-dev/agent_flo"
+    projectLink="https://github.com/tridz-dev/huf"
   />
 )
 
@@ -90,7 +97,9 @@ export default async function RootLayout({ children }) {
   
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <Head />
+      <Head>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+      </Head>
       <body>
         {enableGa && (
           <>
@@ -122,7 +131,7 @@ export default async function RootLayout({ children }) {
         <Layout
           navbar={navbar}
           pageMap={sortedPageMap}
-          docsRepositoryBase="https://github.com/tridz-dev/agent_flo/tree/main/docs"
+          docsRepositoryBase="https://github.com/tridz-dev/huf/tree/main/docs"
           footer={footer}
         >
           {children}

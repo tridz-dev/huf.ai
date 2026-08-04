@@ -2,62 +2,90 @@
 sidebarTitle: Creating Custom Tools
 ---
 
+import { Callout } from 'nextra/components'
+
 # Creating Custom Tools
 
 Custom tools let you extend agent capabilities beyond built-in Frappe operations. Link your own Python functions to agents and unlock unlimited possibilities.
 
 ## What Are Custom Tools?
 
-**Custom tools** are your own Python functions that agents can call. They enable agents to:
-- Perform complex calculations
-- Integrate with external systems
-- Implement business logic
-- Process data in custom ways
-- Execute specialized workflows
+**Custom tools** are your own Python functions that agents can call. They enable agents to perform specialized tasks that built-in tools don't cover.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">Complex Calculations</span>Perform complex calculations</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">External Integrations</span>Integrate with external systems</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Business Logic</span>Implement business logic</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Custom Data Processing</span>Process data in custom ways</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Specialized Workflows</span>Execute specialized workflows</div>
+</div>
 
 If built-in tools are the standard toolkit, custom tools are your custom-made specialty tools.
 
 ## When to Create Custom Tools
 
-**Create custom tools when you need to:**
-- Execute business-specific logic
-- Perform calculations beyond simple queries
-- Integrate with external APIs with custom authentication
-- Process data in ways built-in tools can't
-- Implement multi-step workflows
-- Validate complex conditions
-- Format or transform data specially
+Choose the right approach based on whether your task needs custom logic or can use standard operations.
 
-**Use built-in tools when:**
-- Standard CRUD operations suffice
-- Simple HTTP requests work
-- No custom logic needed
-- Built-in tools already cover the use case
+<p><strong>Create custom tools when you need to:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">Business-Specific Logic</span>Execute business-specific logic</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Advanced Calculations</span>Perform calculations beyond simple queries</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Custom API Integration</span>Integrate with external APIs with custom authentication</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Complex Data Processing</span>Process data in ways built-in tools can't</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Multi-Step Workflows</span>Implement multi-step workflows</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Complex Validation</span>Validate complex conditions</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Specialized Formatting</span>Format or transform data specially</div>
+</div>
+
+<p><strong>Use built-in tools when:</strong></p>
+
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">Standard CRUD</span>Standard CRUD operations suffice</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Simple HTTP</span>Simple HTTP requests work</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">No Custom Logic</span>No custom logic needed</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Covered Use Case</span>Built-in tools already cover the use case</div>
+</div>
 
 ## How Custom Tools Work
 
+Custom tools bridge your Python code and Huf agents through a defined lifecycle.
+
 ### The Flow
 
-1. **You write** a Python function in your Frappe app
-2. **You create** an Agent Tool Function pointing to that function
-3. **You assign** the tool to an agent
-4. **Agent calls** the tool when needed
-5. **Your function executes** with provided parameters
-6. **Result returns** to the agent
-7. **Agent uses** the result in its response
+The agent discovers and executes your function through these stages.
+
+<Mermaid>{`
+flowchart LR
+    Write[Write<br/>Python function in Frappe app] --> Create[Create<br/>Agent Tool Function]
+    Create --> Assign[Assign<br/>tool to agent]
+    Assign --> Call[Call<br/>Agent calls tool when needed]
+    Call --> Execute[Execute<br/>Function runs with parameters]
+    Execute --> Return[Return<br/>Result to agent]
+    Return --> Use[Use<br/>Agent uses result in response]
+`}</Mermaid>
 
 ### Function Requirements
 
-Your Python function must:
-- Be importable (in a module Frappe can access)
-- Accept defined parameters
-- Return JSON-serializable data
-- Handle errors gracefully
-- Respect Frappe permissions (if needed)
+Your Python function must meet these baseline requirements to be callable by an agent.
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">Importable</span>Be importable (in a module Frappe can access)</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Defined Parameters</span>Accept defined parameters</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Serializable Returns</span>Return JSON-serializable data</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Graceful Errors</span>Handle errors gracefully</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Permission Aware</span>Respect Frappe permissions (if needed)</div>
+</div>
 
 ## Creating a Custom Tool
 
-### Step 1: Write the Python Function
+Build and connect a custom tool in four stages.
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">01</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">Step 1: Write the Python Function</div>
+    <div className="huf-step-body">
 
 Create a function in your Frappe app:
 
@@ -99,45 +127,62 @@ def calculate_customer_lifetime_value(customer_id):
 ```
 
 **Key Points:**
-- **Docstring**: Becomes part of tool description (important!)
-- **Type hints**: Help document expected parameters
-- **Return dict**: Agent can easily parse the result
-- **Error handling**: Handle edge cases (division by zero, missing data)
 
-### Step 2: Create Agent Tool Function
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">Docstring</span>Becomes part of tool description (important!)</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Type Hints</span>Help document expected parameters</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Return Dict</span>Agent can easily parse the result</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Error Handling</span>Handle edge cases (division by zero, missing data)</div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">02</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">Step 2: Create Agent Tool Function</div>
+    <div className="huf-step-body">
+
+Create the Agent Tool Function record that points to your Python function.
 
 **Navigate to:** Desk → Huf → Agent Tool Function
 
 **Click New** and fill in:
 
-1. **Tool Name**: `calculate_customer_ltv`
-   - Use descriptive snake_case names
-   - Should match function name (not required but clearer)
+<ConfigPanel title="Agent Tool Function">
+  <ConfigField label="Tool Name" value="calculate_customer_ltv" />
+  <ConfigField label="Description" value="Calculate the lifetime value for a customer including total revenue, order count, and average order value across all paid invoices." />
+  <ConfigField label="Types" value="Custom Function" />
+  <ConfigField label="Function Path" value="my_app.api.tools.calculate_customer_lifetime_value" />
+  <ConfigSection title="Parameters">
+    <ConfigField label="customer_id" value="String (Required) — The customer ID to calculate LTV for" />
+  </ConfigSection>
+</ConfigPanel>
 
-2. **Description**:
-   ```
-   Calculate the lifetime value for a customer including total revenue,
-   order count, and average order value across all paid invoices.
-   ```
-   - Be specific—agent uses this to decide when to use the tool
-   - Mention what data it returns
-   - Include any limitations
+**Guidelines:**
 
-3. **Types**: Select `Custom Function`
+- Use descriptive snake_case names
+- Should match function name (not required but clearer)
+- Be specific—agent uses this to decide when to use the tool
+- Mention what data it returns
+- Include any limitations
+- Full dotted path to the function must be importable: `from my_app.api.tools import calculate_customer_lifetime_value`
 
-4. **Function Path**: `my_app.api.tools.calculate_customer_lifetime_value`
-   - Full dotted path to the function
-   - Must be importable: `from my_app.api.tools import calculate_customer_lifetime_value`
+**Save** the tool
 
-5. **Parameters**: Add rows in the table
+</div>
+  </div>
+</div>
 
-| Parameter Name | Type | Description | Required |
-|----------------|------|-------------|----------|
-| customer_id | String | The customer ID to calculate LTV for | Yes |
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">03</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">Step 3: Assign to Agent</div>
+    <div className="huf-step-body">
 
-6. **Save** the tool
-
-### Step 3: Assign to Agent
+Link the tool to the agent that should be able to use it.
 
 1. Open your agent (Desk → Huf → Agent)
 2. Scroll to **Agent Tool** table
@@ -145,24 +190,33 @@ def calculate_customer_lifetime_value(customer_id):
 4. Select **Tool Function**: `calculate_customer_ltv`
 5. **Save** the agent
 
-### Step 4: Test
+</div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">04</div>
+  <div style={{ gridColumn: 2 }}>
+    <div className="huf-step-title">Step 4: Test</div>
+    <div className="huf-step-body">
 
 Use Agent Chat or run the agent:
 
-```
-User: "What's the lifetime value for customer CUST-001?"
+<ChatTranscript>
+  <ChatMessage role="user">What's the lifetime value for customer CUST-001?</ChatMessage>
+  <ChatMessage role="agent">Recognizes need for LTV data</ChatMessage>
+  <ChatMessage role="tool-call">calculate_customer_ltv("CUST-001")</ChatMessage>
+  <ChatMessage role="tool-result">{`{"lifetime_value": 45230.50, "order_count": 12, ...}`}</ChatMessage>
+  <ChatMessage role="agent">Customer CUST-001 has a lifetime value of $45,230.50 across 12 orders, with an average order value of $3,769.21.</ChatMessage>
+</ChatTranscript>
 
-Agent:
-- Recognizes need for LTV data
-- Calls: calculate_customer_ltv("CUST-001")
-- Receives: {"lifetime_value": 45230.50, "order_count": 12, ...}
-- Responds: "Customer CUST-001 has a lifetime value of $45,230.50 
-            across 12 orders, with an average order value of $3,769.21."
-```
+    </div>
+  </div>
+</div>
 
 ## Parameter Types
 
-When defining parameters in Agent Tool Function:
+When defining parameters in Agent Tool Function, map each type to its Python equivalent.
 
 | Type | Python Type | Description | Example |
 |------|-------------|-------------|---------|
@@ -173,7 +227,7 @@ When defining parameters in Agent Tool Function:
 | **Object** | `dict` | JSON objects | `{"key": "value"}` |
 | **Array** | `list` | JSON arrays | `["item1", "item2"]` |
 
-**Examples:**
+These signatures show how to declare parameters for each type:
 
 ```python
 def search_products(category: str, min_price: float, in_stock: bool):
@@ -191,7 +245,11 @@ def create_customer_profile(data: dict):
 
 ## Advanced Examples
 
+These examples show common custom tool patterns.
+
 ### Example 1: External API Integration
+
+Use this pattern when you need to call an external API from an agent.
 
 ```python
 import requests
@@ -226,15 +284,16 @@ def get_weather_forecast(city: str):
         frappe.throw(f"Weather API error: {response.status_code}")
 ```
 
-**Agent Instructions:**
-```
-When user asks about weather:
-1. Extract city name
-2. Use get_weather_forecast tool
-3. Present temperature, condition, and humidity in a friendly format
-```
+<AgentPrompt title="Weather Agent Instructions">
+  When user asks about weather:
+  1. Extract city name
+  2. Use get_weather_forecast tool
+  3. Present temperature, condition, and humidity in a friendly format
+</AgentPrompt>
 
 ### Example 2: Complex Calculation
+
+Use this pattern to run calculations over Frappe data.
 
 ```python
 import frappe
@@ -293,6 +352,8 @@ def calculate_reorder_quantity(item_code: str, days_ahead: int = 30):
 
 ### Example 3: Validation Logic
 
+Use this pattern to validate documents and flag issues.
+
 ```python
 import frappe
 
@@ -350,27 +411,34 @@ def validate_invoice_pricing(invoice_name: str):
 
 ## Best Practices
 
+Follow these guidelines to build reliable, maintainable custom tools.
+
 ### Function Design
 
-**Do:**
-- Write clear, focused functions (single responsibility)
-- Use descriptive function and parameter names
-- Include comprehensive docstrings
-- Return structured data (dicts with clear keys)
-- Handle errors and edge cases
-- Add type hints for parameters
+Well-designed functions are easier for agents to understand and safer to maintain.
 
-**Don't:**
-- Create mega-functions that do everything
-- Use vague parameter names (`data`, `info`, `x`)
-- Return raw database objects (serialize them)
-- Forget error handling
-- Make functions depend on global state
-- Use side effects without documenting them
+<DoDont
+  doItems={[
+    "Write clear, focused functions (single responsibility)",
+    "Use descriptive function and parameter names",
+    "Include comprehensive docstrings",
+    "Return structured data (dicts with clear keys)",
+    "Handle errors and edge cases",
+    "Add type hints for parameters"
+  ]}
+  dontItems={[
+    "Create mega-functions that do everything",
+    "Use vague parameter names (\`data\`, \`info\`, \`x\`)",
+    "Return raw database objects (serialize them)",
+    "Forget error handling",
+    "Make functions depend on global state",
+    "Use side effects without documenting them"
+  ]}
+/>
 
 ### Error Handling
 
-**Handle errors gracefully:**
+Handle errors gracefully so agents can report meaningful failures.
 
 ```python
 def get_customer_balance(customer_id: str):
@@ -392,15 +460,16 @@ def get_customer_balance(customer_id: str):
         frappe.throw(f"Failed to retrieve customer balance: {str(e)}")
 ```
 
-**Benefits:**
-- Agent gets meaningful error messages
-- User sees helpful feedback
-- Errors are logged for debugging
-- System doesn't crash silently
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Meaningful Errors</span>Agent gets meaningful error messages</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Helpful Feedback</span>User sees helpful feedback</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Logged Errors</span>Errors are logged for debugging</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">No Silent Crashes</span>System doesn't crash silently</div>
+</div>
 
 ### Permissions
 
-**Respect Frappe permissions:**
+Respect Frappe permissions explicitly when your tool performs sensitive actions.
 
 ```python
 def delete_customer_document(doc_name: str):
@@ -420,15 +489,16 @@ def delete_customer_document(doc_name: str):
     return {"success": True, "message": f"Customer {doc_name} deleted"}
 ```
 
-**Always:**
-- Check permissions explicitly when needed
-- Use `frappe.has_permission()`
-- Fail safely with clear error messages
-- Log permission denials for audit
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Explicit Checks</span>Check permissions explicitly when needed</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Use has_permission()</span>Use `frappe.has_permission()`</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Safe Failure</span>Fail safely with clear error messages</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Audit Logs</span>Log permission denials for audit</div>
+</div>
 
 ### Performance
 
-**Optimize for speed:**
+Optimize your tool to minimize database round-trips and data transfer.
 
 ```python
 # BAD: Multiple queries in loop
@@ -450,22 +520,31 @@ def get_customer_orders_fast(customer_id):
     return {"customer_id": customer_id, "orders": orders}
 ```
 
-**Tips:**
-- Fetch all needed data in one query when possible
-- Use `frappe.get_all()` instead of multiple `get_doc()`
-- Cache expensive calculations
-- Return only necessary data
-- Consider database indexes for frequently queried fields
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">Batch Queries</span>Fetch all needed data in one query when possible</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Use get_all()</span>Use `frappe.get_all()` instead of multiple `get_doc()`</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Cache Results</span>Cache expensive calculations</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Minimal Payloads</span>Return only necessary data</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Index Fields</span>Consider database indexes for frequently queried fields</div>
+</div>
 
 ## Debugging Custom Tools
 
+Use these techniques to verify and troubleshoot your custom tools.
+
 ### Test in Frappe Console
 
-Before creating the tool, test your function:
+Test your function directly in the Frappe console before wiring it to an agent.
+
+<div className="huf-cli-note">
 
 ```bash
 bench --site yoursite console
 ```
+
+</div>
+
+Once inside, import and run your function:
 
 ```python
 >>> from my_app.api.tools import calculate_customer_ltv
@@ -475,58 +554,58 @@ bench --site yoursite console
 
 ### Check Agent Run Logs
 
-When the agent uses your tool:
+Review the Agent Run logs after an agent uses your tool.
 
-1. Navigate to **Agent Run** in Desk
-2. Find the run
-3. Check **Tool Calls** section
-4. Review:
-   - Parameters agent passed
-   - Result your function returned
-   - Any errors that occurred
+<Checklist items={[
+  "Navigate to **Agent Run** in Desk",
+  "Find the run",
+  "Check **Tool Calls** section",
+  "Review parameters agent passed",
+  "Review result your function returned",
+  "Review any errors that occurred"
+]} />
 
 ### Common Issues
 
-**"Function not found"**
-- Verify function path is correct
-- Check function is importable
-- Restart bench after adding new functions
+These issues and fixes cover the most common custom tool problems.
 
-**"Missing parameter"**
-- Agent didn't provide required parameter
-- Improve tool description to clarify what's needed
-- Check agent instructions mention parameter
-
-**"TypeError" or "JSON serialization error"**
-- Return value isn't JSON-serializable
-- Convert objects to dicts
-- Convert dates to strings
-- Don't return Frappe DocType objects directly
-
-**Function never called**
-- Tool description may be unclear
-- Agent doesn't recognize when to use it
-- Try improving description or agent instructions
+| Issue | Cause / Fix |
+|---|---|
+| **"Function not found"** | Verify function path is correct.<br />Check function is importable.<br />Restart bench after adding new functions. |
+| **"Missing parameter"** | Agent didn't provide required parameter.<br />Improve tool description to clarify what's needed.<br />Check agent instructions mention parameter. |
+| **"TypeError" or "JSON serialization error"** | Return value isn't JSON-serializable.<br />Convert objects to dicts.<br />Convert dates to strings.<br />Don't return Frappe DocType objects directly. |
+| **Function never called** | Tool description may be unclear.<br />Agent doesn't recognize when to use it.<br />Try improving description or agent instructions. |
 
 ## Documentation Tips
 
+Clear documentation helps agents choose and use your tools correctly.
+
 ### Writing Great Descriptions
 
-**Bad:**
+Compare a vague description with one that gives the agent clear context.
+
+<div className="huf-ps-grid">
+  <div className="huf-ps-cell">
+    <span className="huf-ps-label">Bad</span>
 ```
 Description: Handles customer calculations
 ```
 → Too vague, agent won't know when to use it
-
-**Good:**
+  </div>
+  <div className="huf-ps-cell">
+    <span className="huf-ps-label">Good</span>
 ```
 Description: Calculate the total lifetime value for a customer including 
 all paid invoices, order count, and average order value. Use this when 
 users ask about customer value, spending history, or order statistics.
 ```
 → Clear purpose, context, and use cases
+  </div>
+</div>
 
 ### Include Examples in Docstrings
+
+Add concrete usage examples to your docstrings so agents understand expected inputs and outputs.
 
 ```python
 def convert_currency(amount: float, from_currency: str, to_currency: str):
@@ -553,23 +632,35 @@ The agent can "read" this docstring to understand how to use the tool.
 
 ## Security Considerations
 
+Keep these security principles in mind when building custom tools.
+
 ### Dangerous Operations
 
-**Be careful with:**
-- File system access
-- Shell commands
-- Database modifications
-- External API calls with sensitive data
-- Sending emails/notifications
+Be especially careful when tools can access sensitive resources or execute side effects.
 
-**Safety measures:**
-- Validate all inputs
-- Check permissions explicitly
-- Log all operations
-- Rate-limit expensive operations
-- Use whitelisted values when possible
+<Callout type="warning">
+Be careful with operations that can damage data or leak information.
+</Callout>
+
+<div className="huf-cap-grid">
+  <div className="huf-cap-cell"><span className="huf-cap-term">File System</span>File system access</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Shell Commands</span>Shell commands</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Database Writes</span>Database modifications</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Sensitive APIs</span>External API calls with sensitive data</div>
+  <div className="huf-cap-cell"><span className="huf-cap-term">Notifications</span>Sending emails/notifications</div>
+</div>
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Validate Inputs</span>Validate all inputs</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Check Permissions</span>Check permissions explicitly</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Log Operations</span>Log all operations</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Rate Limit</span>Rate-limit expensive operations</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Whitelist Values</span>Use whitelisted values when possible</div>
+</div>
 
 ### Input Validation
+
+Validate all inputs before executing sensitive operations.
 
 ```python
 def send_email_notification(recipient: str, subject: str, message: str):
@@ -593,6 +684,8 @@ def send_email_notification(recipient: str, subject: str, message: str):
 
 ## What's Next?
 
+Explore related topics to continue building with custom tools.
+
 - **[Publishing Tools](/docs/tools/publishing)** - Share tools via apps
 - **[Built-in Tools](/docs/tools/built-in)** - Reference for built-in tools
 - **[Tools Concept](/docs/concepts/tools)** - Tool fundamentals
@@ -600,5 +693,4 @@ def send_email_notification(recipient: str, subject: str, message: str):
 
 ---
 
-**Questions?** Visit [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
-
+**Questions?** Visit [GitHub discussions](https://github.com/tridz-dev/huf/discussions).

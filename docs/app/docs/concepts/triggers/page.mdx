@@ -2,122 +2,83 @@
 sidebarTitle: Triggers
 ---
 
+import { Callout } from 'nextra/components'
+
 # Triggers
 
 Triggers define **when** and **how** agents run automatically. Instead of manually running agents, triggers let them respond to events, run on schedules, or execute based on specific conditions.
 
 ## What Are Triggers?
 
-A **trigger** is an automated execution rule for an agent. Triggers enable agents to:
-- Run on a schedule (hourly, daily, weekly)
-- Respond to document events (creation, updates, submissions)
-- Execute with specific conditions
-- Maintain per-user conversation history
-
-Without triggers, you manually run agents. With triggers, agents become **proactive automation**.
+A **trigger** is an automated execution rule for an agent. With triggers, an agent can run on a schedule such as hourly or daily, react to document lifecycle events like creation or submission, filter executions through conditions, and keep separate conversation histories for each user. These capabilities turn agents from on-demand tools into **proactive automation**.
 
 ## Trigger Types
 
+Triggers fall into five broad categories depending on who or what starts them and whether they run inside the product or from an external system.
+
 ### 1. Manual Execution
 
-**How it works:** You run the agent yourself
+Manual execution puts you in direct control: you run the agent exactly when you need it, without any trigger configuration. You can start it through the real-time **Agent Chat**, click **Run** on the **Agent DocType** form, or call the `run_agent_sync` method from your own code. This is the best option for testing an agent, handling one-off tasks, supporting user-initiated interactions, and debugging behavior.
 
-**Methods:**
-- **Agent Chat**: Real-time chat interface
-- **Agent DocType**: "Run" button in the form
-- **API**: Call `run_agent_sync` programmatically
-
-**Use Cases:**
-- Testing agents
-- On-demand tasks
-- User-initiated interactions
-- Development and debugging
-
-**No trigger configuration needed**—just run the agent when you want.
+<Callout type="info">No trigger configuration is needed for manual execution—just run the agent when you want.</Callout>
 
 ### 2. Scheduled Triggers
 
-**How it works:** Agent runs automatically at specified intervals
+Scheduled triggers make an agent run repeatedly at fixed intervals. They are useful when an agent needs to produce recurring output without anyone remembering to start it, such as daily reports or periodic health checks. They are configured through the **Agent Trigger** DocType.
 
-**Configuration:** Set up via **Agent Trigger** DocType
+| Frequency | Description |
+|---|---|
+| **Hourly** | Runs every hour |
+| **Daily** | Runs once per day at a specified time |
+| **Weekly** | Runs on selected day(s) of the week |
+| **Custom Cron** | Advanced scheduling using a cron expression |
 
-**Frequencies:**
-- **Hourly**: Every hour
-- **Daily**: Once per day at specified time
-- **Weekly**: Specific day(s) of the week
-- **Custom Cron**: Advanced scheduling with cron expressions
-
-**Use Cases:**
-- Daily report generation
-- Hourly inventory checks
-- Weekly summarization tasks
-- Periodic data synchronization
-- Scheduled notifications
+Common use cases include daily report generation, hourly inventory checks, weekly summarization tasks, periodic data synchronization, and scheduled notifications.
 
 **Example:**
-```
-Agent: Daily Sales Summary
-Trigger: Every day at 9:00 AM
-Action: Generates sales report and sends via email
-```
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Daily Sales Summary" />
+  <ConfigField label="Trigger" value="Every day at 9:00 AM" />
+  <ConfigField label="Action" value="Generates sales report and sends via email" />
+</ConfigPanel>
 
 ### 3. Document Event Triggers
 
-**How it works:** Agent runs when specific document events occur
+Document event triggers react to changes in Frappe documents, so agents can validate, route, or enrich records as they move through a workflow. This lets automation stay tightly coupled to the business data it acts on.
 
-**Events:**
-- **After Insert**: Document is created
-- **On Update**: Document is modified
-- **On Submit**: Submittable document is submitted
-- **On Cancel**: Document is cancelled
-- **Before Save**: Before document is saved (use carefully)
-- **After Delete**: Document is deleted (use rarely)
+| Event | Description |
+|---|---|
+| **After Insert** | Document is created |
+| **On Update** | Document is modified |
+| **On Submit** | Submittable document is submitted |
+| **On Cancel** | Document is cancelled |
+| **Before Save** | Before document is saved (use carefully) |
+| **After Delete** | Document is deleted (use rarely) |
 
-**Use Cases:**
-- Validate invoices on submission
-- Auto-assign leads when created
-- Notify team when deals update
-- Quality check on document submission
-- Enrich data on creation
+Typical use cases include validating invoices on submission, auto-assigning leads when they are created, notifying the team when deals update, running quality checks on document submission, and enriching data on creation.
 
 **Example:**
-```
-Agent: Invoice Validator
-Trigger: After Submit on DocType "Sales Invoice"
-Action: Validates pricing, checks credit limits, flags issues
-```
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Invoice Validator" />
+  <ConfigField label="Trigger" value="After Submit on DocType &quot;Sales Invoice&quot;" />
+  <ConfigField label="Action" value="Validates pricing, checks credit limits, flags issues" />
+</ConfigPanel>
 
 ### 4. Chat-Based Execution
 
-**How it works:** User interacts via chat interface
+Chat-based execution lets users talk to an agent through a chat interface. To enable it, set `allow_chat = 1` on the **Agent DocType**. The agent can then be reached from the **Agent Chat** DocType in Desk and from the `/huf` frontend interface, which is being expanded. This mode is useful for customer support, interactive assistants, conversational workflows, and any user-facing agent.
 
-**Enable:** Set `allow_chat = 1` in Agent DocType
-
-**Access:**
-- **Desk**: Agent Chat DocType
-- **Frontend**: `/huf` interface (expanding)
-
-**Use Cases:**
-- Customer support
-- Interactive assistants
-- Conversational workflows
-- User-facing agents
-
-**No separate trigger needed**—enabled on the agent itself.
+<Callout type="info">No separate trigger is required for chat—chat is enabled on the agent itself.</Callout>
 
 ### 5. API Execution
 
-**How it works:** External systems call agent via API
+API execution lets external systems invoke an agent over HTTP. The agent exposes the whitelisted `run_agent_sync` method, and requests use standard Frappe API authentication. This is the right choice for webhook integrations, external app automation, custom frontends, and third-party service integration.
 
 **Endpoint:** `run_agent_sync` (whitelisted method)
 
 **Authentication:** Standard Frappe API authentication
-
-**Use Cases:**
-- Webhook integrations
-- External app automation
-- Custom frontends
-- Third-party service integration
 
 **Example:**
 ```python
@@ -134,11 +95,11 @@ response = requests.post(
 
 ## Agent Trigger DocType
 
-Scheduled and document event triggers are configured via **Agent Trigger**.
-
-**Navigate to:** Desk → Huf → Agent Trigger
+Scheduled and document event triggers are both configured through the **Agent Trigger** DocType. To create or manage them, go to **Desk → Huf → Agent Trigger**.
 
 ### Key Fields
+
+The Agent Trigger form contains the fields that decide which agent runs, when it runs, and what instructions it receives.
 
 | Field | Description |
 |-------|-------------|
@@ -153,24 +114,31 @@ Scheduled and document event triggers are configured via **Agent Trigger**.
 
 ### Creating a Trigger
 
-1. **Navigate** to Agent Trigger, click **New**
-2. **Select Agent** from dropdown
-3. **Choose Trigger Type**:
-   - **Doc Event**: For document-based automation
-   - **Schedule**: For time-based execution
-4. **Configure Details** (see below)
-5. **Set Prompt Template** (what to tell the agent)
-6. **Enable** and **Save**
+To set up a new trigger, open **Agent Trigger** and click **New**, then fill out the form and save. The process is:
+
+<Checklist items={[
+  "Navigate to Agent Trigger and click New.",
+  "Select Agent from the dropdown.",
+  "Choose Trigger Type: Doc Event for document-based automation, or Schedule for time-based execution.",
+  "Configure Details for the chosen type (see the sections below).",
+  "Set Prompt Template so the agent knows what task to perform.",
+  "Enable the trigger and save."
+]} />
 
 ## Scheduled Trigger Configuration
 
+Scheduled triggers need a frequency or cron expression and a prompt that tells the agent what to do each time it runs.
+
 ### Setting the Schedule
 
-**Frequency Options:**
-- **Hourly**: Runs every hour
-- **Daily**: Specify time (e.g., "09:00")
-- **Weekly**: Choose day(s) and time
-- **Cron**: Advanced cron expression
+Scheduled triggers rely on a frequency or cron expression to decide when the agent wakes up. Choose the option that matches how often the task needs to run.
+
+| Frequency Option | When It Runs |
+|---|---|
+| **Hourly** | Runs every hour |
+| **Daily** | Specify a time such as `"09:00"` |
+| **Weekly** | Choose day(s) and a time |
+| **Cron** | Advanced scheduling with a cron expression |
 
 **Examples:**
 ```
@@ -182,7 +150,7 @@ First day of month: "0 0 1 * *"
 
 ### Prompt Templates for Scheduled Triggers
 
-Use templates to pass context to the agent:
+The prompt template tells a scheduled agent what to do each time it runs. You can keep it static or include dynamic instructions about the current day, period, or data set.
 
 ```
 Generate a summary of today's sales and send it to the sales team.
@@ -196,21 +164,29 @@ Focus on fast-moving items from the last 7 days.
 ```
 
 **Example Trigger:**
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Inventory Monitor" />
+  <ConfigField label="Schedule" value="Every day at 8:00 AM" />
+</ConfigPanel>
+
+**Prompt:**
 ```
-Agent: Inventory Monitor
-Schedule: Every day at 8:00 AM
-Prompt: "Check inventory for items below reorder level and create purchase 
-        requisitions if needed. Prioritize high-demand items."
+"Check inventory for items below reorder level and create purchase
+requisitions if needed. Prioritize high-demand items."
 ```
 
 ## Document Event Trigger Configuration
 
+Document event triggers need a DocType, an event, optional conditions, and a prompt that can reference document fields.
+
 ### Selecting the DocType
 
-Choose which DocType to monitor:
-- **Reference DocType**: The DocType name (e.g., "Sales Invoice", "Lead", "Support Ticket")
+First, choose which DocType the trigger should watch. The **Reference DocType** field is the document type name, such as `"Sales Invoice"`, `"Lead"`, or `"Support Ticket"`.
 
 ### Selecting the Event
+
+Next, pick the document event that starts the agent. Each event fires at a different point in the document lifecycle.
 
 | Event | When It Fires |
 |-------|---------------|
@@ -221,13 +197,11 @@ Choose which DocType to monitor:
 | **Before Save** | Before save (can prevent save with errors) |
 | **After Delete** | After document is deleted |
 
-**Most Common:** After Insert, On Submit, On Update
+<Callout type="info">The most commonly used events are **After Insert**, **On Submit**, and **On Update**.</Callout>
 
 ### Conditional Execution
 
-Run triggers only when conditions match:
-
-**Condition Field:** JSON filter object
+Conditions let you run a document event trigger only when a document matches specific field values, which prevents unnecessary agent runs and keeps costs predictable. The **Condition** field accepts a JSON filter object.
 
 **Example Conditions:**
 ```json
@@ -252,11 +226,11 @@ Run triggers only when conditions match:
 ```
 → Only triggers for specific customer groups
 
-**No condition** = triggers on every matching event
+<Callout type="warning">If you leave the condition empty, the trigger fires on every matching event for that DocType.</Callout>
 
 ### Prompt Templates for Doc Event Triggers
 
-Access document fields in the prompt using `{field_name}` placeholders:
+For document triggers, the prompt template can include placeholders such as `{field_name}` to insert values from the current document.
 
 ```
 A new lead has been created: {lead_name} from {company_name}.
@@ -269,117 +243,113 @@ Lead Details:
 - Territory: {territory}
 ```
 
-**Available Data:**
-- All fields from the document
-- Standard fields (name, creation, modified, owner, etc.)
-- Linked document data (may need tool calls)
+The data available to the prompt includes all fields on the document, standard fields such as `name`, `creation`, `modified`, and `owner`, and linked document data when the agent has tools that can fetch it.
 
 **Example:**
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Agent" value="Lead Qualifier" />
+  <ConfigField label="DocType" value="Lead" />
+  <ConfigField label="Event" value="After Insert" />
+</ConfigPanel>
+
+**Prompt:**
 ```
-Agent: Lead Qualifier
-DocType: Lead
-Event: After Insert
-Prompt: "A new lead was created: {lead_name} from {company_name} 
-        in {territory}. Score this lead, assign to appropriate sales 
-        rep, and set next follow-up date."
+"A new lead was created: {lead_name} from {company_name}
+in {territory}. Score this lead, assign to appropriate sales
+rep, and set next follow-up date."
 ```
 
 ## Conversation Modes for Triggers
 
+Triggers can use either per-user or shared conversation history, depending on whether you want isolation between users or continuity across runs.
+
 ### Per-User Conversation
 
-**Default behavior** (`persist_user_history = 1`):
-- Each triggering user gets separate conversation history
-- Useful for user-specific context
-- Privacy preserved between users
-
-**Example:**
-```
-Support Ticket Agent (On Submit):
-- User A submits ticket → Separate conversation for User A
-- User B submits ticket → Separate conversation for User B
-- Each user's history is independent
-```
+By default, triggers keep each user's history separate (`persist_user_history = 1`). This preserves privacy and ensures user-specific context does not leak between users. For example, if a Support Ticket Agent runs On Submit, User A's submission creates a separate conversation for User A, User B's submission creates a separate conversation for User B, and the histories stay independent.
 
 ### Shared Conversation
 
-**Shared mode** (`persist_user_history = 0`):
-- Single conversation history across all trigger executions
-- Agent builds cumulative knowledge
-- All users share the same context
-
-**Example:**
-```
-Daily Sales Summary (Scheduled):
-- Day 1: Agent generates report
-- Day 2: Agent remembers Day 1, compares trends
-- Day 3: Agent builds on previous days' data
-- Cumulative learning across runs
-```
-
-**Configuration:**
-In Agent DocType:
-- **Persist Conversation**: Enable to keep history
-- **Persist per User (Doc/Schedule)**: Check for per-user, uncheck for shared
+In shared mode (`persist_user_history = 0`), all trigger executions share one conversation. This lets the agent build cumulative knowledge: a daily sales summary scheduled agent can remember yesterday's report, compare trends, and build on previous days' data. You configure this on the **Agent DocType** with the **Persist Conversation** toggle and the **Persist per User (Doc/Schedule)** checkbox: check it for per-user history, uncheck it for shared history.
 
 ## Trigger Best Practices
 
+Following a few guidelines keeps triggers reliable, cost-effective, and easy to maintain.
+
 ### Scheduling
 
-**Do:**
-- Run during off-peak hours for heavy tasks
-- Stagger multiple agents to avoid overlap
-- Use reasonable frequencies (don't over-schedule)
-- Monitor costs of scheduled runs
+Good scheduling keeps agents reliable and avoids resource contention.
 
-**Don't:**
-- Schedule too frequently (every minute)
-- Run multiple heavy agents simultaneously
-- Forget timezone considerations
-- Ignore failed runs
+<DoDont
+  doItems={[
+    "Run heavy tasks during off-peak hours to reduce load on users.",
+    "Stagger multiple agents so they do not overlap.",
+    "Choose reasonable frequencies to avoid over-scheduling.",
+    "Monitor the cost of scheduled runs."
+  ]}
+  dontItems={[
+    "Schedule too frequently, such as every minute.",
+    "Run multiple heavy agents at the same time.",
+    "Ignore timezone considerations.",
+    "Leave failed runs unreviewed."
+  ]}
+/>
 
 ### Document Events
 
-**Do:**
-- Use specific events (not every event)
-- Add conditions to limit executions
-- Handle errors gracefully
-- Test with draft documents first
+Be precise with document events to prevent loops and unnecessary agent runs.
 
-**Don't:**
-- Trigger on every update (can cause loops)
-- Use Before Save unless necessary
-- Forget permission checks
-- Create infinite trigger loops
+<DoDont
+  doItems={[
+    "Use specific events rather than every available event.",
+    "Add conditions to limit executions.",
+    "Handle errors gracefully.",
+    "Test with draft documents first."
+  ]}
+  dontItems={[
+    "Trigger on every update, which can cause loops.",
+    "Use Before Save unless it is necessary.",
+    "Forget permission checks.",
+    "Create infinite trigger loops."
+  ]}
+/>
 
 ### Prompt Templates
 
-**Do:**
-- Be specific about the task
-- Include relevant document fields
-- Provide clear instructions
-- Mention expected outputs
+A clear prompt produces a clear result.
 
-**Don't:**
-- Use vague prompts
-- Forget to test with real data
-- Include sensitive data unnecessarily
-- Assume agent knows document structure
+<DoDont
+  doItems={[
+    "Be specific about the task.",
+    "Include relevant document fields.",
+    "Provide clear instructions.",
+    "Mention expected outputs."
+  ]}
+  dontItems={[
+    "Use vague prompts.",
+    "Forget to test with real data.",
+    "Include sensitive data unnecessarily.",
+    "Assume the agent already knows the document structure."
+  ]}
+/>
 
 ### Error Handling
 
-**Monitor:**
-- Check Agent Run logs regularly
-- Set up failure notifications
-- Review errors and adjust prompts
-- Test trigger conditions thoroughly
+Agent triggers run unattended, so monitoring is essential. Regularly check Agent Run logs, set up failure notifications, review errors and adjust prompts, and test trigger conditions thoroughly.
 
 ## Common Use Cases
 
+These examples show how triggers combine event types, agents, and prompt templates to automate common workflows.
+
 ### 1. Automated Lead Assignment
 
-**Trigger:** After Insert on Lead
-**Agent:** Lead Router
+When a new Lead is created, the Lead Router agent can evaluate territory, workload, and industry fit to assign the best sales rep and schedule the next follow-up.
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="After Insert on Lead" />
+  <ConfigField label="Agent" value="Lead Router" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 New lead: {lead_name} from {territory}.
@@ -392,8 +362,13 @@ Update the lead with assigned rep and next follow-up date.
 
 ### 2. Invoice Validation
 
-**Trigger:** On Submit on Sales Invoice
-**Agent:** Invoice Validator
+On submission of a Sales Invoice, the Invoice Validator agent can check pricing, credit limits, taxes, and anomalies before the invoice is finalized.
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="On Submit on Sales Invoice" />
+  <ConfigField label="Agent" value="Invoice Validator" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Validate this invoice:
@@ -406,8 +381,13 @@ If issues found, add comment and notify accounts team.
 
 ### 3. Daily Report Generation
 
-**Trigger:** Schedule (Daily at 9 AM)
-**Agent:** Sales Report Generator
+A scheduled morning run can produce a daily sales summary and send it to the team without manual intervention.
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="Schedule (Daily at 9 AM)" />
+  <ConfigField label="Agent" value="Sales Report Generator" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Generate daily sales summary:
@@ -420,8 +400,13 @@ Send report to sales@company.com
 
 ### 4. Support Ticket Routing
 
-**Trigger:** After Insert on Support Ticket
-**Agent:** Ticket Router
+When a new Support Ticket arrives, the Ticket Router agent can triage priority, set SLAs, and route the ticket to the right team.
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="After Insert on Support Ticket" />
+  <ConfigField label="Agent" value="Ticket Router" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 New ticket: {subject}
@@ -435,8 +420,13 @@ Analyze the issue and:
 
 ### 5. Inventory Monitoring
 
-**Trigger:** Schedule (Every 6 hours)
-**Agent:** Inventory Monitor
+A recurring inventory check can raise purchase requisitions when stock falls below reorder levels.
+
+<ConfigPanel title="Trigger Example">
+  <ConfigField label="Trigger" value="Schedule (Every 6 hours)" />
+  <ConfigField label="Agent" value="Inventory Monitor" />
+</ConfigPanel>
+
 **Prompt:**
 ```
 Check all items with stock below reorder level.
@@ -449,36 +439,38 @@ Focus on fast-moving items.
 
 ## Troubleshooting
 
+When a trigger does not behave as expected, use the symptoms below to narrow down the cause.
+
 **Trigger doesn't fire:**
-- Verify trigger is **Enabled**
-- Check **Condition** matches document
-- Review DocType and Event selection
-- Check agent is active
-- Verify no Frappe permission issues
+- Verify the trigger is **Enabled**.
+- Check that the condition matches the document.
+- Review the DocType and Event selection.
+- Confirm the agent is active.
+- Verify there are no Frappe permission issues.
 
 **Trigger fires too often:**
-- Add more specific conditions
-- Change from "On Update" to "On Submit"
-- Review document workflow
-- Check for trigger loops
+- Add more specific conditions.
+- Change from "On Update" to "On Submit".
+- Review the document workflow.
+- Check for trigger loops.
 
 **Agent gets wrong data:**
-- Verify prompt template field names
-- Check document state at trigger time
-- Test field access and permissions
-- Review tool assignments
+- Verify prompt template field names.
+- Check the document state at trigger time.
+- Test field access and permissions.
+- Review the agent's tool assignments.
 
 **High costs from triggers:**
-- Reduce trigger frequency
-- Add stricter conditions
-- Use cheaper models for simple triggers
-- Limit conversation history length
+- Reduce trigger frequency.
+- Add stricter conditions.
+- Use cheaper models for simple triggers.
+- Limit conversation history length.
 
 **Performance issues:**
-- Stagger scheduled triggers
-- Use background jobs for heavy tasks
-- Optimize agent tools
-- Monitor Agent Run duration
+- Stagger scheduled triggers.
+- Use background jobs for heavy tasks.
+- Optimize agent tools.
+- Monitor Agent Run duration.
 
 ## What's Next?
 
@@ -491,5 +483,4 @@ Now that you understand triggers:
 
 ---
 
-**Need help with triggers?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
-
+**Need help with triggers?** Check [GitHub discussions](https://github.com/tridz-dev/huf/discussions).

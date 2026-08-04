@@ -21,16 +21,19 @@ Track agent performance, debug issues, optimize costs, and ensure your agents ar
 ### Key Information
 
 **Each Agent Run shows:**
-- **Agent:** Which agent executed
-- **Prompt:** What was sent to the agent
-- **Response:** Agent's output
-- **Status:** Success or error
-- **Tokens:** Input and output tokens used
-- **Cost:** Calculated cost for this run
-- **Tool Calls:** Tools used and results
-- **Duration:** How long execution took
-- **User:** Who triggered the agent
-- **Session:** Conversation session ID
+
+<ConfigPanel title="Agent Run Details">
+  <ConfigField label="Agent" value="Which agent executed" />
+  <ConfigField label="Prompt" value="What was sent to the agent" />
+  <ConfigField label="Response" value="Agent's output" />
+  <ConfigField label="Status" value="Success or error" />
+  <ConfigField label="Tokens" value="Input and output tokens used" />
+  <ConfigField label="Cost" value="Calculated cost for this run" />
+  <ConfigField label="Tool Calls" value="Tools used and results" />
+  <ConfigField label="Duration" value="How long execution took" />
+  <ConfigField label="User" value="Who triggered the agent" />
+  <ConfigField label="Session" value="Conversation session ID" />
+</ConfigPanel>
 
 ## Understanding Run Details
 
@@ -96,12 +99,15 @@ Track agent performance, debug issues, optimize costs, and ensure your agents ar
 ### Filter Options
 
 **Filter by:**
-- **Agent:** Specific agent
-- **Status:** Success, Error, In Progress
-- **Date Range:** Creation time
-- **User:** Who triggered
-- **Cost Range:** Token cost
-- **Has Errors:** Only failed runs
+
+<ConfigPanel title="Filter Options">
+  <ConfigField label="Agent" value="Specific agent" />
+  <ConfigField label="Status" value="Success, Error, In Progress" />
+  <ConfigField label="Date Range" value="Creation time" />
+  <ConfigField label="User" value="Who triggered" />
+  <ConfigField label="Cost Range" value="Token cost" />
+  <ConfigField label="Has Errors" value="Only failed runs" />
+</ConfigPanel>
 
 ### Search Functionality
 
@@ -149,30 +155,39 @@ Total Cost = (Input Tokens × Input Price) + (Output Tokens × Output Price)
 ### Cost Optimization
 
 **Reduce costs:**
-1. Use cheaper models for simple tasks
-2. Limit conversation history length
-3. Minimize tool definitions
-4. Optimize prompts (shorter, clearer)
-5. Cache common results
-6. Batch similar requests
+
+<Checklist items={[
+  "Use cheaper models for simple tasks",
+  "Limit conversation history length",
+  "Minimize tool definitions",
+  "Optimize prompts (shorter, clearer)",
+  "Cache common results",
+  "Batch similar requests"
+]} />
 
 **Monitor optimization:**
-- Track cost reduction
-- Verify performance maintained
-- Compare before/after
-- Adjust as needed
+
+<Checklist items={[
+  "Track cost reduction",
+  "Verify performance maintained",
+  "Compare before/after",
+  "Adjust as needed"
+]} />
 
 ## Performance Metrics
 
 ### Key Metrics
 
 **Track regularly:**
-- **Run Count:** Total executions
-- **Success Rate:** Percentage successful
-- **Error Rate:** Percentage failed
-- **Average Response Time:** Speed
-- **Average Tokens:** Consumption
-- **Average Cost:** Per run
+
+<ConfigPanel title="Key Metrics">
+  <ConfigField label="Run Count" value="Total executions" />
+  <ConfigField label="Success Rate" value="Percentage successful" />
+  <ConfigField label="Error Rate" value="Percentage failed" />
+  <ConfigField label="Average Response Time" value="Speed" />
+  <ConfigField label="Average Tokens" value="Consumption" />
+  <ConfigField label="Average Cost" value="Per run" />
+</ConfigPanel>
 
 ### Trend Analysis
 
@@ -220,32 +235,13 @@ Total Cost = (Input Tokens × Input Price) + (Output Tokens × Output Price)
 
 **Step-by-step process:**
 
-1. **Identify the issue**
-   - Review Agent Run logs
-   - Find failed or unexpected runs
-   - Note error messages
-
-2. **Reproduce the problem**
-   - Use same prompt
-   - Test in Agent Chat
-   - Verify conditions
-
-3. **Isolate the cause**
-   - Check instructions
-   - Verify tools
-   - Review model behavior
-   - Test components individually
-
-4. **Fix the issue**
-   - Update instructions
-   - Adjust tools
-   - Change settings
-   - Fix code if needed
-
-5. **Verify the fix**
-   - Test with same scenario
-   - Monitor new runs
-   - Confirm resolution
+<Checklist items={[
+  "Identify the issue: Review Agent Run logs, find failed or unexpected runs, note error messages",
+  "Reproduce the problem: Use same prompt, test in Agent Chat, verify conditions",
+  "Isolate the cause: Check instructions, verify tools, review model behavior, test components individually",
+  "Fix the issue: Update instructions, adjust tools, change settings, fix code if needed",
+  "Verify the fix: Test with same scenario, monitor new runs, confirm resolution"
+]} />
 
 ### Debugging Tools
 
@@ -312,11 +308,14 @@ Total Cost = (Input Tokens × Input Price) + (Output Tokens × Output Price)
 ### Understanding Errors
 
 **Error types:**
-- **Tool Errors:** Tool execution failed
-- **Model Errors:** AI model issues
-- **Permission Errors:** Access denied
-- **Validation Errors:** Invalid data
-- **Timeout Errors:** Execution too long
+
+<ConfigPanel title="Error Types">
+  <ConfigField label="Tool Errors" value="Tool execution failed" />
+  <ConfigField label="Model Errors" value="AI model issues" />
+  <ConfigField label="Permission Errors" value="Access denied" />
+  <ConfigField label="Validation Errors" value="Invalid data" />
+  <ConfigField label="Timeout Errors" value="Execution too long" />
+</ConfigPanel>
 
 ### Error Patterns
 
@@ -380,45 +379,54 @@ Total Cost = (Input Tokens × Input Price) + (Output Tokens × Output Price)
 
 ### Regular Monitoring
 
-**Do:**
-- Review logs daily
-- Check errors weekly
-- Analyze costs monthly
-- Review performance quarterly
-
-**Don't:**
-- Ignore errors
-- Skip cost reviews
-- Forget performance tracking
-- Neglect user feedback
+<DoDont
+  doItems={[
+    "Review logs daily",
+    "Check errors weekly",
+    "Analyze costs monthly",
+    "Review performance quarterly"
+  ]}
+  dontItems={[
+    "Ignore errors",
+    "Skip cost reviews",
+    "Forget performance tracking",
+    "Neglect user feedback"
+  ]}
+/>
 
 ### Proactive Debugging
 
-**Do:**
-- Monitor trends
-- Identify issues early
-- Fix before they escalate
-- Document solutions
-
-**Don't:**
-- Wait for user complaints
-- Ignore warning signs
-- Skip testing
-- Forget documentation
+<DoDont
+  doItems={[
+    "Monitor trends",
+    "Identify issues early",
+    "Fix before they escalate",
+    "Document solutions"
+  ]}
+  dontItems={[
+    "Wait for user complaints",
+    "Ignore warning signs",
+    "Skip testing",
+    "Forget documentation"
+  ]}
+/>
 
 ### Cost Management
 
-**Do:**
-- Set budgets
-- Monitor spending
-- Optimize regularly
-- Use appropriate models
-
-**Don't:**
-- Ignore costs
-- Use expensive models unnecessarily
-- Forget to optimize
-- Skip cost reviews
+<DoDont
+  doItems={[
+    "Set budgets",
+    "Monitor spending",
+    "Optimize regularly",
+    "Use appropriate models"
+  ]}
+  dontItems={[
+    "Ignore costs",
+    "Use expensive models unnecessarily",
+    "Forget to optimize",
+    "Skip cost reviews"
+  ]}
+/>
 
 ## Troubleshooting Guide
 
@@ -487,5 +495,4 @@ Total Cost = (Input Tokens × Input Price) + (Output Tokens × Output Price)
 
 ---
 
-**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
-
+**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/huf/discussions).

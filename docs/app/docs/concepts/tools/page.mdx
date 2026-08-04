@@ -2,6 +2,8 @@
 sidebarTitle: Tools
 ---
 
+import { Callout } from 'nextra/components'
+
 # Tools
 
 Tools are what make agents useful. Without tools, an agent can only chat. With tools, agents can read data, create records, call APIs, run workflows, and more.
@@ -10,11 +12,14 @@ Tools are what make agents useful. Without tools, an agent can only chat. With t
 
 **Tools** are functions that agents can call to interact with your Frappe system or external services. Think of them as the agent's hands—they enable action, not just conversation.
 
-When an agent needs to:
-- Look up a customer → Uses the **Get Document** tool
-- Create a support ticket → Uses the **Create Document** tool
-- Check inventory levels → Uses the **Get List** tool
-- Send a notification → Uses the **HTTP Request** tool or a custom function
+The following table shows the kind of work agents do by calling tools:
+
+| Use case | Tool used |
+|---|---|
+| Look up a customer | **Get Document** |
+| Create a support ticket | **Create Document** |
+| Check inventory levels | **Get List** |
+| Send a notification | **HTTP Request** or a custom function |
 
 The agent decides which tool to use based on the conversation and tool descriptions.
 
@@ -22,24 +27,35 @@ The agent decides which tool to use based on the conversation and tool descripti
 
 ### The Tool Execution Flow
 
-1. **User sends a message** to the agent
-2. **Agent analyzes** the request and determines if a tool is needed
-3. **Agent selects a tool** from its available toolset
-4. **Agent calls the tool** with appropriate parameters
-5. **Tool executes** (queries database, calls API, runs function)
-6. **Tool returns result** to the agent
-7. **Agent uses the result** to formulate a response
-8. **User receives** the agent's answer
+Every tool call follows a predictable loop between the user, the agent, and the target system. Understanding this flow helps when debugging why an agent did—or did not—use a tool.
+
+<Mermaid>{`
+flowchart LR
+    A[User sends a message<br/>to the agent]
+    B[Agent analyzes the request]
+    C[Agent selects a tool]
+    D[Agent calls the tool]
+    E[Tool executes]
+    F[Tool returns result]
+    G[Agent uses the result to<br/>formulate a response]
+    H[User receives the answer]
+    A --> B --> C --> D --> E --> F --> G --> H
+`}</Mermaid>
 
 ### Tool Selection
 
-Agents choose tools based on:
-- **Tool name**: Descriptive identifier
-- **Tool description**: Explains what the tool does (most important!)
-- **Tool parameters**: What inputs the tool needs
-- **Context**: Current conversation and user request
+Agents choose tools by matching the user's request against each tool's metadata. The quality of this decision depends almost entirely on how clearly the tool is described.
 
-> **Important**: Write clear, specific tool descriptions. The agent uses these to decide when to use each tool.
+| Factor | Why it matters |
+|---|---|
+| **Tool name** | Descriptive identifier that helps the agent narrow candidates quickly. |
+| **Tool description** | Explains what the tool does; this is the most important signal for selection. |
+| **Tool parameters** | Defines what inputs the tool needs so the agent knows if it can satisfy the request. |
+| **Context** | Current conversation and user request determine which tool fits right now. |
+
+<Callout type="warning">
+  Write clear, specific tool descriptions. The agent uses these to decide when to use each tool.
+</Callout>
 
 ## Tool Types
 
@@ -47,7 +63,7 @@ Huf provides three categories of tools:
 
 ### 1. Built-in Tools
 
-Pre-configured tools for common Frappe operations:
+Built-in tools are pre-configured for common Frappe operations. They cover the document lifecycle and a few utility actions, so most agents can be assembled without writing any custom code.
 
 | Tool Type | Purpose | Example Use Case |
 |-----------|---------|------------------|
@@ -62,12 +78,14 @@ Pre-configured tools for common Frappe operations:
 
 ### 2. Custom Tools
 
-Your own Python functions exposed to agents:
+Custom tools are your own Python functions exposed to agents. They let you extend the platform beyond built-in operations while keeping the agent experience consistent.
 
-- **Define in Frappe**: Create via Agent Tool Function DocType
-- **Link to functions**: Point to your module.function path
-- **Define parameters**: Specify inputs and types
-- **Automatic execution**: Huf handles calling your function
+| Characteristic | How it works |
+|---|---|
+| **Define in Frappe** | Create the tool via the Agent Tool Function DocType. |
+| **Link to functions** | Point the tool to your `module.function` path. |
+| **Define parameters** | Specify inputs and types so the agent knows what to provide. |
+| **Automatic execution** | Huf handles calling your function when the agent invokes the tool. |
 
 **Example:**
 ```python
@@ -83,12 +101,12 @@ def calculate_discount(customer_type, order_total):
 
 ### 3. Discovered Tools
 
-Functions auto-discovered from your Frappe apps:
+Discovered tools are functions auto-discovered from your Frappe apps. They reduce setup effort because they are registered automatically and can be reused across projects.
 
-- **Use `@agent_tool` decorator** in your app code
-- **Auto-synced** when app is installed
-- **No manual setup** required
-- **Shareable** across projects
+- Use the **`@agent_tool` decorator** in your app code to mark a function as a tool.
+- Tools are **auto-synced** when the app is installed.
+- **No manual setup** is required after the decorator is in place.
+- Tools can be **shared** across projects because they travel with the app.
 
 See [Publishing Tools](/docs/tools/publishing) for details.
 
@@ -96,7 +114,7 @@ See [Publishing Tools](/docs/tools/publishing) for details.
 
 ### Agent Tool Function DocType
 
-Tools are defined in **Desk → Huf → Agent Tool Function**.
+Tools are defined in **Desk → Huf → Agent Tool Function**. This DocType captures everything the agent needs to know in order to call the tool correctly.
 
 **Key Fields:**
 
@@ -111,29 +129,34 @@ Tools are defined in **Desk → Huf → Agent Tool Function**.
 
 ### Adding Tools to Agents
 
-Once created, tools must be assigned to agents:
+Once created, a tool must be explicitly assigned to an agent before the agent can use it. This assignment step is also the main security gate for tool access.
 
 **In Agent DocType:**
-1. Scroll to **Agent Tool** table
-2. Click **Add Row**
-3. Select **Tool Function** from dropdown
-4. **Save** the agent
+1. Scroll to the **Agent Tool** table.
+2. Click **Add Row**.
+3. Select the **Tool Function** from the dropdown.
+4. **Save** the agent.
 
 Agents can only use tools explicitly assigned to them.
 
 ## Tool Parameters
 
-Tools can accept parameters that the agent fills in based on conversation:
+Tools can accept parameters that the agent fills in based on conversation. Well-defined parameters make the difference between a tool that works reliably and one that the agent calls incorrectly.
 
 ### Parameter Definition
 
-For each parameter, specify:
-- **Parameter Name**: The variable name (e.g., `customer_id`)
-- **Type**: Data type (String, Int, Float, Boolean, Object, Array)
-- **Description**: What this parameter represents
-- **Required**: Whether it must be provided
+For each parameter, specify the fields below so the agent understands exactly what to provide.
+
+| Field | Purpose |
+|---|---|
+| **Parameter Name** | The variable name the function receives (e.g., `customer_id`). |
+| **Type** | Data type: String, Int, Float, Boolean, Object, or Array. |
+| **Description** | What this parameter represents and how to identify the right value. |
+| **Required** | Whether the agent must provide a value for the tool to run. |
 
 ### Example: Get Document Tool
+
+The snippet below shows how a simple Get Document tool is declared. The agent uses this declaration to decide when to call the tool and what argument to pass.
 
 ```json
 {
@@ -151,37 +174,45 @@ For each parameter, specify:
 ```
 
 **Agent Behavior:**
-- User: "Show me info for CUST-001"
-- Agent extracts: `customer_id = "CUST-001"`
-- Agent calls: `get_customer("CUST-001")`
+
+- The user says: "Show me info for CUST-001".
+- The agent extracts `customer_id = "CUST-001"`.
+- The agent calls `get_customer("CUST-001")`.
 
 ## Built-in Tool Details
 
 ### Get Document
 
-Fetches a single document by name or ID.
+Get Document fetches a single document by name or ID. Use it when the user refers to a specific record and the agent needs its full details.
 
 **Parameters:**
-- `doctype`: The DocType name
-- `name`: The document name/ID
 
-**Returns:** Full document with all fields
+| Parameter | Description |
+|---|---|
+| `doctype` | The DocType name. |
+| `name` | The document name/ID. |
+
+**Returns:** Full document with all fields.
 
 **Example:**
-```
-Agent Call: get_document(doctype="Customer", name="CUST-001")
-Result: { "name": "CUST-001", "customer_name": "ABC Corp", ... }
-```
+
+<ToolCallResult
+  call={`get_document(doctype="Customer", name="CUST-001")`}
+  result={`{ "name": "CUST-001", "customer_name": "ABC Corp", ... }`}
+/>
 
 ### Create Document
 
-Creates a new document.
+Create Document creates a new document from a set of field values. It is the right choice when the user asks to add a record rather than update an existing one.
 
 **Parameters:**
-- `doctype`: The DocType name
-- `fields`: Object with field values
 
-**Returns:** Created document
+| Parameter | Description |
+|---|---|
+| `doctype` | The DocType name. |
+| `fields` | Object with field values. |
+
+**Returns:** Created document.
 
 **Example:**
 ```
@@ -197,50 +228,61 @@ Agent Call: create_document(
 
 ### Update Document
 
-Modifies an existing document.
+Update Document modifies an existing document. Use it when the user wants to change specific fields on a known record.
 
 **Parameters:**
-- `doctype`: The DocType name
-- `name`: The document name/ID
-- `fields`: Object with field values to update
 
-**Returns:** Updated document
+| Parameter | Description |
+|---|---|
+| `doctype` | The DocType name. |
+| `name` | The document name/ID. |
+| `fields` | Object with field values to update. |
+
+**Returns:** Updated document.
 
 ### Get List
 
-Queries multiple documents with filtering, sorting, and pagination.
+Get List queries multiple documents with filtering, sorting, and pagination. It is useful whenever the user asks for a set of records rather than a single one.
 
 **Parameters:**
-- `doctype`: The DocType name
-- `filters`: Filter conditions (optional)
-- `fields`: Which fields to return (optional)
-- `order_by`: Sort order (optional)
-- `limit`: Max number of results (optional)
 
-**Returns:** Array of documents
+| Parameter | Description |
+|---|---|
+| `doctype` | The DocType name. |
+| `filters` | Filter conditions (optional). |
+| `fields` | Which fields to return (optional). |
+| `order_by` | Sort order (optional). |
+| `limit` | Max number of results (optional). |
+
+**Returns:** Array of documents.
 
 **Example:**
-```
-Agent Call: get_list(
+
+<ToolCallResult
+  call={`get_list(
   doctype="Support Ticket",
   filters={"status": "Open", "priority": "High"},
   order_by="creation desc",
   limit=10
-)
-Result: [ {...}, {...}, ... ]
-```
+)`}
+  result={`[ {...}, {...}, ... ]`}
+/>
 
 ### Run Agent
 
-Chains to another agent for specialized tasks.
+Run Agent chains to another agent for specialized tasks. It lets you keep each agent focused while still handling cross-domain requests in a single conversation.
 
 **Parameters:**
-- `agent_name`: Name of the agent to run
-- `prompt`: The message to send to that agent
 
-**Returns:** The other agent's response
+| Parameter | Description |
+|---|---|
+| `agent_name` | Name of the agent to run. |
+| `prompt` | The message to send to that agent. |
 
-**Use Case:** Specialized agents for different domains
+**Returns:** The other agent's response.
+
+**Use Case:** Route work to specialized agents for different domains:
+
 - Main agent → Sales agent (for sales questions)
 - Main agent → Support agent (for technical issues)
 
@@ -248,120 +290,150 @@ Chains to another agent for specialized tasks.
 
 ### Tool Execution Context
 
-Tools execute with the **permissions of the user** who triggered the agent:
+Tools execute with the **permissions of the user** who triggered the agent. This keeps the agent inside the same authorization boundaries as a normal Frappe user.
 
-- **User runs agent** → Tool runs as that user
-- **Agent cannot bypass permissions** → If user can't read Customers, agent can't either
-- **Frappe permissions apply** → Standard role-based access control
+| Principle | What it means |
+|---|---|
+| **User runs agent** | The tool runs as that user. |
+| **Agent cannot bypass permissions** | If the user can't read Customers, the agent can't either. |
+| **Frappe permissions apply** | Standard role-based access control is enforced. |
 
 ### Security Best Practices
 
-1. **Least Privilege**: Only assign necessary tools to each agent
-2. **Validate Inputs**: Custom functions should validate parameters
-3. **Audit Logs**: All tool calls are logged in Agent Run
-4. **Permission Checks**: Tools respect Frappe's permission system
-5. **No Elevation**: Agents cannot escalate permissions
+Follow these practices to keep agent capabilities aligned with what each user and agent actually needs.
 
-> **Critical**: An agent with a "Delete Document" tool can only delete documents the current user has permission to delete. Agents are not a security bypass.
+1. **Least Privilege**: Only assign necessary tools to each agent.
+2. **Validate Inputs**: Custom functions should validate parameters before acting on them.
+3. **Audit Logs**: All tool calls are logged in Agent Run for review.
+4. **Permission Checks**: Tools respect Frappe's permission system by default.
+5. **No Elevation**: Agents cannot escalate permissions beyond those of the triggering user.
+
+<Callout type="warning">
+  An agent with a "Delete Document" tool can only delete documents the current user has permission to delete. Agents are not a security bypass.
+</Callout>
 
 ## Tool Performance
 
 ### Optimizing Tool Calls
 
-- **Minimize tool count**: Only assign necessary tools
-- **Clear descriptions**: Help agents choose correctly the first time
-- **Efficient queries**: Use filters in Get List to reduce data transfer
-- **Batch when possible**: Group similar operations
+Every tool assigned to an agent adds decision overhead and tokens. Keeping the toolset tight improves both speed and accuracy.
+
+- **Minimize tool count**: Only assign tools the agent is actually expected to use.
+- **Clear descriptions**: Help agents choose correctly the first time, avoiding repeated calls.
+- **Efficient queries**: Use filters in Get List to reduce data transfer.
+- **Batch when possible**: Group similar operations in custom functions instead of making many small calls.
 
 ### Tool Call Costs
 
-Tool calls affect agent costs:
-- **Tool definitions** add tokens to the prompt
-- **Tool results** add tokens to the conversation
-- **More tools** = more tokens = higher cost
+Tool calls affect agent costs in a few concrete ways. Being aware of them makes it easier to control token usage.
+
+- **Tool definitions** add tokens to the prompt.
+- **Tool results** add tokens to the conversation.
+- **More tools** means more tokens, which means higher cost.
 
 **Optimization Tips:**
-- Assign only relevant tools per agent
-- Use specific DocTypes instead of generic tools
-- Return only needed fields in Get List
-- Keep tool descriptions concise but clear
+
+- Assign only relevant tools per agent.
+- Use specific DocTypes instead of overly generic tools.
+- Return only needed fields in Get List.
+- Keep tool descriptions concise but clear.
 
 ## Troubleshooting
 
+When an agent misbehaves, the cause usually falls into one of four patterns. Use the checklist below to narrow it down quickly.
+
 **Agent doesn't use a tool:**
-- Check tool description clarity
-- Verify tool is assigned to the agent
-- Check if agent instructions mention when to use it
-- Review Agent Run logs for reasoning
+
+<Checklist items={[
+  "Check that the tool description is clear and specific.",
+  "Verify the tool is assigned to the agent.",
+  "Check whether the agent instructions mention when to use it.",
+  "Review the Agent Run logs for the agent's reasoning."
+]} />
 
 **Tool call fails:**
-- Check user permissions for the DocType
-- Verify document exists (for Get/Update/Delete)
-- Check required fields are provided (for Create)
-- Review error in Agent Run logs
+
+<Checklist items={[
+  "Check user permissions for the DocType.",
+  "Verify the document exists (for Get/Update/Delete).",
+  "Check that required fields are provided (for Create).",
+  "Review the error in Agent Run logs."
+]} />
 
 **Wrong tool selected:**
-- Improve tool description specificity
-- Rename tool for clarity
-- Adjust agent instructions to guide tool usage
-- Consider splitting tools into more specific variants
+
+<Checklist items={[
+  "Improve the tool description's specificity.",
+  "Rename the tool for clarity.",
+  "Adjust agent instructions to guide tool usage.",
+  "Consider splitting tools into more specific variants."
+]} />
 
 **Slow performance:**
-- Reduce number of tools assigned
-- Optimize Get List queries with filters
-- Cache common results in custom functions
-- Consider agent chaining for complex workflows
+
+<Checklist items={[
+  "Reduce the number of tools assigned to the agent.",
+  "Optimize Get List queries with filters.",
+  "Cache common results in custom functions.",
+  "Consider agent chaining for complex workflows."
+]} />
 
 ## Best Practices
 
 ### Tool Design
 
-**Do:**
-- Write clear, specific descriptions
-- Use descriptive tool names
-- Define all parameters explicitly
-- Include examples in descriptions
-- Keep tools focused on one task
+Well-designed tools are easier for agents to understand and harder to misuse. Use the guidelines below when creating or naming tools.
 
-**Don't:**
-- Use vague descriptions ("handles customer stuff")
-- Create overly generic mega-tools
-- Forget to specify required parameters
-- Mix multiple unrelated actions in one tool
+<DoDont
+  doItems={[
+    "Write clear, specific descriptions.",
+    "Use descriptive tool names.",
+    "Define all parameters explicitly.",
+    "Include examples in descriptions.",
+    "Keep tools focused on one task."
+  ]}
+  dontItems={[
+    "Use vague descriptions like \"handles customer stuff\".",
+    "Create overly generic mega-tools.",
+    "Forget to specify required parameters.",
+    "Mix multiple unrelated actions in one tool."
+  ]}
+/>
 
 ### Tool Assignment
 
+Assign tools strategically so each agent has exactly the capabilities it needs and no more. Specialized agents are generally more reliable than general-purpose ones.
+
 **Strategic Assignment:**
-- Give agents only the tools they need
-- Create specialized agents with focused toolsets
-- Use agent chaining for cross-domain tasks
-- Test with minimal tools, add as needed
+
+- Give agents only the tools they need.
+- Create specialized agents with focused toolsets.
+- Use agent chaining for cross-domain tasks.
+- Test with minimal tools, then add as needed.
 
 **Example:**
-```
-Customer Support Agent:
-- get_customer
-- get_list (for tickets)
-- create_document (for tickets)
-- update_document (for tickets)
 
-Sales Agent:
-- get_customer
-- get_list (for leads, opportunities)
-- create_document (for leads)
-- update_document (for opportunities)
-- calculate_commission (custom tool)
+<ConfigPanel title="Agent Tool Assignment">
+  <ConfigSection title="Customer Support Agent">
+    <ConfigField label="Tools" value="get_customer, get_list (for tickets), create_document (for tickets), update_document (for tickets)" />
+  </ConfigSection>
+  <ConfigSection title="Sales Agent">
+    <ConfigField label="Tools" value="get_customer, get_list (for leads, opportunities), create_document (for leads), update_document (for opportunities), calculate_commission (custom tool)" />
+  </ConfigSection>
+</ConfigPanel>
 
 Not: One agent with all 20 tools
-```
 
 ### Documentation for Tools
 
+Good documentation inside your custom functions directly improves agent behavior, because Huf uses docstrings and parameter descriptions as part of the tool metadata.
+
 When creating custom tools:
-- **Function docstring** becomes part of tool description
-- **Parameter descriptions** help agent understand inputs
-- **Return value comments** clarify what agent will receive
-- **Examples** in docstrings improve agent behavior
+
+- Write a **function docstring**; it becomes part of the tool description.
+- Add **parameter descriptions** so the agent understands inputs.
+- Include **return value comments** to clarify what the agent will receive.
+- Provide **examples** in docstrings to improve agent behavior.
 
 ```python
 def send_slack_notification(channel, message):
@@ -393,5 +465,4 @@ Now that you understand tools:
 
 ---
 
-**Need help with tools?** Check the [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions) or open an issue.
-
+**Need help with tools?** Check the [GitHub discussions](https://github.com/tridz-dev/huf/discussions) or open an issue.

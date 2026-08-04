@@ -2,6 +2,8 @@
 sidebarTitle: Publishing Tools
 ---
 
+import { Callout } from 'nextra/components'
+
 # Publishing Tools from Your App
 
 If you're building a Frappe app, you can publish tools that agents can automatically discover and use. This lets you share reusable agent capabilities across projects and with the community.
@@ -10,40 +12,62 @@ If you're building a Frappe app, you can publish tools that agents can automatic
 
 **Published tools** are Python functions in your Frappe app that agents can automatically discover and use. Instead of manually creating Agent Tool Functions, you decorate your functions with `@agent_tool`, and Huf automatically syncs them when your app is installed.
 
-**Benefits:**
-- **Auto-discovery**: Tools appear automatically when app is installed
-- **No manual setup**: No need to create Agent Tool Function records
-- **Version control**: Tools are versioned with your app
-- **Reusable**: Share tools across multiple sites/projects
-- **Maintainable**: Update tools by updating your app
+Published tools provide several advantages over manually configured tool functions.
+
+<div className="huf-benefit-strip">
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Auto-discovery</span>Tools appear automatically when app is installed</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">No manual setup</span>No need to create Agent Tool Function records</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Version control</span>Tools are versioned with your app</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Reusable</span>Share tools across multiple sites/projects</div>
+  <div className="huf-benefit-cell"><span className="huf-benefit-label">Maintainable</span>Update tools by updating your app</div>
+</div>
 
 ## How It Works
 
+Published tools are discovered and synced automatically through a simple lifecycle.
+
 ### The Flow
 
-1. **You write** a Python function in your app
-2. **You decorate** it with `@agent_tool`
-3. **You install** your app on a Frappe site
-4. **Huf discovers** the decorated functions
-5. **Huf creates** Agent Tool Function records automatically
-6. **Agents can use** the tools immediately
+Publishing a tool follows a predictable path from code to agent availability.
+
+<Mermaid>{`
+flowchart LR
+    A["Write a Python function<br/>in your app"] --> B["Decorate it with<br/>@agent_tool"]
+    B --> C["Install your app on<br/>a Frappe site"]
+    C --> D["Huf discovers the<br/>decorated functions"]
+    D --> E["Huf creates Agent Tool<br/>Function records automatically"]
+    E --> F["Agents can use the<br/>tools immediately"]
+`}</Mermaid>
 
 ### Auto-Sync Process
 
-When your app is installed or updated:
-- Huf scans your app for `@agent_tool` decorated functions
-- Creates or updates Agent Tool Function records
-- Links tools to your app for tracking
-- Makes tools available to all agents
+When your app is installed or updated, Huf performs several sync actions.
 
-**Sync happens automatically** during:
-- App installation (`bench install-app`)
-- App migration (`bench migrate`)
-- Manual sync (via Huf hooks)
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">Scan</span>Huf scans your app for <code>@agent_tool</code> decorated functions</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Create or Update</span>Creates or updates Agent Tool Function records</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Link</span>Links tools to your app for tracking</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Availability</span>Makes tools available to all agents</div>
+</div>
+
+<div className="huf-cli-note">
+<strong>Sync happens automatically during:</strong>
+<ul>
+<li>App installation (<code>bench install-app</code>)</li>
+<li>App migration (<code>bench migrate</code>)</li>
+<li>Manual sync (via Huf hooks)</li>
+</ul>
+</div>
 
 ## Creating a Published Tool
 
-### Step 1: Write Your Function
+Follow these steps to publish a tool from your Frappe app.
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">1</div>
+  <div>
+    <h3 className="huf-step-title" id="write-your-function">Write Your Function</h3>
+    <div className="huf-step-body">
 
 Create a function in your app with proper structure:
 
@@ -98,7 +122,15 @@ def calculate_discount(customer_type: str, order_total: float) -> dict:
     }
 ```
 
-### Step 2: Import the Decorator
+    </div>
+  </div>
+</div>
+
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">2</div>
+  <div>
+    <h3 className="huf-step-title" id="import-the-decorator">Import the Decorator</h3>
+    <div className="huf-step-body">
 
 Make sure to import `agent_tool` from Huf:
 
@@ -106,6 +138,7 @@ Make sure to import `agent_tool` from Huf:
 from huf.ai.tool_discovery import agent_tool
 ```
 
+<Callout type="info">
 If Huf isn't installed, handle gracefully:
 
 ```python
@@ -116,10 +149,19 @@ except ImportError:
     def agent_tool(func):
         return func
 ```
+</Callout>
 
-### Step 3: Add Metadata (Optional)
+    </div>
+  </div>
+</div>
 
-The decorator accepts optional metadata:
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">3</div>
+  <div>
+    <h3 className="huf-step-title" id="add-metadata-optional">Add Metadata (Optional)</h3>
+    <div className="huf-step-body">
+
+The decorator accepts optional metadata to improve discovery.
 
 ```python
 @agent_tool(
@@ -132,34 +174,49 @@ def calculate_discount(customer_type: str, order_total: float) -> dict:
     pass
 ```
 
-**Metadata Options:**
-- `category`: Group tools by category (e.g., "Pricing", "Inventory", "Sales")
-- `description`: Override auto-generated description
-- `tags`: Searchable tags for tool discovery
+| Option | Purpose |
+|---|---|
+| `category` | Group tools by category (e.g., "Pricing", "Inventory", "Sales") |
+| `description` | Override auto-generated description |
+| `tags` | Searchable tags for tool discovery |
 
-### Step 4: Install Your App
+    </div>
+  </div>
+</div>
 
-When you install your app on a site with Huf:
+<div className="huf-procedure-step">
+  <div className="huf-step-counter">4</div>
+  <div>
+    <h3 className="huf-step-title" id="install-your-app">Install Your App</h3>
+    <div className="huf-step-body">
+
+Install your app on a Frappe site that has Huf enabled.
 
 ```bash
 bench --site sitename install-app my_app
 ```
 
 Huf automatically:
-1. Scans your app for `@agent_tool` functions
-2. Creates Agent Tool Function records
-3. Links them to your app
 
-**Check in Desk:**
-Navigate to **Huf → Agent Tool Function** and filter by your app name.
+<div className="huf-feature-grid">
+  <div className="huf-feature-cell"><span className="huf-feature-label">Scan</span>Scans your app for <code>@agent_tool</code> functions</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Create</span>Creates Agent Tool Function records</div>
+  <div className="huf-feature-cell"><span className="huf-feature-label">Link</span>Links them to your app</div>
+</div>
+
+**Check in Desk:** Navigate to **Huf → Agent Tool Function** and filter by your app name.
+
+    </div>
+  </div>
+</div>
 
 ## Tool Metadata from Docstrings
 
-Huf extracts metadata from your function docstring:
+Huf extracts metadata from your function docstring to build tool records.
 
 ### Function Description
 
-The main docstring becomes the tool description:
+The main docstring becomes the tool description.
 
 ```python
 @agent_tool
@@ -172,6 +229,8 @@ def get_customer_orders(customer_id: str):
     pass
 ```
 
+Follow these guidelines when writing descriptions:
+
 **Best Practices:**
 - Start with what the tool does
 - Mention when agents should use it
@@ -180,7 +239,7 @@ def get_customer_orders(customer_id: str):
 
 ### Parameter Documentation
 
-Document parameters in the docstring:
+Document parameters in the docstring so agents know what to pass.
 
 ```python
 @agent_tool
@@ -199,6 +258,8 @@ def create_quote(items: list, customer_id: str, valid_until: str = None):
     pass
 ```
 
+Keep these guidelines in mind when documenting parameters:
+
 **Parameter Types:**
 - Document types clearly (`str`, `int`, `float`, `list`, `dict`)
 - Mark optional parameters
@@ -207,7 +268,7 @@ def create_quote(items: list, customer_id: str, valid_until: str = None):
 
 ### Return Value Documentation
 
-Document what the function returns:
+Document what the function returns to help agents interpret results.
 
 ```python
 @agent_tool
@@ -227,9 +288,11 @@ def analyze_sales_trends(period_days: int = 30):
 
 ## Advanced Patterns
 
+These patterns help you organize and conditionally expose tools.
+
 ### Tool Categories
 
-Group related tools with categories:
+Group related tools with categories so agents can discover them by context.
 
 ```python
 # Pricing tools
@@ -255,7 +318,7 @@ Agents can discover tools by category, making it easier to find relevant capabil
 
 ### Conditional Tool Registration
 
-Register tools conditionally:
+Register tools only when dependencies are present.
 
 ```python
 import frappe
@@ -271,7 +334,7 @@ def advanced_analytics(...):
 
 ### Tool Dependencies
 
-Document dependencies in docstrings:
+Document dependencies in docstrings so agents know prerequisites.
 
 ```python
 @agent_tool
@@ -289,16 +352,24 @@ def sync_with_external_system(...):
 
 ## Tool Discovery Process
 
+Huf finds and registers your tools through a structured scan.
+
 ### How Huf Finds Your Tools
 
-1. **Scan app directory**: Huf scans your app's Python modules
-2. **Import modules**: Attempts to import modules (handles errors gracefully)
-3. **Find decorators**: Looks for `@agent_tool` decorated functions
-4. **Extract metadata**: Reads function signature, docstring, decorator args
-5. **Create records**: Creates Agent Tool Function records
-6. **Link to app**: Associates tools with your app
+The discovery process runs through these stages.
+
+<Mermaid>{`
+flowchart LR
+    A["Scan app directory<br/>Huf scans your app's Python modules"] --> B["Import modules<br/>Attempts to import modules (handles errors gracefully)"]
+    B --> C["Find decorators<br/>Looks for @agent_tool decorated functions"]
+    C --> D["Extract metadata<br/>Reads function signature, docstring, decorator args"]
+    D --> E["Create records<br/>Creates Agent Tool Function records"]
+    E --> F["Link to app<br/>Associates tools with your app"]
+`}</Mermaid>
 
 ### Module Scanning
+
+Huf scans specific locations in your app.
 
 Huf scans these locations:
 - `{app_name}/api/` directory
@@ -309,6 +380,8 @@ Huf scans these locations:
 
 ### Error Handling
 
+Discovery continues even when individual tools fail.
+
 If a tool function has errors:
 - Huf logs the error but continues scanning
 - Other tools are still registered
@@ -317,14 +390,20 @@ If a tool function has errors:
 
 ## Updating Published Tools
 
+Tools stay in sync with your app as you release updates.
+
 ### Modifying Tools
 
-When you update a tool function:
+When you update a tool function, migration propagates the changes.
 
-1. **Update your code** in the app
-2. **Run migration**: `bench --site sitename migrate`
-3. **Huf syncs**: Automatically updates Agent Tool Function records
-4. **Agents get updates**: New version available immediately
+<Mermaid>{`
+flowchart LR
+    A["Update your code<br/>in the app"] --> B["Run migration<br/>bench --site sitename migrate"]
+    B --> C["Huf syncs<br/>Automatically updates Agent Tool Function records"]
+    C --> D["Agents get updates<br/>New version available immediately"]
+`}</Mermaid>
+
+The following changes are synchronized:
 
 **Changes that sync:**
 - Function signature (parameters)
@@ -334,14 +413,15 @@ When you update a tool function:
 
 ### Versioning
 
-Tools are versioned with your app:
+Tools are versioned with your app.
+
 - **App version** tracks tool versions
 - **Update app** to update tools
 - **Rollback app** to rollback tools
 
 ### Breaking Changes
 
-If you make breaking changes:
+If you make breaking changes, choose one of these strategies.
 
 **Option 1: Deprecate and Replace**
 ```python
@@ -371,7 +451,11 @@ def tool_name(param1, param2=None, **kwargs):
 
 ## Best Practices
 
+These guidelines help you design reliable, maintainable tools.
+
 ### Function Design
+
+Keep tool functions focused and well documented.
 
 **Do:**
 - Write focused, single-purpose functions
@@ -390,7 +474,8 @@ def tool_name(param1, param2=None, **kwargs):
 
 ### Documentation
 
-**Comprehensive Docstrings:**
+Comprehensive docstrings make tools easier for agents to use.
+
 ```python
 @agent_tool
 def process_order(order_id: str, payment_method: str) -> dict:
@@ -428,7 +513,8 @@ def process_order(order_id: str, payment_method: str) -> dict:
 
 ### Error Handling
 
-**Always handle errors:**
+Always handle errors so agents receive useful feedback.
+
 ```python
 @agent_tool
 def safe_operation(param: str) -> dict:
@@ -455,7 +541,7 @@ def safe_operation(param: str) -> dict:
 
 ### Testing Tools
 
-**Test your tools before publishing:**
+Test your tools before publishing to catch regressions early.
 
 ```python
 # In your app's test file
@@ -474,7 +560,11 @@ class TestTools(unittest.TestCase):
 
 ## Sharing Tools
 
+Published tools can be shared inside your organization or with the wider community.
+
 ### Within Your Organization
+
+Install your app on multiple sites to share tools internally.
 
 **Multiple Sites:**
 - Install your app on all sites
@@ -488,6 +578,8 @@ class TestTools(unittest.TestCase):
 
 ### With the Community
 
+Open-source your app to let others use and contribute to your tools.
+
 **Open Source Apps:**
 - Publish your app on GitHub
 - Others can install and use your tools
@@ -499,6 +591,8 @@ class TestTools(unittest.TestCase):
 - Provide examples
 
 ## Troubleshooting
+
+If tools don't appear or update as expected, check these common causes.
 
 **Tools not appearing:**
 - Check app is installed: `bench --site sitename list-apps`
@@ -523,7 +617,7 @@ class TestTools(unittest.TestCase):
 
 ## Example: Complete Tool Package
 
-Here's a complete example of a tool package:
+Here is a complete example of a tool package in one module.
 
 **File:** `my_app/api/tools.py`
 
@@ -645,7 +739,7 @@ def calculate_order_total(items: List[Dict], customer_id: str) -> Dict:
 
 ## What's Next?
 
-Now that you can publish tools:
+Continue with these related guides.
 
 - **[Custom Tools](/docs/tools/custom)** - Creating tools manually
 - **[Built-in Tools](/docs/tools/built-in)** - Using Huf's built-in tools
@@ -654,5 +748,4 @@ Now that you can publish tools:
 
 ---
 
-**Questions?** Visit [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions) or check the [Huf source code](https://github.com/tridz-dev/agent_flo).
-
+**Questions?** Visit [GitHub discussions](https://github.com/tridz-dev/huf/discussions) or check the [Huf source code](https://github.com/tridz-dev/huf).

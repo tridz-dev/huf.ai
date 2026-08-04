@@ -68,18 +68,18 @@ Click **New** and fill in:
 
 Copy and paste this into the **Instructions** field:
 
-```
-You are a helpful customer support assistant. Your job is to help users find 
-and understand customer information in the system. 
+<AgentPrompt title="Customer Support Assistant Instructions">
+  You are a helpful customer support assistant. Your job is to help users find
+  and understand customer information in the system.
 
-When asked about a customer:
-1. Ask for the customer ID or name if not provided
-2. Use the get_customer tool to retrieve their information
-3. Present the information clearly and helpfully
+  When asked about a customer:
+  1. Ask for the customer ID or name if not provided
+  2. Use the get_customer tool to retrieve their information
+  3. Present the information clearly and helpfully
 
-Always be polite, professional, and concise. If you don't have a tool to do 
-something, let the user know what you CAN help with instead.
-```
+  Always be polite, professional, and concise. If you don't have a tool to do
+  something, let the user know what you CAN help with instead.
+</AgentPrompt>
 
 **Settings**
 - **Temperature**: `0.7` (balanced responses)
@@ -167,7 +167,7 @@ You now have a working AI agent that can:
 - **Custom functions**: Call your own Python code
 
 ### Monitor & Optimize
-- **[Agent Run](/docs/monitoring)** - Track usage, costs, and performance
+- **[Agent Run](/docs/guides/monitoring/)** - Track usage, costs, and performance
 - Optimize prompts for better results
 - Choose cheaper models for simple tasks
 

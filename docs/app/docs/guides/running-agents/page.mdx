@@ -137,18 +137,21 @@ Send report to sales@company.com
 
 ### Best Practices
 
-**Do:**
-- Run during off-peak hours for heavy tasks
-- Stagger multiple agents to avoid overlap
-- Use reasonable frequencies
-- Monitor costs
-- Test schedules before production
-
-**Don't:**
-- Schedule too frequently (every minute)
-- Run multiple heavy agents simultaneously
-- Forget timezone considerations
-- Ignore failed runs
+<DoDont
+  doItems={[
+    "Run during off-peak hours for heavy tasks",
+    "Stagger multiple agents to avoid overlap",
+    "Use reasonable frequencies",
+    "Monitor costs",
+    "Test schedules before production"
+  ]}
+  dontItems={[
+    "Schedule too frequently (every minute)",
+    "Run multiple heavy agents simultaneously",
+    "Forget timezone considerations",
+    "Ignore failed runs"
+  ]}
+/>
 
 ## Document Event Triggers
 
@@ -215,17 +218,20 @@ Please process this document:
 
 ### Best Practices
 
-**Do:**
-- Use specific events (not every event)
-- Add conditions to limit executions
-- Handle errors gracefully
-- Test with draft documents first
-
-**Don't:**
-- Trigger on every update (can cause loops)
-- Use Before Save unless necessary
-- Forget permission checks
-- Create infinite trigger loops
+<DoDont
+  doItems={[
+    "Use specific events (not every event)",
+    "Add conditions to limit executions",
+    "Handle errors gracefully",
+    "Test with draft documents first"
+  ]}
+  dontItems={[
+    "Trigger on every update (can cause loops)",
+    "Use Before Save unless necessary",
+    "Forget permission checks",
+    "Create infinite trigger loops"
+  ]}
+/>
 
 ## Chat Interface
 
@@ -274,18 +280,21 @@ Please process this document:
 
 ### Best Practices
 
-**Do:**
-- Enable only for user-facing agents
-- Set clear expectations in instructions
-- Handle errors gracefully
-- Provide escalation paths
-- Monitor user satisfaction
-
-**Don't:**
-- Enable for internal automation agents
-- Forget to set permissions
-- Ignore user feedback
-- Leave errors unhandled
+<DoDont
+  doItems={[
+    "Enable only for user-facing agents",
+    "Set clear expectations in instructions",
+    "Handle errors gracefully",
+    "Provide escalation paths",
+    "Monitor user satisfaction"
+  ]}
+  dontItems={[
+    "Enable for internal automation agents",
+    "Forget to set permissions",
+    "Ignore user feedback",
+    "Leave errors unhandled"
+  ]}
+/>
 
 ## API Execution
 
@@ -375,19 +384,22 @@ except Exception as e:
 
 ### Best Practices
 
-**Do:**
-- Use proper authentication
-- Handle errors gracefully
-- Set timeouts
-- Log API calls
-- Rate limit if needed
-
-**Don't:**
-- Expose API keys
-- Ignore errors
-- Make blocking calls
-- Forget rate limits
-- Skip authentication
+<DoDont
+  doItems={[
+    "Use proper authentication",
+    "Handle errors gracefully",
+    "Set timeouts",
+    "Log API calls",
+    "Rate limit if needed"
+  ]}
+  dontItems={[
+    "Expose API keys",
+    "Ignore errors",
+    "Make blocking calls",
+    "Forget rate limits",
+    "Skip authentication"
+  ]}
+/>
 
 ## Multi-Run Orchestration
 
@@ -425,23 +437,19 @@ That's it! The next time you call this agent, it will:
 
 ### Execution Flow
 
-```
-User Request → Create Orchestration → Planning Phase
-                                           ↓
-                                    Generate Steps
-                                           ↓
-                              Save to agent_orchestration_plan
-                                           ↓
-                              Scheduler picks up (every 1 min)
-                                           ↓
-                              Execute Step 1 → Save output
-                                           ↓
-                              Execute Step 2 → Save output
-                                           ↓
-                                         ...
-                                           ↓
-                              All steps done → Completed
-```
+<Mermaid>{`
+flowchart LR
+    A[User Request] --> B[Create Orchestration]
+    B --> C[Planning Phase]
+    C --> D[Generate Steps]
+    D --> E[Save to Plan]
+    E --> F[Scheduler]
+    F --> G[Execute Step 1]
+    G --> H[Execute Step 2]
+    H --> I[...]
+    I --> J[All Steps Done]
+    J --> K[Completed]
+`}</Mermaid>
 
 ### Monitoring Orchestrations
 
@@ -496,17 +504,20 @@ Each step executes with context from previous steps, building up the final outpu
 
 ### Best Practices
 
-**Do:**
-- Use for genuinely complex tasks (5+ logical steps)
-- Write clear, comprehensive prompts
-- Monitor orchestration progress
-- Review step outputs for quality
-
-**Don't:**
-- Enable for simple single-step tasks
-- Expect real-time responses (steps execute async)
-- Forget that each step costs tokens
-- Use for user-facing chat interactions
+<DoDont
+  doItems={[
+    "Use for genuinely complex tasks (5+ logical steps)",
+    "Write clear, comprehensive prompts",
+    "Monitor orchestration progress",
+    "Review step outputs for quality"
+  ]}
+  dontItems={[
+    "Enable for simple single-step tasks",
+    "Expect real-time responses (steps execute async)",
+    "Forget that each step costs tokens",
+    "Use for user-facing chat interactions"
+  ]}
+/>
 
 ### Limitations (Phase-1)
 
@@ -627,5 +638,5 @@ Current implementation:
 
 ---
 
-**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
+**Questions?** Check [GitHub discussions](https://github.com/tridz-dev/huf/discussions).
 

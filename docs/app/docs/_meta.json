@@ -1,4 +1,9 @@
 {
+  "*": {
+    "theme": {
+      "timestamp": false
+    }
+  },
   "quick-start": "Quick Start",
   "installation": "Installation",
   "concepts": "Core Concepts",
