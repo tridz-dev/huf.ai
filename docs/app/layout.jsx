@@ -1,6 +1,7 @@
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
+import Script from 'next/script'
 import 'nextra-theme-docs/style.css'
 import './globals.css'
 
@@ -14,6 +15,12 @@ export const metadata = {
     icon: [{ url: '/favicon.ico', type: 'image/x-icon' }]
   }
 }
+
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID
+const enableGa = gaMeasurementId?.startsWith('G-')
+const enableClarity =
+  Boolean(clarityProjectId) && clarityProjectId !== 'your-clarity-project-id'
 
 const navbar = (
   <Navbar
@@ -94,6 +101,33 @@ export default async function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
       </Head>
       <body>
+        {enableGa && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaMeasurementId}');
+              `}
+            </Script>
+          </>
+        )}
+        {enableClarity && (
+          <Script id="clarity-init" strategy="afterInteractive">
+            {`
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "${clarityProjectId}");
+            `}
+          </Script>
+        )}
         <Layout
           navbar={navbar}
           pageMap={sortedPageMap}
