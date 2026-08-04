@@ -1,0 +1,118 @@
+---
+title: Model Context Protocol (MCP) Tools
+description: Connect HUF agents to external MCP servers to fetch and execute tools dynamically.
+---
+
+import { Callout } from 'nextra/components'
+
+# Model Context Protocol (MCP) Tools
+
+HUF supports the **Model Context Protocol (MCP)**, an open standard that enables applications to expose tools to LLMs over standard interfaces. With HUF's built-in MCP Client adapter, you can connect your agents to any external MCP server (running locally or in the cloud), dynamically sync its tools, and let your agents execute them.
+
+<Callout type="info">
+  HUF supports MCP servers using the **HTTP/SSE (Server-Sent Events)** transport protocol.
+</Callout>
+
+---
+
+## How MCP Works in HUF
+
+HUF discovers, caches, and exposes MCP tools dynamically:
+
+1. **Declare the Server** — Create an `MCP Server` document with the server URL and headers.
+2. **Sync Tools** — Fetch available tools from the server. They are cached in the `MCP Server Tool` child table.
+3. **Link to Agent** — Link the MCP Server to an agent.
+4. **Execution** — When the agent executes an MCP tool, HUF routes the request to the MCP server via JSON-RPC, executing the tool remotely and returning the output to the LLM.
+
+```
+┌─────────────┐       sync       ┌──────────────┐
+│  MCP Server │ ───────────────> │  HUF Database│ (Cached tools)
+└─────────────┘                  └──────────────┘
+       ▲                                 │
+       │ execution                       │ load tools
+       │                                 ▼
+┌─────────────┐                  ┌──────────────┐
+│  MCP Server │ <─────────────── │  HUF Agent   │ (LiteLLM Runtime)
+└─────────────┘   JSON-RPC call  └──────────────┘
+```
+
+---
+
+## Configuration Guide
+
+### 1. Register the MCP Server
+
+Go to **HUF → MCP Server → New** and configure the following fields:
+
+| Field | Fieldname | Type | Description |
+|---|---|---|---|
+| **Server Name** | `server_name` | Data | A unique identifier for the server. |
+| **Server URL** | `server_url` | Data | The HTTP/SSE endpoint of the server (e.g. `http://localhost:3001/sse`). |
+| **Enabled** | `enabled` | Check | Toggle whether this server is active. |
+| **Auth Type** | `auth_type` | Select | Authentication scheme: `bearer_token`, `api_key_header`, or `none`. |
+| **Auth Header Name** | `auth_header_name` | Data | Custom authentication header name (e.g., `X-API-Key` or `Authorization`). |
+| **Auth Header Value** | `auth_header_value` | Password | The API key or token (stored encrypted in the database). |
+| **Tool Namespace** | `tool_namespace` | Data | Optional namespace prefix to avoid tool name collisions (e.g. if set to `weather`, a tool `get_forecast` becomes `weather.get_forecast`). |
+| **Timeout Seconds** | `timeout_seconds` | Int | Timeout for execution requests (default is 30s). |
+| **Enable Auto-Sync** | `enable_auto_sync` | Check | Auto-sync the tool definitions periodically. |
+| **Auto-Sync Interval** | `auto_sync_interval` | Int | Number of hours between automatic sync runs. |
+
+#### Custom Headers
+If the server requires additional headers (like custom tenant IDs or organization keys), configure them in the **Custom Headers** child table (`Agent Tool HTTP Header`).
+
+---
+
+### 2. Fetch and Sync Tools
+
+Once saved:
+1. Click the **Test Connection** button to verify the server is reachable and auth works.
+2. Click **Sync Tools** to fetch the tool schemas.
+3. HUF sends a `tools/list` JSON-RPC request and registers the tools in the **Tools** child table. Each row caches:
+   - **Tool Name**
+   - **Description**
+   - **Parameters** (JSON schema describing the arguments)
+
+---
+
+### 3. Link MCP Server to Agent
+
+To make synced tools available to an agent:
+1. Open the **Agent** document.
+2. Scroll to the **MCP Servers** child table (`agent_mcp_server`).
+3. Add a row, select the **MCP Server**, and check **Enabled**.
+4. Save the Agent. The tools are now active for the agent.
+
+---
+
+## Tool Naming and Namespaces
+
+To prevent conflicts with other built-in or custom tools, HUF processes MCP tool names during runtime compilation:
+
+- **Namespace Prefixing** — If the MCP Server has a `tool_namespace` set (e.g., `jira`), tool names are compiled as `{namespace}.{original_name}` (e.g., `jira.create_issue`).
+- **Character Sanitization** — Tool names are sanitized to only contain alphanumeric characters, underscores, and dashes, matching OpenAI's tool name requirements.
+- **Length Constraint** — Sanitized names are truncated to 64 characters.
+
+Inside `sdk_tools.py`, MCP tools are wrapped using HUF's `FunctionTool` class with the description prefixed with `[MCP:{server_name}]`.
+
+---
+
+## Developer API & Operations
+
+You can also trigger MCP sync programmatically using HUF's whitelisted server-side functions:
+
+```python
+# Sync tools from an MCP server
+result = frappe.call("huf.ai.mcp_client.sync_mcp_server_tools", server_name="My Jira Server")
+# Output: {"success": True, "tool_count": 5, "tools": ["jira_create_issue", ...]}
+
+# Test connection to an MCP server
+conn_result = frappe.call("huf.ai.mcp_client.test_mcp_connection", server_name="My Jira Server")
+# Output: {"success": True, "message": "Connection successful"}
+```
+
+Scheduled auto-sync runs hourly via `auto_sync_mcp_server_tools()`:
+```python
+# huf/ai/mcp_client.py
+# Runs through all enabled MCP servers that have auto-sync turned on
+# and runs sync_mcp_server_tools if time elapsed exceeds the interval.
+```

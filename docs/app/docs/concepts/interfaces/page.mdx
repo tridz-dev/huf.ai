@@ -1,219 +1,123 @@
----
-sidebarTitle: Interfaces
----
+export const metadata = {
+  sidebarTitle: "Interfaces",
+};
 
-# Interfaces: Frontend vs Desk
+# Interfaces: /huf vs /app
 
-Huf provides **two distinct interfaces** for interacting with AI agents. Understanding when to use each is key to getting the most out of Huf.
-
-## Overview
-
-| Interface | URL | Designed For | Use Case | Status |
-|-----------|-----|--------------|----------|--------|
-| **Frontend** | `/huf` | End users | Chat, interact with agents, view conversations | **Actively expanding** |
-| **Desk** | `/app` | Administrators | Configure agents, manage providers, monitor all activity | **Complete** |
-
-## Frontend Interface (`/huf`)
-
-### What It Is
-
-The **frontend** is a user-focused interface optimized for chatting with agents and viewing agent-related information without entering the Frappe Desk.
-
-**Access**: Navigate to `https://your-site.com/huf`
-
-### Who It's For
-
-- **End users** who need to interact with agents
-- **Non-admin users** who don't need full Frappe Desk access
-- **Customer-facing** interactions (with proper permissions)
-
-### Current Capabilities
-
-**Available Now:**
-- Real-time chat with agents
-- View conversation history
-- User-specific sessions
-
-**Coming Soon:**
-- Agent discovery/browsing
-- Quick tool invocation
-- Conversation management
-- Mobile-optimized views
-- Shared conversations
-- User dashboards
-
-### When to Use Frontend
-
-Use `/huf` when you want to:
-- Provide a clean, focused chat experience
-- Give users access to agents without Frappe Desk training
-- Build customer or team-facing agent interactions
-- Keep the experience simple and uncluttered
-
-### Current Limitations
-
-The frontend is **under active development**. Right now:
-- Limited to chat interactions
-- No agent configuration (use Desk for this)
-- Not all agent features are exposed yet
-
-> **Roadmap**: The frontend is expanding rapidly. We're adding agent browsing, tool shortcuts, conversation management, and more. Check the GitHub repo for the latest updates.
-
-## Desk Interface (`/app`)
-
-### What It Is
-
-The **Desk** is the full Frappe administration interface where you configure, manage, and monitor everything in Huf.
-
-**Access**: Navigate to `https://your-site.com/app` → Switch to **Huf** workspace
-
-### Who It's For
-
-- **Administrators** setting up agents
-- **Developers** creating custom tools
-- **Operations teams** monitoring agent performance
-- **Anyone** who needs full control and visibility
-
-### Full Capabilities
-
-**Configure:**
-- Create and edit agents
-- Set up AI providers and models
-- Define agent tools and functions
-- Configure triggers (schedule, doc events)
-- Manage permissions
-
-**Monitor:**
-- Agent Run logs (every execution)
-- Conversation history (all users)
-- Token usage and costs
-- Tool call details
-- Error tracking
-
-**Manage:**
-- User permissions for agents
-- Agent settings and defaults
-- LiteLLM configuration
-- Tool discovery cache
-
-### When to Use Desk
-
-Use `/app` (Desk) when you need to:
-- Create or modify agents
-- Add new AI providers or models
-- Create custom tool functions
-- Set up scheduled or event-driven agents
-- Monitor agent performance and costs
-- Debug issues or view detailed logs
-- Configure system-wide settings
-
-### DocTypes in Desk
-
-Key DocTypes you'll work with:
-
-| DocType | Purpose |
-|---------|---------|
-| **Agent** | Define agents with instructions, models, tools |
-| **AI Provider** | Store API keys for OpenAI, Anthropic, etc. |
-| **AI Model** | Define which models are available |
-| **Agent Tool Function** | Create tools agents can use |
-| **Agent Trigger** | Schedule or event-based agent execution |
-| **Agent Run** | View logs of every agent execution |
-| **Agent Conversation** | View all conversation histories |
-| **Agent Chat** | Real-time chat interface (also in Desk) |
-| **Agent Settings** | System-wide defaults and configuration |
-
-## Comparison Table
-
-| Feature | Frontend (`/huf`) | Desk (`/app`) |
-|---------|-------------------|---------------|
-| **Chat with agents** | Primary use case | Via Agent Chat |
-| **Create agents** | Not available | Full control |
-| **Configure tools** | Not available | Full control |
-| **View your conversations** | User-specific | All conversations |
-| **Monitor agent runs** | Coming soon | Complete logs |
-| **Manage providers** | Not available | Full control |
-| **Set up triggers** | Not available | Full control |
-| **Mobile optimized** | Coming soon | Desktop-first |
-| **Permissions required** | User/Guest level | System Manager/custom |
-| **User experience** | Clean, focused | Full admin power |
-
-## Typical Workflows
-
-### For End Users
-1. Access `/huf` on desktop or mobile
-2. Select or discover an agent to chat with
-3. Interact naturally via chat
-4. View conversation history
-5. (Future) Quickly invoke common tools
-
-### For Administrators
-1. Access `/app` and switch to Huf workspace
-2. Create agents, providers, models
-3. Define tools and configure triggers
-4. Test agents via Agent Chat in Desk
-5. Monitor runs and costs
-6. Iterate and improve based on logs
-
-## Future Roadmap
-
-### Frontend Expansion
-
-We're actively building:
-- **Agent Browser**: Discover and launch agents easily
-- **Tool Shortcuts**: Quick access to common actions
-- **Conversation Management**: Archive, search, export chats
-- **Mobile App**: Native mobile experience
-- **Public Agents**: Share agents externally (with permissions)
-- **Voice Input**: Speak to agents directly
-- **Rich Media**: Images, files, structured data in chat
-
-### Desk Enhancements
-
-Ongoing improvements:
-- Better analytics and dashboards
-- Advanced agent debugging tools
-- Cost optimization recommendations
-- A/B testing for agent prompts
-- Version control for agents
-
-## Best Practices
-
-### For Organizations
-
-- **Admin users**: Work exclusively in Desk to configure everything
-- **End users**: Direct them to `/huf` for clean, focused interactions
-- **Permissions**: Use Frappe's role-based permissions to control access
-- **Training**: Train admins on Desk, end users only need `/huf`
-
-### For Developers
-
-- **Build custom tools** in Desk via Agent Tool Function
-- **Test thoroughly** in Desk before exposing to frontend
-- **Monitor logs** in Agent Run to debug issues
-- **Iterate**: Use Agent Run insights to improve prompts and tools
-
-## Security & Permissions
-
-Both interfaces respect Frappe's permission system:
-
-- **Frontend**: Users see only agents they have permission for
-- **Desk**: Standard Frappe roles (System Manager, custom roles)
-- **Agents**: Inherit the permissions of the user running them
-- **Tools**: Execute with the current user's permissions
-
-> **Important**: Agents always run with the permissions of the user who triggered them. An agent cannot access data the user doesn't have permission to see.
-
-## What's Next?
-
-Now that you understand the two interfaces:
-
-- **[Agents](/docs/concepts/agents)** - Learn what agents are and how they work
-- **[Providers & Models](/docs/concepts/providers-models)** - Connect to AI services
-- **[Tools](/docs/concepts/tools)** - Give agents capabilities
-- **[Quick Start](/docs/quick-start)** - Build your first agent (uses Desk)
+Huf exposes two distinct frontend interfaces served from different URL paths. Understanding the difference helps you choose the right one for your deployment.
 
 ---
 
-**Questions or feedback on the frontend?** We'd love to hear from you! Open an issue or discussion on [GitHub](https://github.com/tridz-dev/agent_flo).
+## /huf — The Huf App Interface
 
+**URL:** `{your-frappe-site}/huf`
+
+This is the main Huf application UI, built as a React single-page application. It is the primary interface for both end-users and administrators to interact with the Huf system.
+
+### Who uses it?
+- **Huf Admins** — configure agents, providers, models, tools, flows, and knowledge sources.
+- **Huf Managers** — create and manage agents, flows, and knowledge.
+- **Huf Users** — chat with agents, view conversations, run flows.
+- **Huf Viewers** — read-only access to conversations.
+
+### What's in /huf?
+
+| Section | What you can do |
+|---|---|
+| **Agents** | Create, configure, and manage agents. View agent runs and conversation history. |
+| **Chat** | Open a chat session with any agent that has `allow_chat` enabled. Real-time streaming responses with markdown rendering. |
+| **Flows** | Build and manage visual AI workflows using the drag-and-drop flow builder. |
+| **Knowledge** | Manage knowledge sources, view indexing status, and add documents. |
+| **Tools** | Browse and configure Agent Tool Functions and MCP Servers. |
+| **Settings** | Configure AI Providers, AI Models, and provider-specific settings (ElevenLabs, OpenAI TTS, Groq). |
+| **Roles & Users** | Manage Huf Roles and assign them to users (Admin/Manager only). |
+
+### Access Control
+
+The `/huf` interface checks the user's **Huf Role** on load. If a user has no Huf Role and is not a System Manager, they are redirected away. Module visibility within the app is further controlled by capabilities assigned to the user's role.
+
+The current user's role and capabilities are fetched on load via:
+
+```
+GET /api/method/huf.permissions.get_me
+```
+
+This returns:
+```json
+{
+  "user": "jane@example.com",
+  "full_name": "Jane Doe",
+  "huf_role": "Huf Manager",
+  "capabilities": ["agent.use", "agent.create", "chat.use", ...]
+}
+```
+
+---
+
+## /app — The Frappe Desk Interface
+
+**URL:** `{your-frappe-site}/app`
+
+This is the standard Frappe Desk interface. Huf DocTypes are accessible here for administrators who prefer working in the traditional Frappe form view.
+
+### When to use /app for Huf?
+
+- **Advanced configuration** — editing DocType schemas, permission rules, or system settings not exposed in the Huf UI.
+- **Report access** — using Frappe's built-in List View and Report builder for Agent Runs, Agent Messages, etc.
+- **Debugging** — inspecting raw document records for Flow Runs, Agent Conversations, and Agent Runs.
+- **Frappe integrations** — connecting Huf DocTypes to Frappe Workflows, Notifications, or Custom Fields.
+
+### Huf DocTypes in /app
+
+All Huf DocTypes appear in the Frappe Desk module list under **Huf**:
+
+```
+/app/agent            → Agent list + form
+/app/agent-run        → Agent Run log
+/app/agent-message    → Agent Message log
+/app/agent-trigger    → Trigger configuration
+/app/flow-definition  → Flow definitions (raw JSON editing)
+/app/flow-run         → Flow Run log
+/app/knowledge-source → Knowledge Source management
+/app/mcp-server       → MCP Server configuration
+/app/agent-console    → Quick-test console (singleton)
+```
+
+---
+
+## Choosing the Right Interface
+
+| Task | Use |
+|---|---|
+| Chat with an agent | `/huf` Chat |
+| Build a flow | `/huf` Flows |
+| Configure a new provider | `/huf` Settings |
+| View raw Agent Run JSON | `/app/agent-run` |
+| Grant a user access to Huf | `/huf` Roles → Assign Role, or `/app/huf-user-role` |
+| Set up a Doc Event trigger | `/huf` Agents → Triggers tab, or `/app/agent-trigger` |
+| Inspect flow execution state | `/app/flow-run` |
+| Add knowledge documents | `/huf` Knowledge |
+
+---
+
+## Real-Time Features
+
+Both interfaces rely on **Frappe Realtime** (Socket.IO) for live updates:
+
+- **Chat** — agent responses are streamed token-by-token to the browser without polling.
+- **Flow Builder** — flow run status updates (node activation, completion) are pushed in real-time.
+- **Tool Execution Status** — tool call events are pushed as the agent works.
+
+Realtime requires the Frappe socket server (`frappe-socketio`) to be running. In production, this is typically started with `bench start` or a dedicated Supervisor process.
+
+---
+
+## Guest Access
+
+Some Huf functionality can be exposed to unauthenticated (Guest) users:
+
+- **Agent API** — individual agents can set `allow_guest = true`. Guest users can then call `run_agent_sync` without logging in.
+- **HTTP Tool Handler** — tools with `allowed_for_guest = true` can be called by unauthenticated requests.
+
+> [!CAUTION]
+> Enable guest access only for agents that are explicitly designed for public use. Always validate inputs and limit tool capabilities on guest-accessible agents to prevent misuse.

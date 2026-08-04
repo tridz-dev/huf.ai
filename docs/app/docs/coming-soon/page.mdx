@@ -1,0 +1,51 @@
+---
+title: Coming Soon
+description: Upcoming features currently in PRs or feature branches.
+---
+
+import { Callout } from 'nextra/components'
+
+# Coming Soon
+
+HUF is in active development, with several advanced capabilities currently in feature branches or pull requests. Here is a preview of what is coming in the near-term.
+
+---
+
+## 1. Native `pgvector` Knowledge Backend
+- **Branch/PR:** `feat/pgvector-knowledge-backend`
+- **What it does:** Allows PostgreSQL database users to store and query vector embeddings natively using the `pgvector` extension. This removes the need to deploy and manage a separate vector database (like ChromaDB) by utilizing your existing PostgreSQL infrastructure.
+
+---
+
+## 2. Scoped Memory System
+- **Branch/PR:** `feature/scoped-memory-core`
+- **What it does:** Introduces long-term memory for agents. Using `Memory Record` and `Memory Policy` DocTypes, agents can dynamically read and write core facts about users or sessions. Memory profiles are projected into the prompt context dynamically based on relevancy, allowing agents to remember user preferences across distinct conversations.
+
+---
+
+## 3. Odoo First-Class Integration
+- **Branch/PR:** `feat/odoo-first-class-integration`
+- **What it does:** Out-of-the-box integration with Odoo ERP. Uses `odoo-client-lib` to establish a native, secure transport layer, allowing agents to query databases, update sales pipelines, or manage inventory records in Odoo as native tools.
+
+---
+
+## 4. Gemini Live & Advanced Audio
+- **Branch/PR:** `feature/gemini-audio-tools`
+- **What it does:** Implements native integration with Google's `google-genai` SDK to support **Gemini Live** real-time streaming audio sessions. Users can have continuous, low-latency spoken conversations with the agent over WebSockets, with instant interruption handling.
+
+---
+
+## 5. Flow Backend Approvals
+- **Branch/PR:** `feature/flow-backend-integration`
+- **What it does:** Adds a centralized **Approval Inbox** in the HUF desk. Flow runs paused at a `human.approval` node can be managed, reviewed, and approved/rejected directly from a unified dashboard, bringing full auditing and human-in-the-loop controls into one interface.
+
+---
+
+## 6. zvec Vector Database Integration
+- **Branch/PR:** `feature/zvec-vectorDB-integration`
+- **What it does:** Connects HUF to the portable vector database backend via the `tridz-zvec` package.
+
+---
+
+## 7. Declarative Agent Declarations
+- **What it does:** Declare agents, prompts, and tools in plain YAML/JSON configuration files in your custom app's repo, making it easier to sync, version-control, and share agent setups across different team environments.

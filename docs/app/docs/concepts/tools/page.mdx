@@ -1,397 +1,210 @@
----
-sidebarTitle: Tools
----
+export const metadata = {
+  sidebarTitle: "Tools",
+};
 
 # Tools
 
-Tools are what make agents useful. Without tools, an agent can only chat. With tools, agents can read data, create records, call APIs, run workflows, and more.
-
-## What Are Tools?
-
-**Tools** are functions that agents can call to interact with your Frappe system or external services. Think of them as the agent's hands—they enable action, not just conversation.
-
-When an agent needs to:
-- Look up a customer → Uses the **Get Document** tool
-- Create a support ticket → Uses the **Create Document** tool
-- Check inventory levels → Uses the **Get List** tool
-- Send a notification → Uses the **HTTP Request** tool or a custom function
-
-The agent decides which tool to use based on the conversation and tool descriptions.
-
-## How Tools Work
-
-### The Tool Execution Flow
-
-1. **User sends a message** to the agent
-2. **Agent analyzes** the request and determines if a tool is needed
-3. **Agent selects a tool** from its available toolset
-4. **Agent calls the tool** with appropriate parameters
-5. **Tool executes** (queries database, calls API, runs function)
-6. **Tool returns result** to the agent
-7. **Agent uses the result** to formulate a response
-8. **User receives** the agent's answer
-
-### Tool Selection
-
-Agents choose tools based on:
-- **Tool name**: Descriptive identifier
-- **Tool description**: Explains what the tool does (most important!)
-- **Tool parameters**: What inputs the tool needs
-- **Context**: Current conversation and user request
-
-> **Important**: Write clear, specific tool descriptions. The agent uses these to decide when to use each tool.
-
-## Tool Types
-
-Huf provides three categories of tools:
-
-### 1. Built-in Tools
-
-Pre-configured tools for common Frappe operations:
-
-| Tool Type | Purpose | Example Use Case |
-|-----------|---------|------------------|
-| **Get Document** | Fetch a single document by name/ID | "Show me customer CUST-001" |
-| **Create Document** | Create a new document | "Create a new lead for ABC Corp" |
-| **Update Document** | Modify an existing document | "Update the customer's email" |
-| **Delete Document** | Remove a document | "Delete draft order SO-2024-001" |
-| **Submit Document** | Submit a submittable DocType | "Submit the invoice" |
-| **Get List** | Query multiple documents | "List all open support tickets" |
-| **Run Agent** | Chain to another agent | "Ask the sales agent about this" |
-| **HTTP Request** | Call external APIs | "Send to Slack webhook" |
-
-### 2. Custom Tools
-
-Your own Python functions exposed to agents:
-
-- **Define in Frappe**: Create via Agent Tool Function DocType
-- **Link to functions**: Point to your module.function path
-- **Define parameters**: Specify inputs and types
-- **Automatic execution**: Huf handles calling your function
-
-**Example:**
-```python
-def calculate_discount(customer_type, order_total):
-    """Calculate discount based on customer type and order total."""
-    if customer_type == "Wholesale":
-        return order_total * 0.15
-    elif order_total > 10000:
-        return order_total * 0.10
-    else:
-        return order_total * 0.05
-```
-
-### 3. Discovered Tools
-
-Functions auto-discovered from your Frappe apps:
-
-- **Use `@agent_tool` decorator** in your app code
-- **Auto-synced** when app is installed
-- **No manual setup** required
-- **Shareable** across projects
-
-See [Publishing Tools](/docs/tools/publishing) for details.
-
-## Tool Configuration
-
-### Agent Tool Function DocType
-
-Tools are defined in **Desk → Huf → Agent Tool Function**.
-
-**Key Fields:**
-
-| Field | Description |
-|-------|-------------|
-| **Tool Name** | Unique identifier (e.g., `get_customer`) |
-| **Description** | What the tool does (used by AI for selection) |
-| **Types** | Tool category (Get Document, Create Document, Custom Function, etc.) |
-| **Reference DocType** | For DocType tools, which DocType to operate on |
-| **Function Path** | For custom tools, the Python function path |
-| **Parameters** | Table of input parameters with names, types, descriptions |
-
-### Adding Tools to Agents
-
-Once created, tools must be assigned to agents:
-
-**In Agent DocType:**
-1. Scroll to **Agent Tool** table
-2. Click **Add Row**
-3. Select **Tool Function** from dropdown
-4. **Save** the agent
-
-Agents can only use tools explicitly assigned to them.
-
-## Tool Parameters
-
-Tools can accept parameters that the agent fills in based on conversation:
-
-### Parameter Definition
-
-For each parameter, specify:
-- **Parameter Name**: The variable name (e.g., `customer_id`)
-- **Type**: Data type (String, Int, Float, Boolean, Object, Array)
-- **Description**: What this parameter represents
-- **Required**: Whether it must be provided
-
-### Example: Get Document Tool
-
-```json
-{
-  "name": "get_customer",
-  "description": "Retrieve detailed information about a customer",
-  "parameters": [
-    {
-      "name": "customer_id",
-      "type": "String",
-      "description": "The customer ID or name",
-      "required": true
-    }
-  ]
-}
-```
-
-**Agent Behavior:**
-- User: "Show me info for CUST-001"
-- Agent extracts: `customer_id = "CUST-001"`
-- Agent calls: `get_customer("CUST-001")`
-
-## Built-in Tool Details
-
-### Get Document
-
-Fetches a single document by name or ID.
-
-**Parameters:**
-- `doctype`: The DocType name
-- `name`: The document name/ID
-
-**Returns:** Full document with all fields
-
-**Example:**
-```
-Agent Call: get_document(doctype="Customer", name="CUST-001")
-Result: { "name": "CUST-001", "customer_name": "ABC Corp", ... }
-```
-
-### Create Document
-
-Creates a new document.
-
-**Parameters:**
-- `doctype`: The DocType name
-- `fields`: Object with field values
-
-**Returns:** Created document
-
-**Example:**
-```
-Agent Call: create_document(
-  doctype="Lead",
-  fields={
-    "lead_name": "John Doe",
-    "company_name": "XYZ Inc",
-    "email_id": "john@xyz.com"
-  }
-)
-```
-
-### Update Document
-
-Modifies an existing document.
-
-**Parameters:**
-- `doctype`: The DocType name
-- `name`: The document name/ID
-- `fields`: Object with field values to update
-
-**Returns:** Updated document
-
-### Get List
-
-Queries multiple documents with filtering, sorting, and pagination.
-
-**Parameters:**
-- `doctype`: The DocType name
-- `filters`: Filter conditions (optional)
-- `fields`: Which fields to return (optional)
-- `order_by`: Sort order (optional)
-- `limit`: Max number of results (optional)
-
-**Returns:** Array of documents
-
-**Example:**
-```
-Agent Call: get_list(
-  doctype="Support Ticket",
-  filters={"status": "Open", "priority": "High"},
-  order_by="creation desc",
-  limit=10
-)
-Result: [ {...}, {...}, ... ]
-```
-
-### Run Agent
-
-Chains to another agent for specialized tasks.
-
-**Parameters:**
-- `agent_name`: Name of the agent to run
-- `prompt`: The message to send to that agent
-
-**Returns:** The other agent's response
-
-**Use Case:** Specialized agents for different domains
-- Main agent → Sales agent (for sales questions)
-- Main agent → Support agent (for technical issues)
-
-## Permissions and Security
-
-### Tool Execution Context
-
-Tools execute with the **permissions of the user** who triggered the agent:
-
-- **User runs agent** → Tool runs as that user
-- **Agent cannot bypass permissions** → If user can't read Customers, agent can't either
-- **Frappe permissions apply** → Standard role-based access control
-
-### Security Best Practices
-
-1. **Least Privilege**: Only assign necessary tools to each agent
-2. **Validate Inputs**: Custom functions should validate parameters
-3. **Audit Logs**: All tool calls are logged in Agent Run
-4. **Permission Checks**: Tools respect Frappe's permission system
-5. **No Elevation**: Agents cannot escalate permissions
-
-> **Critical**: An agent with a "Delete Document" tool can only delete documents the current user has permission to delete. Agents are not a security bypass.
-
-## Tool Performance
-
-### Optimizing Tool Calls
-
-- **Minimize tool count**: Only assign necessary tools
-- **Clear descriptions**: Help agents choose correctly the first time
-- **Efficient queries**: Use filters in Get List to reduce data transfer
-- **Batch when possible**: Group similar operations
-
-### Tool Call Costs
-
-Tool calls affect agent costs:
-- **Tool definitions** add tokens to the prompt
-- **Tool results** add tokens to the conversation
-- **More tools** = more tokens = higher cost
-
-**Optimization Tips:**
-- Assign only relevant tools per agent
-- Use specific DocTypes instead of generic tools
-- Return only needed fields in Get List
-- Keep tool descriptions concise but clear
-
-## Troubleshooting
-
-**Agent doesn't use a tool:**
-- Check tool description clarity
-- Verify tool is assigned to the agent
-- Check if agent instructions mention when to use it
-- Review Agent Run logs for reasoning
-
-**Tool call fails:**
-- Check user permissions for the DocType
-- Verify document exists (for Get/Update/Delete)
-- Check required fields are provided (for Create)
-- Review error in Agent Run logs
-
-**Wrong tool selected:**
-- Improve tool description specificity
-- Rename tool for clarity
-- Adjust agent instructions to guide tool usage
-- Consider splitting tools into more specific variants
-
-**Slow performance:**
-- Reduce number of tools assigned
-- Optimize Get List queries with filters
-- Cache common results in custom functions
-- Consider agent chaining for complex workflows
-
-## Best Practices
-
-### Tool Design
-
-**Do:**
-- Write clear, specific descriptions
-- Use descriptive tool names
-- Define all parameters explicitly
-- Include examples in descriptions
-- Keep tools focused on one task
-
-**Don't:**
-- Use vague descriptions ("handles customer stuff")
-- Create overly generic mega-tools
-- Forget to specify required parameters
-- Mix multiple unrelated actions in one tool
-
-### Tool Assignment
-
-**Strategic Assignment:**
-- Give agents only the tools they need
-- Create specialized agents with focused toolsets
-- Use agent chaining for cross-domain tasks
-- Test with minimal tools, add as needed
-
-**Example:**
-```
-Customer Support Agent:
-- get_customer
-- get_list (for tickets)
-- create_document (for tickets)
-- update_document (for tickets)
-
-Sales Agent:
-- get_customer
-- get_list (for leads, opportunities)
-- create_document (for leads)
-- update_document (for opportunities)
-- calculate_commission (custom tool)
-
-Not: One agent with all 20 tools
-```
-
-### Documentation for Tools
-
-When creating custom tools:
-- **Function docstring** becomes part of tool description
-- **Parameter descriptions** help agent understand inputs
-- **Return value comments** clarify what agent will receive
-- **Examples** in docstrings improve agent behavior
-
-```python
-def send_slack_notification(channel, message):
-    """
-    Send a notification message to a Slack channel.
-    
-    Args:
-        channel (str): Slack channel name (e.g., "#support")
-        message (str): The message text to send
-        
-    Returns:
-        dict: Success status and message ID
-        
-    Example:
-        send_slack_notification("#alerts", "New high-priority ticket!")
-    """
-    # Implementation
-    pass
-```
-
-## What's Next?
-
-Now that you understand tools:
-
-- **[Built-in Tools](/docs/tools/built-in)** - Detailed guide to each built-in tool
-- **[Creating Custom Tools](/docs/tools/custom)** - Build your own tools
-- **[Publishing Tools](/docs/tools/publishing)** - Share tools via apps
-- **[Conversations](/docs/concepts/conversations)** - How agents maintain context
+Tools give agents the power to *act*. Instead of only generating text, an agent with tools can read and write Frappe documents, call external APIs, run sub-agents, generate audio, and more.
 
 ---
 
-**Need help with tools?** Check the [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions) or open an issue.
+## Agent Tool Function DocType
 
+Every tool is defined as an **Agent Tool Function** record. This single DocType covers all tool types by swapping in the relevant fields based on the selected **Types** value.
+
+### Core Fields
+
+| Field | Fieldname | Type | Notes |
+|---|---|---|---|
+| Tool Name | `tool_name` | Data | Unique name. The agent sees exactly this string when choosing a tool. |
+| Description | `description` | Small Text | Critical. The AI reads this to decide *when* to use the tool. Write in plain English. |
+| Types | `types` | Select | Determines the underlying handler. See the table below. |
+| Tool Type | `tool_type` | Link → Agent Tool Type | Category tag. Required. Used for UI grouping. |
+
+### Tool Types Reference
+
+| Type | What it does |
+|---|---|
+| `Get Document` | Fetches a single Frappe document by doctype + name |
+| `Get Multiple Documents` | Fetches multiple documents by a list of names |
+| `Get List` | Lists documents with optional filters, fields, and pagination |
+| `Get Value` | Fetches the value of a single field from a document |
+| `Set Value` | Sets the value of a single field on a document |
+| `Create Document` | Creates a new Frappe document |
+| `Create Multiple Documents` | Batch-creates documents from an array |
+| `Update Document` | Updates fields on an existing document |
+| `Update Multiple Documents` | Batch-updates multiple documents |
+| `Delete Document` | Deletes a document (with permission check) |
+| `Delete Multiple Documents` | Batch-deletes documents |
+| `Submit Document` | Submits a submittable document |
+| `Cancel Document` | Cancels a submitted document |
+| `Get Amended Document` | Gets the amended copy of a cancelled document |
+| `Attach File to Document` | Attaches a file URL to a document's attach field |
+| `Get Report Result` | Runs a Frappe Report and returns results |
+| `Custom Function` | Calls a Python function by dotted path |
+| `App Provided` | Tool provided/registered by another installed app |
+| `GET` | Makes an HTTP GET request to an external URL |
+| `POST` | Makes an HTTP POST request to an external URL |
+| `Run Agent` | Invokes another Huf agent as a sub-agent |
+| `Speech to Text` | Transcribes audio to text |
+
+---
+
+## Type-Specific Fields
+
+### DocType-Linked Tools
+
+Most built-in tool types operate on a Frappe DocType:
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Reference DocType | `reference_doctype` | The target DocType (e.g. `Sales Order`). Required for all DocType-operation types. |
+| Parameters | `parameters` | Child table (`Agent Function Params`). Define what arguments the agent can pass. |
+| Function Definition | `function_definition` | Read-only JSON. Auto-generated from parameters; sent to the LLM for tool calling. |
+
+### Custom Function
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Function Path | `function_path` | Dotted Python path (e.g. `myapp.api.process_order`). The function must accept keyword arguments matching the parameter definitions. |
+| Pass Parameters as JSON | `pass_parameters_as_json` | If on, all parameters are bundled into a single `params` JSON string instead of individual kwargs. |
+
+The referenced function should return a dict that the agent can interpret.
+
+```python
+# Example custom function
+import frappe
+
+def process_order(order_id: str, **kwargs):
+    """Process a sales order and return updated status."""
+    doc = frappe.get_doc("Sales Order", order_id)
+    # ... processing logic ...
+    return {
+        "success": True,
+        "order_id": doc.name,
+        "status": doc.workflow_state
+    }
+```
+
+### App Provided Tools
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Provider App | `provider_app` | Name of the installed Frappe app that registers this tool. The app must call Huf's tool registration API during its setup. |
+
+### HTTP Tools (GET / POST)
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Base URL | `base_url` | Optional prefix applied before the URL argument. Allows agents to call relative paths (e.g. `/v1/products`) against a known base. |
+| HTTP Headers | `http_headers` | Child table (`Agent Tool HTTP Header`) of `key` / `value` pairs. Injected into every request. Use for static auth tokens. |
+| Allowed for Guest | `allowed_for_guest` | If checked, unauthenticated requests can use this tool via the HTTP handler. |
+
+> [!CAUTION]
+> Huf's HTTP handler (`http_handler.py`) performs **SSRF protection** before every request: it resolves the hostname's IP and blocks calls to private/internal address ranges (`10.x`, `172.16–31.x`, `192.168.x`, `127.x`, `::1`). This is enforced server-side and cannot be bypassed by the agent.
+
+### Run Agent
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Agent | `agent` | Link to the sub-agent to invoke. The calling agent passes a prompt to the sub-agent and receives its response as the tool result. |
+
+---
+
+## Parameters (Agent Function Params)
+
+The `parameters` child table defines the JSON Schema that the LLM uses for tool calling. Each row is one parameter:
+
+| Field | Notes |
+|---|---|
+| `param_name` | Parameter name (snake_case). |
+| `type` | JSON Schema type: `string`, `number`, `integer`, `boolean`, `array`, `object`. |
+| `description` | Explains this parameter to the agent. |
+| `required` | If checked, the LLM must always supply this argument. |
+| `default` | Optional default value if the agent omits the argument. |
+
+When parameters are saved, Huf auto-generates the `function_definition` JSON (OpenAI function-calling format) that is sent to the LLM.
+
+---
+
+## Permission-Aware Execution
+
+When an agent runs a tool, Huf's `PermissionAwareToolRegistry` checks Frappe's standard permission model **before executing**:
+
+- For **mutating operations** (`Create`, `Update`, `Delete`, `Submit`, `Cancel`, `Set Value`, `Attach`): the current user must have write/delete/submit permission on the `reference_doctype`.
+- For **read operations** (`Get`, `List`, `Get Value`): the current user must have read permission on the `reference_doctype`.
+
+Mutating tools are defined in `MUTATING_TOOL_TYPES` in `tool_registry.py`. If the user lacks permission, the tool call is rejected with a permission error — the agent cannot bypass Frappe's access controls.
+
+```python
+# The check happens automatically:
+frappe.has_permission(reference_doctype, ptype, raise_exception=True)
+```
+
+This means agents always operate with the permissions of the user who triggered them. Agents cannot escalate privileges.
+
+---
+
+## MCP Tools (Model Context Protocol)
+
+In addition to native Huf tools, agents can connect to external **MCP Servers** to use their tools. MCP is an open protocol for LLM-tool interoperability.
+
+Each MCP Server is registered as a separate **MCP Server** DocType record, then linked to agents via the `agent_mcp_server` child table.
+
+### MCP Server Fields
+
+| Field | Notes |
+|---|---|
+| `server_name` | Human-readable name |
+| `server_url` | The MCP server's HTTP endpoint |
+| `enabled` | Master enable/disable |
+| `auth_type` | `bearer_token`, `api_key`, or `none` |
+| `auth_header_name` / `auth_header_value` | Auth header key-value pair |
+| `tool_namespace` | Optional prefix applied to all tools from this server (e.g. `github.create_issue`) |
+| `timeout_seconds` | Per-request timeout. Default: 30s. |
+| `enable_auto_sync` | Auto-refreshes the tool list on a schedule |
+| `auto_sync_interval` | Hours between auto-syncs |
+
+### Syncing Tools
+
+Click **Sync Tools** on the MCP Server record to fetch and cache available tools. Huf communicates with the MCP server using JSON-RPC 2.0 (`tools/list` and `tools/call` methods). The tool list is stored in the `tools` child table, where you can enable/disable individual tools.
+
+### Enabling MCP on an Agent
+
+1. Open the Agent.
+2. In **Agent MCP Server** (child table), add a row and select the MCP Server.
+3. Check **Enabled**.
+4. Save.
+
+MCP tools are presented to the LLM alongside native Huf tools with a `[MCP: server_name]` prefix in the description.
+
+---
+
+## Tool Sync
+
+The **Agent Tool Sync** mechanism (via `PermissionAwareToolRegistry.sync_tools`) keeps the agent's tool list in sync with its `agent_tool` child table. It filters out tools that the current user doesn't have permission to use based on the underlying DocType permissions.
+
+---
+
+## Creating a Custom Tool — Step by Step
+
+1. **Navigate** to **Huf → Agent Tool Functions → New**.
+2. Set **Tool Name** (e.g. `send_whatsapp_message`).
+3. Set **Types** to `Custom Function`.
+4. Write a **Description** that explains *when* the agent should use this tool.
+5. Set **Function Path** to the Python function (e.g. `myapp.whatsapp.send_message`).
+6. Add **Parameters** (e.g. `recipient_phone: string`, `message: string`).
+7. Save. The **Function Definition** JSON is auto-generated.
+8. Open an **Agent**, go to **Agent Tool** tab, and add this tool.
+
+The agent can now call `send_whatsapp_message` when it needs to send a message.
+
+---
+
+## Best Practices
+
+- **Keep descriptions specific** — vague descriptions lead to the agent calling the wrong tool.
+- **Minimise required parameters** — the more required fields, the harder it is for the agent to call the tool correctly.
+- **Return structured data** — have custom functions return a dict with `success`, `data`, and optional `error` fields.
+- **One tool, one responsibility** — avoid multi-purpose tools; they confuse the agent's decision making.
+- **Test in Agent Console** — use the Agent Console to test tool calls before deploying.

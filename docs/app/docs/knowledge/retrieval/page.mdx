@@ -1,0 +1,48 @@
+---
+title: Retrieval & Chunking
+description: Deep dive into chunking strategies, embeddings, retrieval logic, and context building in HUF.
+---
+
+import { Callout } from 'nextra/components'
+
+# Retrieval & Chunking
+
+The RAG (Retrieval-Augmented Generation) pipeline in HUF relies on splitting documents into manageable sections (chunking) and fetching the most relevant sections at query time (retrieval).
+
+---
+
+## Chunking Strategy
+
+When documents are indexed, they are split into overlapping blocks using the Sentence Splitter:
+
+- **Target Chunk Size** — The maximum number of characters per chunk (default: `512`).
+- **Overlap** — The number of characters duplicated between consecutive chunks (default: `50`) to preserve context boundaries.
+- **Splitter Implementation** — Uses LlamaIndex's `SentenceSplitter` (splits at natural sentence/paragraph boundaries). If LlamaIndex is not installed, the engine falls back to a regex-based sentence boundary splitter.
+
+---
+
+## Embeddings Configuration
+
+For vector backends (`sqlite_vec` and `chroma`), each text chunk is mapped to a vector space:
+
+- **Model Compatibility** — LiteLLM routes embedding requests to any supported API (e.g. `openai/text-embedding-3-small`, `cohere/embed-english-v3.0`).
+- **Vector Dimension** — Configurable on the Knowledge Source to match the model's output dimensions (e.g., `1536` for OpenAI, `384` for standard local models).
+- **Credentials** — Resolved securely using the **Embedding Provider** linked to the Knowledge Source.
+
+---
+
+## Retrieval & Context Building
+
+HUF handles retrieval dynamically before and during agent execution:
+
+### 1. Mandatory Retrieval (Auto-Injection)
+Before the agent prompt is sent to the LLM, the `context_builder.py` module:
+1. Queries the active knowledge backend using keyword (`bm25`) or vector similarity search.
+2. Formats the top-k chunks into a structured markdown block (`## Relevant Knowledge`).
+3. Appends the block to the prompt, keeping token usage within the token budget.
+
+### 2. Optional Retrieval (Tool-Based)
+If the access type is set to **Optional**, the agent receives the `knowledge_search` tool:
+- The agent calls the tool with a specific `query`.
+- Chunks are fetched on demand and returned as a tool result.
+- This helps control token costs by only querying when needed.

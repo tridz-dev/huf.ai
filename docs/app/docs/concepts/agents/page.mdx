@@ -1,466 +1,244 @@
----
-sidebarTitle: Agents
----
+export const metadata = {
+  sidebarTitle: "Agents",
+};
 
 # Agents
 
-**Agents are AI-powered team members for your Frappe site.** Think of each agent as a specialist with a specific role, equipped with tools to work with your data, and ready to assist users or automate tasks.
+An **Agent** is the central building block of Huf. It pairs an LLM model with a system prompt (instructions), a set of tools, and a behaviour configuration. When a user or trigger submits a prompt, the agent reasons through it, calls tools as needed, and returns a response.
 
-## What is an Agent?
+---
 
-An agent in Huf is built from four core components:
+## What Makes an Agent?
 
-1. **Instructions** - The "personality" and role definition (system prompt)
-2. **AI Model** - The "brain" (GPT-4, Claude, Gemini, etc.)
-3. **Tools** - The "capabilities" (what it can do with your data)
-4. **Settings** - Fine-tuning parameters (temperature, top_p)
+Every agent has four core ingredients:
 
-When you run an agent, it:
-- Reads its instructions to understand its role
-- Uses the AI model to reason about requests
-- Calls tools to interact with Frappe data
-- Returns helpful, contextual responses
+| Ingredient | What it does |
+|---|---|
+| **Instructions** | The system prompt — defines the agent's persona, goals, constraints, and tone |
+| **Provider + Model** | Which LLM to call (via LiteLLM) |
+| **Tools** | Actions the agent can take: read/write Frappe docs, call APIs, run sub-agents |
+| **Parameters** | Sampling settings (`temperature`, `top_p`) that control response randomness |
 
-## Agent Anatomy
+---
 
-### Instructions (System Prompt)
+## Agent DocType Fields
 
-The most important part of your agent. This is where you define:
-- **Who** the agent is (role, personality)
-- **What** it can help with (scope of tasks)
-- **How** it should behave (tone, style, constraints)
-- **When** to use tools and how
+### General Tab
 
-**Example Instructions:**
+| Field | Fieldname | Type | Notes |
+|---|---|---|---|
+| Agent Name | `agent_name` | Data | Unique identifier. Auto-named from this field. |
+| Provider | `provider` | Link → AI Provider | Required. Determines API key and routing. |
+| Model | `model` | Link → AI Model | Required. The model to use for inference. |
+| Temperature | `temperature` | Float | 0–2. Default `1`. Lower = more deterministic. |
+| Top P | `top_p` | Float | Nucleus sampling. Default `1`. Adjust one of temperature *or* top_p, not both. |
+| Description | `description` | Small Text | Short summary shown in lists and the chat picker. |
+| Disabled | `disabled` | Check | If checked, the agent will not run when triggered. |
+
+### Prompt Tab
+
+Huf supports two prompt modes, selectable via **Prompt Mode**:
+
+- **Local** — the `instructions` field (Code/Markdown) is the system prompt. Edited directly on the agent.
+- **Template** — links to an **Agent Prompt** from the prompt library. Supports versioning and locking.
+
+| Field | Fieldname | Type | Notes |
+|---|---|---|---|
+| Prompt Mode | `prompt_mode` | Select | `Local` or `Template`. Default: `Local`. |
+| Agent Prompt | `agent_prompt` | Link → Agent Prompt | Visible when Prompt Mode = Template. |
+| Lock Prompt Version | `prompt_version_locked` | Check | If checked, agent stays on the version it was attached to. |
+| Attached at Version | `template_version_at_attach` | Int | Read-only. Records the version number at time of attachment. |
+| Instructions | `instructions` | Code (Markdown) | Visible when Prompt Mode = Local. The actual system prompt. |
+
+### Prompt Caching
+
+Huf can cache repeated prompt content to reduce token cost. Support is auto-detected using LiteLLM pricing metadata (see `prompt_cache_capabilities.py`).
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Enable Prompt Caching | `enable_prompt_caching` | Master switch. Works with Anthropic, OpenAI, Deepseek. |
+| Cache Control Type | `cache_control_type` | `ephemeral` (Anthropic) or `auto` (OpenAI/Deepseek). |
+| Cache System Message | `cache_system_message` | Caches the instructions/system prompt block. Default: on. |
+| Cache Conversation History | `cache_conversation_history` | Caches multi-turn history messages to cut repeated costs. |
+
+### Behaviour Tab
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Allow Chat | `allow_chat` | Enables the Agent Chat interface for this agent. |
+| Persist Conversation | `persist_conversation` | If on, conversation history is saved and reloaded across sessions. |
+| Persist per User (Doc/Schedule) | `persist_user_history` | When on, Doc Event and Scheduled runs maintain a separate history per user. When off, a single shared history is used. Default: on. |
+| Enable Multi Run | `enable_multi_run` | Turns on the orchestration planner. The agent breaks work into steps and executes them sequentially. |
+
+### Advanced Settings Tab
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Context Strategy | `context_strategy` | `Summarize`, `FIFO`, or `None`. How to handle history overflow. |
+| History Limit | `history_limit` | Max messages in active context before strategy is applied. Default: 20. |
+| Summary Ratio | `summary_ratio` | Fraction of oldest messages to compress. Default: 0.7. |
+| Summary Model | `summary_model` | Optional lightweight model for summarization. Falls back to the main model. |
+| Max Knowledge Tokens | `max_knowledge_tokens` | Token budget for injected knowledge context. Default: 4000. |
+| Max Turns | `max_turns` | Max consecutive tool-call/response cycles per run. Default: 20. |
+| Allow Conversation Data Management | `enable_conversation_data` | Enables the agent's key-value memory store (`conversation_data`). |
+| Inject Conversation Data into Prompt | `inject_conversation_data` | When on, all stored memory items are injected into every turn. Turn off to reduce context bloat and use `get_conversation_data` on-demand instead. |
+
+### Audio / Vision
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| TTS Model | `tts_model` | Link → AI Model. Dedicated model for the `generate_audio` tool. When set, API key comes from the TTS model's own provider (e.g. ElevenLabs). |
+| TTS Voice | `tts_voice` | Default voice identifier (e.g. `alloy`, `nova`, or an ElevenLabs voice ID). |
+| STT Model | `stt_model` | Link → AI Model. Dedicated model for Speech-to-Text transcription. |
+| Image Generation Model | `image_generation_model` | Link → AI Model. Optional dedicated model for the image generation tool. |
+
+### Huf UI Settings
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Agent Color | `agent_color` | Hex colour for the agent avatar in chat (e.g. `#6366F1`). |
+| Show Tool Execution Details | `show_tool_execution_details` | If enabled, tool call status and results are shown in the chat output. |
+| Autonaming of Conversation Title | `autonaming_of_conversation_title` | When on, the conversation title is auto-generated from the first few messages. |
+
+### Permissions Tab
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Allow Guest | `allow_guest` | Lets unauthenticated (Guest) users run this agent via the API. |
+| Allowed Users | `allowed_users` | Table Multi-Select of specific users (via `Agent User`). If empty, any logged-in user can run the agent. |
+| Allowed Roles | `allowed_roles` | Table Multi-Select of roles (via `Agent Role`). If empty, any logged-in user can run the agent. |
+
+> [!NOTE]
+> If **both** `allowed_users` and `allowed_roles` are empty, all authenticated users can use the agent. Add at least one entry to restrict access.
+
+### Metadata Tab
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Last Run | `last_run` | Datetime of the most recent execution. Read-only. |
+| Total Run | `total_run` | Cumulative run count. Read-only. |
+
+---
+
+## Child Tables on Agent
+
+### Agent Tool (`agent_tool`)
+
+Links the agent to its `Agent Tool Function` records. Each row in this table represents one tool the agent is allowed to use. See the [Tools](/docs/tools) guide for details on defining tools.
+
+### Agent MCP Server (`agent_mcp_server`)
+
+Links the agent to external **MCP (Model Context Protocol) servers** for additional tool capabilities. Each row points to an `MCP Server` document and has an `enabled` flag. When enabled, all enabled tools from that MCP server are automatically wired into the agent on each run.
 
 ```
-You are a customer support specialist for our Frappe-based business. Your job is to:
-
-1. Help users find and understand customer information
-2. Look up orders and their status
-3. Create support tickets when issues need escalation
-
-When a user asks about a customer:
-- Ask for the customer name or ID if not provided
-- Use the get_customer tool to retrieve information
-- Present information clearly and highlight key details
-
-Always be polite, professional, and concise. If you cannot help with something,
-explain why and suggest alternatives.
+Agent  →  Agent MCP Server (child table)  →  MCP Server  →  MCP Server Tool (child table)
 ```
 
-### AI Model
+MCP tools appear alongside native tools; the agent uses them transparently.
 
-The model determines the agent's intelligence and capabilities:
+### Agent Knowledge (`agent_knowledge`)
 
-| Model Type | Best For | Cost | Speed |
-|------------|----------|------|-------|
-| **GPT-4 Turbo** | Complex reasoning, detailed responses | $$$ | Medium |
-| **GPT-3.5 Turbo** | Quick tasks, simple interactions | $ | Fast |
-| **Claude 3 Opus** | Long context, nuanced understanding | $$$ | Medium |
-| **Claude 3 Sonnet** | Balanced performance and cost | $$ | Fast |
-| **Gemini Pro** | Multimodal, Google ecosystem | $$ | Fast |
+Links the agent to `Knowledge Source` documents (documents, PDFs, web pages, Huf Data Tables, etc.). Each row has:
 
-> **Tip**: Start with a cheaper model (GPT-3.5, Gemini) for testing, then upgrade to more powerful models (GPT-4, Claude Opus) for production if needed.
+| Field | Notes |
+|---|---|
+| `knowledge_source` | Link to the Knowledge Source |
+| `mode` | `Mandatory` or `Optional` |
+| `priority` | Lower number = higher priority in context building |
+| `max_chunks` | Maximum retrieved chunks per source. Default: 5. |
+| `token_budget` | Token cap for this source's contribution. Default: 2000. |
 
-### Tools
+- **Mandatory** sources are automatically retrieved and injected into the system prompt on every run.
+- **Optional** sources are exposed as a `knowledge_search` tool that the agent can call when it needs information.
 
-Tools give agents the ability to interact with Frappe. Without tools, agents can only chat—they can't read or modify data.
+### Agent Orchestration Plan (`default_plan`)
 
-**Built-in Tool Types:**
-- **Get Document** - Fetch a specific document by ID
-- **Create Document** - Create new documents
-- **Update Document** - Modify existing documents
-- **Delete Document** - Remove documents
-- **Get List** - Query documents with filters and sorting
-- **Run Agent** - Chain to another agent
-- **HTTP Request** - Call external APIs
+Available when **Enable Multi Run** is on. Pre-defines the steps the agent should follow for any prompt. Each row has:
 
-**Custom Tools:**
-- Link to your own Python functions
-- Define parameters and return types
-- Automatically discovered if decorated with `@agent_tool`
+| Field | Notes |
+|---|---|
+| `step_index` | Order of execution (1, 2, 3…) |
+| `instruction` | The step instruction given to the agent |
+| `status` | Runtime status: `pending`, `in_progress`, `done`, `failed` |
 
-Learn more in [Tools](/docs/concepts/tools).
+If `default_plan` is empty, the orchestrator auto-generates steps by sending the user prompt to a planning LLM call.
 
-### Settings
+---
 
-Fine-tune agent behavior with these parameters:
+## Running Agents
 
-**Temperature** (`0.0` - `2.0`)
-- **Lower (0.0-0.3)**: More focused, deterministic, consistent
-  - Best for: Data retrieval, validation, structured tasks
-- **Medium (0.7)**: Balanced creativity and consistency
-  - Best for: General conversations, customer support
-- **Higher (1.0-2.0)**: More creative, varied, exploratory
-  - Best for: Content generation, brainstorming
+### Chat Interface
 
-**Top P** (`0.0` - `1.0`)
-- Alternative to temperature (nucleus sampling)
-- Controls diversity of word choices
-- Start with `1.0` for most use cases
-- Lower values make output more focused
+Enable `allow_chat` on the agent, then navigate to **Huf → Agent Chat** and select the agent. The chat UI provides real-time markdown rendering and tool execution status.
 
-> **Note**: Use either temperature OR top_p, not both. Temperature is more commonly used.
+### API
 
-## Agent States
+```bash
+POST /api/method/huf.ai.agent_integration.run_agent_sync
+Content-Type: application/json
 
-Agents have a lifecycle:
-
-```
-Draft → Active → Running → Completed
+{
+  "agent_name": "My Agent",
+  "prompt": "Create a sales order for Acme Corp",
+  "channel_id": "api"
+}
 ```
 
-- **Draft**: Being configured, not ready for use
-- **Active**: Ready to run (manually, scheduled, or triggered)
-- **Running**: Currently processing a request
-- **Completed**: Finished execution (check Agent Run for results)
-
-## Types of Agents
-
-### 1. Chat Agents
-
-**Interactive, conversational agents** accessible via Agent Chat or the `/huf` frontend.
-
-**How to enable**: Check **Allow Chat** when creating the agent.
-
-**Use cases:**
-- Customer support bots
-- Internal help desks
-- Data exploration assistants
-- Interactive reporting
-
-**Features:**
-- Real-time conversations
-- Conversation history maintained automatically
-- Multi-turn interactions with full context
-- Can use tools dynamically during chat
-
-**Example**: A customer support agent that helps users look up orders, check status, and create tickets—all through natural conversation.
-
-### 2. Scheduled Agents
-
-**Agents that run automatically** at specified intervals (hourly, daily, weekly, etc.).
-
-**How to configure**: Create an **Agent Trigger** with a schedule.
-
-**Use cases:**
-- Daily reports and summaries
-- Periodic data cleanup
-- Regular health checks
-- Automated notifications
-
-**Features:**
-- Cron-like scheduling
-- Can run without user input (provide prompt in trigger)
-- Results logged in Agent Run
-- Can be chained to other agents
-
-**Example**: A daily sales summary agent that runs every morning at 9 AM, analyzes yesterday's orders, and sends a report via email.
-
-### 3. Event-Driven Agents
-
-**Agents triggered automatically** when documents are created, updated, submitted, or deleted.
-
-**How to configure**: Create an **Agent Trigger** with:
-- **DocType** - Which document type to watch
-- **Event** - Which event to trigger on (after_insert, on_submit, etc.)
-- **Condition** (optional) - Python expression to filter when to run
-
-**Use cases:**
-- Document validation before submission
-- Auto-populate fields based on AI analysis
-- Notify teams when conditions are met
-- Data enrichment on creation
-
-**Features:**
-- Runs in background automatically
-- Access to the document that triggered it
-- Can modify the document or create related documents
-- Per-user or shared conversation history
-
-**Example**: An invoice validator that runs when invoices are submitted, checks for errors or anomalies, and flags issues or auto-corrects them.
-
-Learn more in [Triggers](/docs/concepts/triggers).
-
-### 4. Multi-Run Orchestration Agents
-
-**Agents that break complex tasks into steps** and execute them sequentially over multiple runs.
-
-**How to enable**: Check **Enable Multi Run** when creating the agent.
-
-**Use cases:**
-- Complex multi-step workflows
-- Tasks requiring planning and execution phases
-- Long-running processes that need incremental progress
-- Research or analysis tasks with multiple stages
-
-**Features:**
-- Automatic planning phase that breaks objectives into steps
-- Sequential step execution via scheduler
-- Scratchpad for maintaining context between steps
-- Full output storage for each step
-- Progress tracking and error handling
-
-**How it works:**
-1. **First API call** → Creates orchestration document
-2. **Planning phase** → Agent generates numbered list of steps
-3. **Scheduler processes** → Executes one step per minute
-4. **Context maintained** → Scratchpad carries information between steps
-5. **Completion** → Marked complete when all steps are done
-
-**Example**: A content research agent that:
-1. Identifies target topics
-2. Gathers relevant information
-3. Analyzes findings
-4. Creates an outline
-5. Writes draft content
-6. Reviews and refines
-
-Learn more in [Running Agents - Multi-Run Orchestration](/docs/guides/running-agents#multi-run-orchestration).
-
-## Creating an Agent
-
-### Step-by-Step
-
-Navigate to: **Desk → Huf → Agent**
-
-**1. Basic Information**
-- **Agent Name**: Descriptive, unique name
-- **Description**: Brief summary of the agent's purpose
-- **Provider**: Select your AI provider
-- **Model**: Select the AI model
-
-**2. Instructions**
-- Write clear, detailed instructions
-- Define role, scope, and behavior
-- Include examples of desired responses
-- Set constraints and boundaries
-
-**3. Settings**
-- **Temperature**: Start with `0.7`
-- **Top P**: Start with `1.0`
-- **Allow Chat**: Enable if users should chat with this agent
-- **Enable Multi Run**: Enable for multi-step orchestration workflows
-- **Persist Conversation**: Keep history across runs (recommended)
-- **Persist per User**: Separate history for each user (recommended for chat)
-
-**4. Tools**
-- Click **Add Row** in the **Agent Tool** table
-- Select tools this agent needs
-- Start minimal—add more as needed
-
-**5. Save and Test**
-- Save the agent
-- Test via **Agent Chat** or **Agent Console**
-- Review **Agent Run** logs
-- Iterate on instructions and settings
-
-## Best Practices
-
-### Writing Great Instructions
-
-**Do:**
-- Be specific about the agent's role and scope
-- Include step-by-step guidance for common tasks
-- Provide examples of good responses
-- Define clear boundaries (what NOT to do)
-- Use natural, conversational language
-
-**Don't:**
-- Be vague ("help users")
-- Assume the AI knows your business logic
-- Forget to mention tool usage
-- Mix multiple unrelated roles in one agent
-
-**Example Comparison:**
-
-**Bad:**
-```
-Help with sales.
+Response:
+```json
+{
+  "success": true,
+  "response": "Done. Sales Order SO-0001 has been created.",
+  "agent_run_id": "AGR-00001",
+  "conversation_id": "AGC-00001"
+}
 ```
 
-**Good:**
+### Agent Console
+
+The **Agent Console** is a singleton DocType for quick testing. Navigate to **Huf → Agent Console**, select an agent, enter a prompt, and click **Run**. The response appears in the `response` field.
+
+### Triggers
+
+Agents can be invoked automatically via **Agent Trigger** (Doc Events, Schedules, Webhooks, App Events). See the [Triggers](/docs/concepts/triggers) guide.
+
+---
+
+## Agent Run Logging
+
+Every execution creates an **Agent Run** document tracking:
+
+- Status (`Queued` → `Started` → `Success` / `Failed`)
+- Input and output tokens
+- Estimated cost
+- Prompt and response content
+- Linked conversation, flow run (if triggered from a flow), or orchestration
+
+---
+
+## Tips for Writing Good Instructions
+
+1. **Be explicit about the agent's role** — start with "You are a…" to set context.
+2. **Describe available tools** — briefly list what the agent can do so it picks the right tool.
+3. **Set boundaries** — tell the agent what it should *not* do (e.g. "Do not delete records without confirmation").
+4. **Specify output format** — if you need JSON, markdown tables, or bullet points, say so.
+5. **Keep it focused** — agents with narrow, clear mandates perform better than catch-all agents.
+6. **Use examples** — a few concrete worked examples in the prompt dramatically improve accuracy for complex tasks.
+7. **Version your prompts** — use the Template mode with `Agent Prompt` to track iterations.
+
 ```
-You are a sales assistant. Help users:
-1. Look up customer information by name or ID
-2. Find recent orders for a customer
-3. Identify upsell opportunities based on order history
+Example Instructions:
+You are an Order Processing Agent for Acme Corp.
 
-Always ask clarifying questions if the request is ambiguous.
-Use the get_customer and get_list_sales_orders tools as needed.
-Present information in bullet points for clarity.
+Your job is to create and update Sales Orders based on user requests.
+
+Available tools:
+- create_sales_order: Creates a new Sales Order
+- update_sales_order: Updates fields on an existing Sales Order
+- get_customer: Retrieves customer details
+
+Rules:
+- Always confirm the customer exists before creating an order.
+- Never delete records; mark them as cancelled instead.
+- Respond with a summary of what you did, in plain English.
 ```
-
-### Tool Selection
-
-- **Start minimal**: Add only essential tools initially
-- **Test thoroughly**: Verify each tool works correctly
-- **Tool descriptions matter**: The AI uses them to decide when to call tools
-- **Don't overload**: Too many tools confuse the model (keep to ~5-10)
-- **Group by purpose**: Create specialized agents instead of one mega-agent
-
-### Performance Tuning
-
-**For Consistent Output:**
-- Lower temperature (0.0-0.3)
-- More specific instructions
-- Provide examples in instructions
-
-**For Creative Output:**
-- Higher temperature (0.8-1.5)
-- Looser instructions
-- Encourage exploration
-
-**For Cost Optimization:**
-- Use cheaper models for simple tasks
-- Limit conversation history length
-- Be concise in instructions (fewer tokens)
-- Cache frequent queries
-
-## Managing Agents
-
-### Viewing All Agents
-
-Navigate to: **Desk → Huf → Agent**
-
-- See all agents in list view
-- Filter by status, model, or other fields
-- Click an agent to edit or view details
-
-### Editing Agents
-
-Changes to agents take effect immediately for new runs. Ongoing conversations or scheduled runs may use the old configuration until they complete.
-
-> **Tip**: Test changes in a draft/duplicate agent before modifying production agents.
-
-### Monitoring Performance
-
-Check **Agent Run** for every execution:
-- View prompts and responses
-- See tool calls and results
-- Track token usage and costs
-- Identify errors and issues
-
-Learn more in [Monitoring](/docs/monitoring).
-
-### Permissions
-
-Agents inherit the permissions of the user running them. An agent cannot:
-- Access documents the user doesn't have permission for
-- Create documents in DocTypes the user can't access
-- Bypass Frappe's security model
-
-Set up permissions via Frappe's **Role Permission Manager**.
-
-## Common Patterns
-
-### Customer Support Agent
-
-**Role**: Help users with customer inquiries
-
-**Tools**:
-- Get Customer
-- Get List (Sales Orders, Support Tickets)
-- Create Support Ticket
-
-**Instructions**: Focus on being helpful, asking clarifying questions, and escalating complex issues.
-
-### Document Validator
-
-**Role**: Validate documents before submission
-
-**Trigger**: `on_submit` event for target DocType
-
-**Tools**:
-- Get Document
-- Update Document
-- Get List (for reference data)
-
-**Instructions**: Check specific fields, validate against rules, flag or auto-correct issues.
-
-### Scheduled Reporter
-
-**Role**: Generate periodic reports
-
-**Trigger**: Daily at 9 AM
-
-**Tools**:
-- Get List (with date filters)
-- Custom function to send email/Slack
-
-**Instructions**: Summarize data, highlight insights, format for readability.
-
-### Data Entry Assistant
-
-**Role**: Help users create documents interactively
-
-**Tools**:
-- Create Document
-- Get List (for lookups)
-- Get Document (for validation)
-
-**Instructions**: Guide users through required fields, validate inputs, create documents.
-
-## Troubleshooting
-
-### Agent Not Responding
-
-**Check:**
-- API key is valid and has credits
-- Model name is correct for the provider
-- Instructions aren't empty
-- Provider and model are both saved
-
-**Debug:**
-- Look at **Agent Run** for error messages
-- Test the API key independently
-- Try a different model
-
-### Tools Not Working
-
-**Check:**
-- Tool is added to agent's tool list
-- Tool description is clear and accurate
-- User has permissions for the DocType
-- Tool parameters are correct
-
-**Debug:**
-- Test the tool independently in Python
-- Check **Agent Run** to see tool calls
-- Verify permissions via Role Permission Manager
-
-### Poor Responses
-
-**Improve:**
-- Make instructions more specific
-- Add examples of good responses
-- Lower temperature for more consistency
-- Simplify the task or split into multiple agents
-- Review Agent Run logs to see what the agent is thinking
-
-### High Costs
-
-**Optimize:**
-- Use cheaper models (GPT-3.5 vs GPT-4)
-- Shorten instructions (fewer input tokens)
-- Limit conversation history length
-- Reduce tool descriptions
-- Cache repetitive queries
-- Review **Agent Run** to identify expensive operations
-
-## What's Next?
-
-Now that you understand agents, dive deeper into specific topics:
-
-- **[Providers & Models](/docs/concepts/providers-models)** - Choose and configure AI models
-- **[Tools](/docs/concepts/tools)** - Give agents powerful capabilities
-- **[Conversations](/docs/concepts/conversations)** - Understand how context is maintained
-- **[Triggers](/docs/concepts/triggers)** - Automate agents with schedules and events
-
-Or jump to practical guides:
-
-- **[Creating Agents](/docs/guides/creating-agents)** - Step-by-step agent creation
-- **[Managing Agents](/docs/guides/managing-agents)** - Agent lifecycle management
-- **[Monitoring](/docs/guides/monitoring)** - Track performance and costs
-

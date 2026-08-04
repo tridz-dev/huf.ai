@@ -1,495 +1,210 @@
----
-sidebarTitle: Triggers
----
+export const metadata = {
+  sidebarTitle: "Triggers",
+};
 
 # Triggers
 
-Triggers define **when** and **how** agents run automatically. Instead of manually running agents, triggers let them respond to events, run on schedules, or execute based on specific conditions.
-
-## What Are Triggers?
-
-A **trigger** is an automated execution rule for an agent. Triggers enable agents to:
-- Run on a schedule (hourly, daily, weekly)
-- Respond to document events (creation, updates, submissions)
-- Execute with specific conditions
-- Maintain per-user conversation history
-
-Without triggers, you manually run agents. With triggers, agents become **proactive automation**.
-
-## Trigger Types
-
-### 1. Manual Execution
-
-**How it works:** You run the agent yourself
-
-**Methods:**
-- **Agent Chat**: Real-time chat interface
-- **Agent DocType**: "Run" button in the form
-- **API**: Call `run_agent_sync` programmatically
-
-**Use Cases:**
-- Testing agents
-- On-demand tasks
-- User-initiated interactions
-- Development and debugging
-
-**No trigger configuration needed**—just run the agent when you want.
-
-### 2. Scheduled Triggers
-
-**How it works:** Agent runs automatically at specified intervals
-
-**Configuration:** Set up via **Agent Trigger** DocType
-
-**Frequencies:**
-- **Hourly**: Every hour
-- **Daily**: Once per day at specified time
-- **Weekly**: Specific day(s) of the week
-- **Custom Cron**: Advanced scheduling with cron expressions
-
-**Use Cases:**
-- Daily report generation
-- Hourly inventory checks
-- Weekly summarization tasks
-- Periodic data synchronization
-- Scheduled notifications
-
-**Example:**
-```
-Agent: Daily Sales Summary
-Trigger: Every day at 9:00 AM
-Action: Generates sales report and sends via email
-```
-
-### 3. Document Event Triggers
-
-**How it works:** Agent runs when specific document events occur
-
-**Events:**
-- **After Insert**: Document is created
-- **On Update**: Document is modified
-- **On Submit**: Submittable document is submitted
-- **On Cancel**: Document is cancelled
-- **Before Save**: Before document is saved (use carefully)
-- **After Delete**: Document is deleted (use rarely)
-
-**Use Cases:**
-- Validate invoices on submission
-- Auto-assign leads when created
-- Notify team when deals update
-- Quality check on document submission
-- Enrich data on creation
-
-**Example:**
-```
-Agent: Invoice Validator
-Trigger: After Submit on DocType "Sales Invoice"
-Action: Validates pricing, checks credit limits, flags issues
-```
-
-### 4. Chat-Based Execution
-
-**How it works:** User interacts via chat interface
-
-**Enable:** Set `allow_chat = 1` in Agent DocType
-
-**Access:**
-- **Desk**: Agent Chat DocType
-- **Frontend**: `/huf` interface (expanding)
-
-**Use Cases:**
-- Customer support
-- Interactive assistants
-- Conversational workflows
-- User-facing agents
-
-**No separate trigger needed**—enabled on the agent itself.
-
-### 5. API Execution
-
-**How it works:** External systems call agent via API
-
-**Endpoint:** `run_agent_sync` (whitelisted method)
-
-**Authentication:** Standard Frappe API authentication
-
-**Use Cases:**
-- Webhook integrations
-- External app automation
-- Custom frontends
-- Third-party service integration
-
-**Example:**
-```python
-response = requests.post(
-    "https://yoursite.com/api/method/huf.ai.agent_integration.run_agent_sync",
-    headers={"Authorization": f"token {api_key}:{api_secret}"},
-    json={
-        "agent_name": "Customer Support Agent",
-        "prompt": "What is the status of order SO-001?",
-        "session_id": "api:external_system:12345"
-    }
-)
-```
-
-## Agent Trigger DocType
-
-Scheduled and document event triggers are configured via **Agent Trigger**.
-
-**Navigate to:** Desk → Huf → Agent Trigger
-
-### Key Fields
-
-| Field | Description |
-|-------|-------------|
-| **Agent** | Which agent to run |
-| **Trigger Type** | Schedule or Doc Event |
-| **Reference DocType** | For doc events, which DocType |
-| **Document Event** | Which event (After Insert, On Submit, etc.) |
-| **Condition** | Optional filter conditions |
-| **Schedule** | For scheduled triggers, the frequency/time |
-| **Prompt Template** | What message to send to the agent |
-| **Enabled** | Active/inactive toggle |
-
-### Creating a Trigger
-
-1. **Navigate** to Agent Trigger, click **New**
-2. **Select Agent** from dropdown
-3. **Choose Trigger Type**:
-   - **Doc Event**: For document-based automation
-   - **Schedule**: For time-based execution
-4. **Configure Details** (see below)
-5. **Set Prompt Template** (what to tell the agent)
-6. **Enable** and **Save**
-
-## Scheduled Trigger Configuration
-
-### Setting the Schedule
-
-**Frequency Options:**
-- **Hourly**: Runs every hour
-- **Daily**: Specify time (e.g., "09:00")
-- **Weekly**: Choose day(s) and time
-- **Cron**: Advanced cron expression
-
-**Examples:**
-```
-Daily at 9 AM: "0 9 * * *"
-Every Monday at 2 PM: "0 14 * * 1"
-Every 30 minutes: "*/30 * * * *"
-First day of month: "0 0 1 * *"
-```
-
-### Prompt Templates for Scheduled Triggers
-
-Use templates to pass context to the agent:
-
-```
-Generate a summary of today's sales and send it to the sales team.
-```
-
-Or with dynamic data:
-
-```
-Check inventory levels and alert if any items are below reorder point. 
-Focus on fast-moving items from the last 7 days.
-```
-
-**Example Trigger:**
-```
-Agent: Inventory Monitor
-Schedule: Every day at 8:00 AM
-Prompt: "Check inventory for items below reorder level and create purchase 
-        requisitions if needed. Prioritize high-demand items."
-```
-
-## Document Event Trigger Configuration
-
-### Selecting the DocType
-
-Choose which DocType to monitor:
-- **Reference DocType**: The DocType name (e.g., "Sales Invoice", "Lead", "Support Ticket")
-
-### Selecting the Event
-
-| Event | When It Fires |
-|-------|---------------|
-| **After Insert** | Document is created and saved |
-| **On Update** | Document is modified |
-| **On Submit** | Submittable document is submitted |
-| **On Cancel** | Document is cancelled |
-| **Before Save** | Before save (can prevent save with errors) |
-| **After Delete** | After document is deleted |
-
-**Most Common:** After Insert, On Submit, On Update
-
-### Conditional Execution
-
-Run triggers only when conditions match:
-
-**Condition Field:** JSON filter object
-
-**Example Conditions:**
-```json
-{
-  "status": "Open",
-  "priority": "High"
-}
-```
-→ Only triggers if document status is "Open" AND priority is "High"
-
-```json
-{
-  "grand_total": [">", 10000]
-}
-```
-→ Only triggers if grand_total exceeds 10,000
-
-```json
-{
-  "customer_group": ["in", ["Wholesale", "Distributor"]]
-}
-```
-→ Only triggers for specific customer groups
-
-**No condition** = triggers on every matching event
-
-### Prompt Templates for Doc Event Triggers
-
-Access document fields in the prompt using `{field_name}` placeholders:
-
-```
-A new lead has been created: {lead_name} from {company_name}.
-Please review the lead, score it based on our criteria, and assign 
-it to the appropriate sales rep.
-
-Lead Details:
-- Email: {email_id}
-- Source: {source}
-- Territory: {territory}
-```
-
-**Available Data:**
-- All fields from the document
-- Standard fields (name, creation, modified, owner, etc.)
-- Linked document data (may need tool calls)
-
-**Example:**
-```
-Agent: Lead Qualifier
-DocType: Lead
-Event: After Insert
-Prompt: "A new lead was created: {lead_name} from {company_name} 
-        in {territory}. Score this lead, assign to appropriate sales 
-        rep, and set next follow-up date."
-```
-
-## Conversation Modes for Triggers
-
-### Per-User Conversation
-
-**Default behavior** (`persist_user_history = 1`):
-- Each triggering user gets separate conversation history
-- Useful for user-specific context
-- Privacy preserved between users
-
-**Example:**
-```
-Support Ticket Agent (On Submit):
-- User A submits ticket → Separate conversation for User A
-- User B submits ticket → Separate conversation for User B
-- Each user's history is independent
-```
-
-### Shared Conversation
-
-**Shared mode** (`persist_user_history = 0`):
-- Single conversation history across all trigger executions
-- Agent builds cumulative knowledge
-- All users share the same context
-
-**Example:**
-```
-Daily Sales Summary (Scheduled):
-- Day 1: Agent generates report
-- Day 2: Agent remembers Day 1, compares trends
-- Day 3: Agent builds on previous days' data
-- Cumulative learning across runs
-```
-
-**Configuration:**
-In Agent DocType:
-- **Persist Conversation**: Enable to keep history
-- **Persist per User (Doc/Schedule)**: Check for per-user, uncheck for shared
-
-## Trigger Best Practices
-
-### Scheduling
-
-**Do:**
-- Run during off-peak hours for heavy tasks
-- Stagger multiple agents to avoid overlap
-- Use reasonable frequencies (don't over-schedule)
-- Monitor costs of scheduled runs
-
-**Don't:**
-- Schedule too frequently (every minute)
-- Run multiple heavy agents simultaneously
-- Forget timezone considerations
-- Ignore failed runs
-
-### Document Events
-
-**Do:**
-- Use specific events (not every event)
-- Add conditions to limit executions
-- Handle errors gracefully
-- Test with draft documents first
-
-**Don't:**
-- Trigger on every update (can cause loops)
-- Use Before Save unless necessary
-- Forget permission checks
-- Create infinite trigger loops
-
-### Prompt Templates
-
-**Do:**
-- Be specific about the task
-- Include relevant document fields
-- Provide clear instructions
-- Mention expected outputs
-
-**Don't:**
-- Use vague prompts
-- Forget to test with real data
-- Include sensitive data unnecessarily
-- Assume agent knows document structure
-
-### Error Handling
-
-**Monitor:**
-- Check Agent Run logs regularly
-- Set up failure notifications
-- Review errors and adjust prompts
-- Test trigger conditions thoroughly
-
-## Common Use Cases
-
-### 1. Automated Lead Assignment
-
-**Trigger:** After Insert on Lead
-**Agent:** Lead Router
-**Prompt:**
-```
-New lead: {lead_name} from {territory}.
-Assign to the best sales rep based on:
-- Territory coverage
-- Current workload
-- Specialization in {industry}
-Update the lead with assigned rep and next follow-up date.
-```
-
-### 2. Invoice Validation
-
-**Trigger:** On Submit on Sales Invoice
-**Agent:** Invoice Validator
-**Prompt:**
-```
-Validate this invoice:
-- Check pricing against price list
-- Verify credit limit for customer {customer}
-- Confirm tax calculations
-- Flag any anomalies
-If issues found, add comment and notify accounts team.
-```
-
-### 3. Daily Report Generation
-
-**Trigger:** Schedule (Daily at 9 AM)
-**Agent:** Sales Report Generator
-**Prompt:**
-```
-Generate daily sales summary:
-- Total orders and revenue
-- Top 5 customers
-- Pending payments
-- Trends vs yesterday
-Send report to sales@company.com
-```
-
-### 4. Support Ticket Routing
-
-**Trigger:** After Insert on Support Ticket
-**Agent:** Ticket Router
-**Prompt:**
-```
-New ticket: {subject}
-Priority: {priority}
-Analyze the issue and:
-- Assign to appropriate team
-- Set SLA deadline
-- Add initial response if simple
-- Escalate if high priority
-```
-
-### 5. Inventory Monitoring
-
-**Trigger:** Schedule (Every 6 hours)
-**Agent:** Inventory Monitor
-**Prompt:**
-```
-Check all items with stock below reorder level.
-For each item:
-- Calculate required quantity
-- Create purchase requisition
-- Notify procurement team
-Focus on fast-moving items.
-```
-
-## Troubleshooting
-
-**Trigger doesn't fire:**
-- Verify trigger is **Enabled**
-- Check **Condition** matches document
-- Review DocType and Event selection
-- Check agent is active
-- Verify no Frappe permission issues
-
-**Trigger fires too often:**
-- Add more specific conditions
-- Change from "On Update" to "On Submit"
-- Review document workflow
-- Check for trigger loops
-
-**Agent gets wrong data:**
-- Verify prompt template field names
-- Check document state at trigger time
-- Test field access and permissions
-- Review tool assignments
-
-**High costs from triggers:**
-- Reduce trigger frequency
-- Add stricter conditions
-- Use cheaper models for simple triggers
-- Limit conversation history length
-
-**Performance issues:**
-- Stagger scheduled triggers
-- Use background jobs for heavy tasks
-- Optimize agent tools
-- Monitor Agent Run duration
-
-## What's Next?
-
-Now that you understand triggers:
-
-- **[Running Agents](/docs/guides/running-agents)** - Detailed guide to execution methods
-- **[Agent Triggers Deep Dive](/docs/advanced/triggers)** - Advanced trigger patterns
-- **[Monitoring](/docs/guides/monitoring)** - Track trigger performance
-- **[Creating Agents](/docs/guides/creating-agents)** - Design automation workflows
+**Agent Triggers** define *when* and *how* an agent runs automatically — without a human sending a chat message. Triggers are managed in the **Agent Trigger** DocType, which replaces the old `condition` field that used to live directly on the Agent form.
 
 ---
 
-**Need help with triggers?** Check [GitHub discussions](https://github.com/tridz-dev/agent_flo/discussions).
+## Agent Trigger DocType Fields
 
+| Field | Fieldname | Type | Notes |
+|---|---|---|---|
+| Trigger Name | `trigger_name` | Data | Auto-generated unique name |
+| Agent | `agent` | Link → Agent | The agent to execute when this trigger fires |
+| Trigger Type | `trigger_type` | Select | See types below |
+| Disabled | `disabled` | Check | If checked, this trigger will not fire |
+| Disabled Reason | `disabled_reason` | Small Text | Why the trigger was disabled (auto-populated in some cases) |
+| Is Virtual | `is_virtual` | Check | System-generated trigger (not user-created) |
+| Source System | `source_system` | Data | Source app that created this trigger (for virtual triggers) |
+| Metadata | `metadata` | JSON | Additional trigger-specific metadata |
+
+---
+
+## Trigger Types
+
+### 1. Doc Event
+
+Fires an agent whenever a specific **document lifecycle event** occurs on a DocType.
+
+**Type-specific fields:**
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Reference Doctype | `reference_doctype` | The DocType to listen on (e.g. `Sales Order`) |
+| Doc Event | `doc_event` | Event to listen for. See events below. |
+| Condition | `condition` | A Python expression evaluated before firing. If it returns `False`, the trigger is skipped. |
+| Prompt Field | `prompt_field` | Optional field on the document whose value is used as the primary prompt instruction to the agent |
+| File Attachments | `file_attachments` | Child table (`Agent Trigger Attachment`) of fields that hold files to pass to the agent |
+
+**Available doc events:**
+
+```
+before_insert, after_insert, before_save, after_save,
+before_submit, on_submit, before_cancel, on_cancel,
+after_delete, before_update_after_submit, after_update_after_submit,
+after_workflow_action
+```
+
+**How conditions work:**
+
+```python
+# Example: Only fire when the order value exceeds 10,000
+doc.grand_total > 10000
+
+# Only fire when status changes to Completed
+doc.status == "Completed" and doc.get_doc_before_save().status != "Completed"
+```
+
+Conditions use `frappe.utils.safe_exec` and have access to the `doc` object.
+
+**File Attachments (Agent Trigger Attachment):**
+
+Each row in the file attachments child table tells Huf which document fields hold attached files to pass to the agent as context:
+
+| Field | Notes |
+|---|---|
+| Source Type | `DocField` (a field directly on the document) or `Child Table Field` (a field inside a child table) |
+| Child Table | For `Child Table Field` — the fieldname of the child table |
+| Attach Field Name | The fieldname that holds the file URL |
+
+When a Doc Event fires, Huf collects all specified file URLs, detects their MIME type, and passes images as inline vision inputs. Non-image files (PDFs, DOCX, etc.) are processed through OCR to extract text, which is appended to the agent prompt as context.
+
+**Execution:**
+
+Doc Event triggers run asynchronously via Frappe's background job queue (`long` queue). The agent receives:
+1. A formatted prompt describing the event and document identifiers.
+2. The document's JSON data as context.
+3. Any extracted file content.
+
+---
+
+### 2. Schedule
+
+Fires an agent on a recurring time schedule.
+
+**Type-specific fields:**
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Scheduled Interval | `scheduled_interval` | `Hourly`, `Daily`, `Weekly`, `Monthly`, `Yearly` |
+| Interval Count | `interval_count` | Multiplier for the interval (e.g. 2 + Daily = every 2 days) |
+| Last Execution | `last_execution` | Datetime of last successful execution (read-only) |
+| Next Execution | `next_execution` | Datetime of next scheduled execution (read-only) |
+
+Huf integrates with Frappe's **Scheduler** hooks. On each scheduler tick, Huf checks all active Schedule triggers and fires any that are due.
+
+---
+
+### 3. Webhook
+
+Exposes an agent endpoint that external systems can call via HTTP.
+
+**Type-specific fields:**
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Webhook Key | `webhook_key` | Authentication token. Include as `X-Webhook-Key` header or `key` query parameter |
+| Webhook Slug | `webhook_slug` | URL slug that identifies this trigger |
+
+**Endpoint URL:**
+
+```
+POST /api/method/huf.ai.webhook_handler.handle_webhook?slug={webhook_slug}&key={webhook_key}
+```
+
+The webhook handler passes the request body as the agent's prompt payload. External tools, Zapier, Make (Integromat), and other automation platforms can trigger agents this way.
+
+---
+
+### 4. App Event
+
+Fires an agent when a specific named event is emitted by a Frappe app via Huf's event bus.
+
+**Type-specific fields:**
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| App Name | `app_name` | The Frappe app that emits the event |
+| Event Name | `event_name` | The specific event identifier |
+
+Apps fire app events by calling:
+
+```python
+from huf.events import fire_app_event
+
+fire_app_event(
+    app_name="my_app",
+    event_name="customer_onboarded",
+    payload={"customer": "Acme Corp", "tier": "Enterprise"}
+)
+```
+
+---
+
+### 5. Manual
+
+A trigger with no automatic firing mechanism. Used as a configuration template or for triggers that are invoked programmatically.
+
+---
+
+## Conversation History in Triggers
+
+Triggered agents maintain conversation history in the same way as chat agents. The behaviour is controlled by two Agent settings:
+
+| Agent Setting | Default | Effect |
+|---|---|---|
+| `persist_conversation` | on | Saves conversation history across runs |
+| `persist_user_history` | on | Creates separate history per user for Doc Event / Schedule triggers |
+
+**When `persist_user_history` is on:**
+- Doc Event runs: history is scoped to the user who modified the document (or the document owner).
+- Schedule runs: history is scoped to the trigger owner.
+
+**When `persist_user_history` is off:**
+- All runs share a single conversation, keyed as `shared:{agent_name}`.
+
+---
+
+## Concurrency Guard
+
+To prevent duplicate agent runs when the same event fires rapidly (e.g. a doc is saved multiple times in quick succession), Huf uses a Redis-based lock:
+
+```python
+lock_key = f"huf:lock:{agent}:{doctype}:{docname}:{event}"
+# Expires after 30 seconds
+```
+
+If a lock already exists for the same agent + document + event combination, the duplicate trigger is silently dropped.
+
+---
+
+## Cache Invalidation
+
+Doc Event agent assignments are cached in Redis with the key `huf:doc_event_agents`. The cache is invalidated whenever:
+- An Agent Trigger is created, updated, or deleted.
+- The Agent itself is modified.
+
+This ensures changes to trigger configuration take effect immediately without requiring a server restart.
+
+---
+
+## Creating a Doc Event Trigger — Example
+
+**Scenario:** Auto-draft a follow-up email when a Sales Order is submitted.
+
+1. Open **Huf → Agent Triggers → New**.
+2. Set **Agent** to your email drafting agent.
+3. Set **Trigger Type** to `Doc Event`.
+4. Set **Reference Doctype** to `Sales Order`.
+5. Set **Doc Event** to `on_submit`.
+6. Leave **Condition** blank (fires on all submissions), or add:
+   ```python
+   doc.grand_total > 1000
+   ```
+7. Set **Prompt Field** to `special_instructions` if your Sales Order has a field for custom agent instructions.
+8. Save.
+
+The agent will now run asynchronously in the background every time a Sales Order is submitted (and the condition passes).

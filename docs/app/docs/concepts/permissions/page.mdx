@@ -1,0 +1,280 @@
+export const metadata = {
+  sidebarTitle: "Permissions",
+};
+
+# Permissions & Security
+
+Huf uses a two-layer permission model: **Huf Roles** (capability-based) sit on top of **Frappe Roles** (DocType-level enforcement). Understanding both layers is important for building secure agent deployments.
+
+---
+
+## Layer 1: Huf Roles (Capability-Based)
+
+Huf Roles grant named capabilities that control access to Huf features. A user with no Huf Role cannot access the Huf application at all.
+
+### Built-in Roles
+
+| Huf Role | Description |
+|---|---|
+| **Huf Admin** | Full access to everything. Backed by Frappe's `System Manager` role. |
+| **Huf Manager** | Can create and manage agents, tools, flows, knowledge, and view all conversations. |
+| **Huf User** | Can use agents, chat, and access knowledge/tools that are shared with them. |
+| **Huf Viewer** | Read-only. Can view their own conversations. |
+
+### Huf Role DocType
+
+Custom roles can be created in **Huf Role**:
+
+| Field | Notes |
+|---|---|
+| `role_name` | Unique name (auto-names the document) |
+| `description` | Human-readable description |
+| `is_system_role` | System roles cannot be renamed or deleted |
+| `frappe_role` | The underlying Frappe role that enforces DocType-level permissions |
+| `permissions` (table) | Child table of `Huf Role Permission` — each row is one capability |
+
+---
+
+## Capabilities
+
+Huf defines a catalogue of fine-grained capabilities. Each Huf Role grants a subset of these:
+
+### Agent Capabilities
+
+| Capability | Label |
+|---|---|
+| `agent.use` | Use Agents |
+| `agent.create` | Create Agents |
+| `agent.edit` | Edit Agents |
+| `agent.delete` | Delete Agents |
+| `agent.view_all` | View All Agents |
+
+### Chat Capabilities
+
+| Capability | Label |
+|---|---|
+| `chat.use` | Use Chat |
+| `chat.view_own` | View Own Conversations |
+| `chat.view_all` | View All Conversations |
+
+### Knowledge Capabilities
+
+| Capability | Label |
+|---|---|
+| `knowledge.use` | Use Knowledge |
+| `knowledge.create` | Create Knowledge |
+| `knowledge.manage` | Manage Knowledge |
+
+### Tool Capabilities
+
+| Capability | Label |
+|---|---|
+| `tools.use` | Use Tools |
+| `tools.create` | Create Tools |
+| `tools.manage` | Manage Tools |
+
+### Flow Capabilities
+
+| Capability | Label |
+|---|---|
+| `flows.use` | Use Flows |
+| `flows.create` | Create Flows |
+| `flows.manage` | Manage Flows |
+
+### System Capabilities
+
+| Capability | Label |
+|---|---|
+| `system.providers.manage` | Manage AI Providers |
+| `system.models.manage` | Manage AI Models |
+| `system.mcp.manage` | Manage MCP Servers |
+| `system.settings.manage` | Manage Settings |
+
+### User & Role Management Capabilities
+
+| Capability | Label |
+|---|---|
+| `users.invite` | Invite Users |
+| `users.manage` | Manage Users |
+| `roles.manage` | Manage Roles |
+
+### Default Capability Assignments
+
+| Role | Capabilities |
+|---|---|
+| **Huf Admin** | All capabilities |
+| **Huf Manager** | All agent, chat, knowledge, tools, and flows capabilities (no system management) |
+| **Huf User** | `agent.use`, `chat.use`, `chat.view_own`, `knowledge.use`, `tools.use`, `flows.use` |
+| **Huf Viewer** | `agent.use`, `chat.view_own` |
+
+---
+
+## Layer 2: Frappe Role Permissions (DocType-Level)
+
+Underneath the capability layer, standard Frappe role permissions control who can read, write, create, and delete individual DocType records.
+
+| Huf Role | Backing Frappe Role |
+|---|---|
+| Huf Admin | System Manager |
+| Huf Manager | Huf Manager |
+| Huf User | Huf User |
+| Huf Viewer | Huf Viewer |
+
+Frappe roles are checked on every database operation — `frappe.get_doc()`, `frappe.get_list()`, etc. Custom Huf tools that access Frappe data (Get Document, Create Document, etc.) inherit the calling user's Frappe role permissions automatically.
+
+---
+
+## Permission-Aware Tool Execution
+
+When an agent calls a tool, Huf's `PermissionAwareToolRegistry` enforces Frappe permissions before execution:
+
+```python
+# Before executing a mutating tool:
+frappe.has_permission(reference_doctype, ptype="write", raise_exception=True)
+
+# Before executing a read tool:
+frappe.has_permission(reference_doctype, ptype="read", raise_exception=True)
+```
+
+**Mutating tools** (those that change data):
+- Create Document, Create Multiple Documents
+- Update Document, Update Multiple Documents
+- Delete Document, Delete Multiple Documents
+- Submit Document, Cancel Document
+- Set Value, Attach File to Document
+
+**Read tools** (those that only read data):
+- Get Document, Get Multiple Documents
+- Get List, Get Value
+- Get Report Result, Get Amended Document
+
+> [!IMPORTANT]
+> Agents **cannot escalate privileges**. They always execute with the permissions of the user who triggered them. If a user cannot delete Sales Orders, an agent they trigger cannot delete Sales Orders either — even if the agent has a `Delete Document` tool configured.
+
+---
+
+## Agent-Level Access Control
+
+Beyond Huf Roles, individual agents can restrict who may use them:
+
+| Agent Field | Effect |
+|---|---|
+| `allow_guest` | Allows unauthenticated (Guest) users to call this agent via the API |
+| `allowed_users` | Restricts access to a specific list of users (via `Agent User` child table) |
+| `allowed_roles` | Restricts access to users with specific Frappe roles (via `Agent Role` child table) |
+
+If both `allowed_users` and `allowed_roles` are empty, any authenticated user can use the agent.
+
+---
+
+## Assigning Huf Roles to Users
+
+### From the Huf UI
+
+1. Navigate to **Huf → Users** (requires `users.manage` capability).
+2. Find the user and click **Assign Role**.
+3. Select the Huf Role to grant.
+
+### From /app
+
+1. Navigate to **Huf → Huf User Role → New**.
+2. Set **User** and **Huf Role**.
+3. Check **Enabled** and save.
+
+---
+
+## Checking Permissions Programmatically
+
+In Python (server-side), use the Huf permissions API:
+
+```python
+from huf.permissions import has_capability, get_user_capabilities, get_user_huf_role
+
+# Check if the current user can create agents
+if not has_capability(frappe.session.user, "agent.create"):
+    frappe.throw("Not permitted", frappe.PermissionError)
+
+# Get all capabilities for a user
+caps = get_user_capabilities("manager@example.com")
+# Returns: ["agent.use", "agent.create", "chat.use", ...]
+
+# Get the user's Huf Role
+role = get_user_huf_role("manager@example.com")
+# Returns: "Huf Manager"
+```
+
+### Frontend API
+
+The React frontend calls this endpoint on load:
+
+```
+GET /api/method/huf.permissions.get_me
+```
+
+Response:
+```json
+{
+  "user": "jane@example.com",
+  "full_name": "Jane Doe",
+  "huf_role": "Huf Manager",
+  "capabilities": ["agent.use", "agent.create", "chat.use", "chat.view_own"]
+}
+```
+
+Capability strings from this response control which modules and actions are visible in the Huf UI.
+
+---
+
+## Security Considerations
+
+### API Key Protection
+
+AI Provider API keys are stored using Frappe's `Password` field type, which applies AES encryption at rest. Keys are decrypted server-side only when needed for LLM API calls. They are never returned in JSON responses from the Frappe REST API.
+
+### SSRF Protection
+
+All outbound HTTP calls made by agents (via GET/POST tools) pass through `huf/ai/http_handler.py`, which:
+1. Resolves the target hostname to its IP addresses.
+2. Blocks requests to private/internal IP ranges (`10.x`, `172.16–31.x`, `192.168.x`, `127.x`, `::1`).
+3. Blocks non-HTTP/HTTPS schemes.
+4. Enforces a 10MB response size limit.
+
+This protection is server-side and cannot be bypassed by agent prompts.
+
+### Custom Tool Functions
+
+Custom Python functions exposed via `Agent Tool Function` (type: `Custom Function`) run with the permissions of the triggering user. Always validate inputs and perform permission checks inside custom functions:
+
+```python
+def my_custom_tool(document_id: str, **kwargs):
+    # Always validate permissions explicitly
+    frappe.has_permission("Sales Order", "write", document_id, throw=True)
+    
+    # Validate the input
+    if not document_id or not document_id.startswith("SO-"):
+        frappe.throw("Invalid Sales Order ID")
+    
+    # Proceed with validated, permitted operation
+    doc = frappe.get_doc("Sales Order", document_id)
+    # ...
+```
+
+### Agent Prompt Injection
+
+Be aware that user inputs can contain adversarial instructions. Mitigate this by:
+- Writing clear system instructions that define the agent's boundaries.
+- Using the `allowed_tools` principle: only attach tools the agent genuinely needs.
+- For high-security contexts, review Agent Run logs to monitor tool usage.
+
+---
+
+## Caching
+
+Capability lookups are cached per-user for 5 minutes using Frappe's Redis cache:
+
+```python
+cache_key = f"huf_user_capabilities::{user}"
+# TTL: 300 seconds
+```
+
+The cache is invalidated when a user's Huf User Role is modified. This means role changes take effect within 5 minutes without a server restart.

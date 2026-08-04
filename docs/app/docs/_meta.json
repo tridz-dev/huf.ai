@@ -2,9 +2,17 @@
   "quick-start": "Quick Start",
   "installation": "Installation",
   "concepts": "Core Concepts",
-  "tools": "Working with Tools",
+  "chat": "Chat",
+  "flows": "Flows",
+  "knowledge": "Knowledge & RAG",
+  "multimodal": "Multimodal (Voice & Vision)",
+  "tools": "Tools",
+  "api": "API & Developer Guide",
+  "permissions": "Permissions & Security",
+  "settings": "Settings & Providers",
   "use-cases": "Use Cases",
   "examples": "Example Agents",
   "guides": "Guides",
+  "coming-soon": "Coming Soon",
   "development": "Development"
 }

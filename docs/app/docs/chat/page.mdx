@@ -1,0 +1,56 @@
+---
+title: Chat Overview
+description: Conversational user interfaces, real-time message streaming, and agent console testing in HUF.
+---
+
+import { Callout } from 'nextra/components'
+
+# Chat Overview
+
+HUF offers a robust, real-time conversational chat interface (`Agent Chat` DocType) that enables users to interact directly with AI agents. This interface is built specifically for agentic workflows, featuring markdown rendering, tool call execution visibility, file attachments, token cost metrics, and voice playback.
+
+---
+
+## Enabling Chat for an Agent
+
+To make an agent available in the Huf Chat UI:
+1. Open the **Agent** document.
+2. Under the main settings, check **Allow Chat** (`allow_chat = 1`).
+3. Save the document.
+
+The agent will now appear in the sidebar of the HUF chat application page (`/huf/chat`).
+
+---
+
+## Session & Conversation Management
+
+HUF handles conversations via two primary DocTypes:
+
+### Agent Conversation
+A new `Agent Conversation` is created for every unique session:
+- **Title** (`title`) — Automatically summarized or set.
+- **Session ID** (`session_id`) — Tied to the channel (e.g., `Chat`) and the logged-in user.
+- **Is Active** (`is_active`) — Tracks if the chat session is open.
+- **Total Messages** (`total_messages`) — Increments with every exchange.
+
+### Agent Message
+Every interaction (user message, agent response, tool call, or error) is stored as an `Agent Message` linked to the conversation.
+
+---
+
+## Real-Time Message Streaming
+
+When a user submits a prompt:
+1. **API Call** — The frontend sends a request via the whitelisted `send_message_to_conversation` or `new_conversation` endpoint.
+2. **Streaming Pipeline** — The agent's reasoning loop executes. Token output is streamed chunk-by-chunk using Frappe's real-time events (`frappe.publish_realtime`).
+3. **Frontend Display** — The React frontend (`ChatPageV2.tsx`) renders the streaming markdown in real-time, providing immediate feedback rather than waiting for the entire block to generate.
+
+---
+
+## Testing Console (Agent Console)
+
+For quick debugging and playground testing without starting a persistent conversation, developers can use the **Agent Console** singleton (`AgentConsole` DocType):
+- **Select Agent** — Choose any configured agent.
+- **Prompt** — Enter a query.
+- **Response** — Displays the agent's raw response in code/text format.
+- Runs synchronously using the whitelisted server action `run_agent_sync`.

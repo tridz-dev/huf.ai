@@ -1,0 +1,139 @@
+export const metadata = {
+  sidebarTitle: "Data Tables",
+};
+
+# Data Tables
+
+Huf Data Tables are custom, agent-managed structured data stores. They give agents the ability to read and write tabular data — think of them as lightweight, schema-flexible spreadsheets that agents can query and update through natural language.
+
+---
+
+## What Are Data Tables?
+
+A Data Table is a Frappe DocType that is dynamically created and managed by Huf. Unlike standard Frappe DocTypes (which require developer-level schema changes), Huf Data Tables can be created, modified, and populated by agents and users directly from the Huf interface.
+
+**Common use cases:**
+- Agent-maintained lookup tables (e.g. "approved vendors", "product codes", "escalation rules")
+- Structured output storage from agent runs (e.g. extracted data from documents)
+- Reference data that agents need to read during conversations
+
+---
+
+## Huf Data Table DocType
+
+The **Huf Data Table** DocType acts as the registry for all custom data tables. Each record represents one data table.
+
+| Field | Fieldname | Notes |
+|---|---|---|
+| Table Name | `table_name` | Human-readable name for the table. Unique. |
+| DocType Name | `doctype_name` | The underlying Frappe DocType created for this table. Read-only. |
+| Naming Method | `autoname_method` | How rows are identified: `Autoincrement`, `Hash`, or `By Field` |
+| Title Field | `title_field_name` | Only visible when naming method = `By Field`. The field used as the row identifier. |
+| Description | `description` | What this table stores |
+| Icon | `icon` | Optional icon for display in the UI |
+| Field Count | `field_count` | Number of columns (fields) in the table. Read-only. |
+| Record Count | `record_count` | Number of rows currently stored. Read-only. |
+| Is Active | `is_active` | If unchecked, the table is excluded from agent tool access |
+
+---
+
+## Data Table Fields (Columns)
+
+Each Data Table has a collection of **Huf Data Table Field** child documents that define its schema (columns). Supported field types include standard Frappe field types such as:
+
+- `Data` — short text
+- `Int` — integer
+- `Float` — decimal number
+- `Date`, `Datetime`
+- `Text`, `Long Text`
+- `Select` — dropdown with predefined options
+- `Link` — link to another DocType or Data Table
+- `Check` — boolean
+
+Fields can be added, removed, or modified through the Huf UI without requiring `bench migrate`.
+
+---
+
+## Using Data Tables with Agents
+
+### As a Knowledge Source
+
+Data Tables can be added to a **Knowledge Source** as an input type. When indexed, each row becomes a searchable knowledge chunk. The agent can then retrieve relevant rows using semantic or full-text search through the knowledge retrieval system.
+
+### As Tools
+
+When a Data Table is created and active, Huf automatically generates the following tools that agents can use:
+
+| Tool | What it does |
+|---|---|
+| `get_{table_name}_record` | Retrieve a single row by ID |
+| `list_{table_name}_records` | List rows with optional filters |
+| `create_{table_name}_record` | Insert a new row |
+| `update_{table_name}_record` | Update an existing row |
+| `delete_{table_name}_record` | Delete a row |
+
+These tools are auto-wired when the Data Table is linked to an agent via the **Agent Tool** child table using tool type `App Provided` and the `provider_app` set to `huf`.
+
+### Querying from Agent Prompts
+
+Once linked, agents can naturally interact with data tables:
+
+```
+User: Add a new approved vendor: "Acme Supplies", category "Office", contact "orders@acme.com"
+Agent: [calls create_approved_vendors_record(...)]
+       Done. Acme Supplies has been added to the approved vendors list.
+
+User: Who are our approved vendors in the Office category?
+Agent: [calls list_approved_vendors_records(filters={"category": "Office"})]
+       You have 3 approved vendors in the Office category:
+       1. Acme Supplies (orders@acme.com)
+       2. ...
+```
+
+---
+
+## Creating a Data Table
+
+### From the Huf UI
+
+1. Navigate to **Huf → Data Tables → New**.
+2. Set the **Table Name** (e.g. `Approved Vendors`).
+3. Choose a **Naming Method**:
+   - `Autoincrement` — rows get IDs like 1, 2, 3 (simple, fast)
+   - `Hash` — rows get random hash IDs (good for imports)
+   - `By Field` — a specific field acts as the primary key (e.g. vendor name)
+4. Add **Fields** (columns) with their types.
+5. Save.
+
+Huf creates the underlying Frappe DocType automatically in the background.
+
+### From an Agent
+
+When an agent has the data table management tools available, it can create tables on demand:
+
+```
+User: Create a table to track project deadlines with columns: project name, deadline date, owner
+Agent: [creates Huf Data Table with specified fields]
+       Done. "Project Deadlines" table created with 3 columns.
+```
+
+---
+
+## Permissions
+
+Data Table records follow standard Frappe permission rules. The underlying DocType permissions are set when the Data Table is created:
+
+- **Huf Manager** — full CRUD access
+- **Huf User** — read access by default (write access can be granted)
+- **System Manager** — full access
+
+> [!NOTE]
+> Because Data Tables are real Frappe DocTypes under the hood, you can also configure custom permissions, workflow states, or field-level access on the generated DocType using standard Frappe permission tooling in `/app`.
+
+---
+
+## Limitations
+
+- Data Tables support simple tabular data. For complex relational structures, use standard Frappe DocTypes.
+- The schema change (adding/removing fields) triggers a `bench migrate` equivalent internally. Avoid adding many fields in rapid succession.
+- Large Data Tables (millions of rows) should use Frappe's standard infrastructure; Huf Data Tables are best suited for small-to-medium reference data.

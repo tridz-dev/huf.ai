@@ -1,0 +1,53 @@
+---
+title: Chat Features
+description: Rich markdown rendering, tool call logs, file attachments, and run feedback in Huf Chat.
+---
+
+import { Callout } from 'nextra/components'
+
+# Chat Features
+
+HUF Chat provides a rich, responsive user interface specifically designed for interacting with autonomous agents. 
+
+---
+
+## Rich Markdown Rendering
+
+Responses from agents are parsed and rendered as fully formatted GitHub Flavored Markdown (GFM) in real-time, including:
+- **Headers and Text Formatting** (bold, italics, blocks)
+- **Fenced Code Blocks** with syntax highlighting
+- **Structured Data Tables**
+- **Bullet and Numbered Lists**
+
+---
+
+## Tool Execution Logs
+
+Unlike standard chat interfaces that hide agent actions, HUF Chat shows the agent's execution path:
+- **Tool Call Steps** — Shows which tool the agent is calling and the parameters passed (e.g. `slack.send_message`).
+- **Tool Output** — Summarizes or shows the result returned by the tool.
+- **Show/Hide Toggle** — Users can expand tool steps to inspect the raw data or collapse them to keep the chat clean.
+
+---
+
+## File & Image Attachments
+
+Users can upload files (PDFs, DOCX, TXT) and images directly into the chat:
+1. **Upload** — Files are saved via the `upload_file_and_process` endpoint.
+2. **OCR Parsing** — HUF runs OCR or vision models (`handle_ocr_document`) on the file.
+3. **In-Chat Preview** — Attached images display as inline previews, and document texts are injected into the agent's context as file-reference inputs.
+
+---
+
+## Performance & Cost Metrics
+
+For every agent message, HUF captures execution metrics directly inside the chat UI (visible to developers and managers):
+- **Input / Output / Total Tokens** used during the completion run.
+- **Run Cost** calculated in real-time using LiteLLM pricing metadata.
+- **Execution Time** (latency) of the agent's completion and tool calls.
+
+---
+
+## Run Feedback
+
+To capture quality metrics and improve agent performance, every agent response includes Thumbs Up / Thumbs Down feedback buttons. Submitting feedback creates an **Agent Run Feedback** record linked to the specific `Agent Run`, allowing administrators to audit low-rated outputs and adjust prompts.

@@ -1,0 +1,136 @@
+# Voice in Chat
+
+HUF supports voice input (speech-to-text) and voice output (text-to-speech) in the chat interface. This page covers both directions and how to configure them.
+
+## Recording Voice Messages
+
+Users can send voice messages directly in the chat UI:
+
+1. **Record** — Click the microphone button. The browser uses the MediaRecorder API to capture audio in webm format.
+2. **Stop** — Click again to finish recording.
+3. **Upload** — The audio blob is base64-encoded and sent to `huf.ai.agent_chat.upload_audio_and_transcribe` (desk chat) or `huf.ai.agent_chat.upload_audio_and_transcribe_web` (web/SaaS).
+4. **Save** — The audio file is saved in Frappe attached to an `Agent Message` with `kind = Audio`. The `voice_message` field stores the file URL.
+5. **Transcribe** — The transcription pipeline calls `sdk_tools.handle_transcribe_audio()`, which dispatches to the configured STT provider.
+6. **Run** — The transcript is passed to `run_agent_sync` as the user prompt.
+
+The chat UI shows an audio player for each recorded voice message so users can replay their input.
+
+## Transcription Pipeline
+
+Transcription is handled by `huf/ai/transcription_handler.py` through a generic provider dispatch pattern:
+
+```python
+execute_provider_capability(
+    provider="Groq",           # or "OpenAI", etc.
+    capability_method="transcribe_audio",
+    file_doc=file_doc,
+)
+```
+
+This calls `transcribe_audio()` on the provider's Settings singleton (e.g. `Groq Settings`, `OpenAI Settings`). This design lets you swap STT providers without changing agent code.
+
+### Groq Settings (STT)
+
+Configure in **Groq Settings** (singleton, accessible from HUF Settings):
+
+| Field | Description |
+|---|---|
+| `provider` | Link to the Groq AI Provider |
+| `api_url` | Groq transcription endpoint |
+| `model` | Model ID (e.g. `whisper-large-v3`) |
+| `auth_type` | `Bearer Token`, `API Key Header`, or `None` |
+| `file_param` | Multipart form file parameter name |
+| `enabled` | Must be checked to activate |
+
+### OpenAI Settings (STT)
+
+Identical structure to Groq Settings. Configure in **OpenAI Settings**:
+
+| Field | Description |
+|---|---|
+| `provider` | Link to the OpenAI AI Provider |
+| `api_url` | OpenAI transcription endpoint (`/v1/audio/transcriptions`) |
+| `model` | `whisper-1` or similar |
+| `enabled` | Must be checked (defaults to enabled) |
+
+## TTS Response Playback
+
+Agents can speak their responses back using text-to-speech. Configure on the Agent:
+
+| Field | Description |
+|---|---|
+| `tts_model` | Link to an AI Model configured for TTS (e.g. ElevenLabs, OpenAI TTS) |
+| `tts_voice` | Default voice identifier (e.g. `alloy`, `nova` for OpenAI; ElevenLabs voice IDs) |
+
+When `tts_model` is set, the agent's TTS API key is sourced from the **TTS model's own provider** (`AI Model → AI Provider`). This lets you use a different provider for TTS than for LLM inference — for example, GPT-4o for reasoning and ElevenLabs for voice.
+
+If `tts_model` is not set, HUF falls back to the main provider's default TTS model.
+
+The `generate_audio` tool (an SDK tool) accepts an optional `voice` argument that overrides `tts_voice` for a single call.
+
+## Voice Agent Pattern (STT → LLM → TTS)
+
+A fully voice-capable agent works as follows:
+
+```
+User speaks
+    ↓
+MediaRecorder (webm)
+    ↓
+upload_audio_and_transcribe()
+    ↓
+STT provider (Groq Whisper / OpenAI Whisper)
+    ↓  transcript text
+run_agent_sync(prompt=transcript)
+    ↓  text response
+generate_audio(text=response, voice=tts_voice)
+    ↓
+TTS provider (ElevenLabs / OpenAI TTS)
+    ↓  audio file
+Audio player in chat UI
+```
+
+This pipeline is entirely assembled from existing HUF components — no special agent type is needed. Configure `tts_model` + `tts_voice` on the agent, and point the STT Settings to your transcription provider.
+
+## ElevenLabs Settings
+
+For ElevenLabs TTS and Conversational AI:
+
+| Field | Description |
+|---|---|
+| `provider` | Link to ElevenLabs AI Provider (API key stored there) |
+| `agent_id` | ElevenLabs Conversational AI agent ID (for live audio) |
+| `webhook_secret` | HMAC secret for validating ElevenLabs webhook events |
+
+> [!NOTE]
+> ElevenLabs Conversational AI (live bidirectional audio streaming) is available in the current release. Configure `agent_id` in ElevenLabs Settings to enable it for your HUF agents.
+
+## Live Audio Streaming
+
+For real-time bidirectional voice conversations (no push-to-talk), HUF supports live audio via:
+
+- **ElevenLabs Conversational AI** — WebSocket-based streaming; configure `agent_id` in ElevenLabs Settings.
+- **OpenAI Realtime API** — Configure via OpenAI Settings; requires WebSocket support in the client.
+
+> [!IMPORTANT]
+> Live audio streaming requires the agent to have `tts_model` configured pointing to the appropriate provider. The browser connects to the provider's streaming endpoint via a WebSocket connection proxied through HUF.
+
+## `transcribe_only` Mode
+
+The `upload_audio_and_transcribe_web` endpoint supports a `transcribe_only=true` parameter. In this mode, the audio is transcribed but the agent is **not** run. The transcript is returned to the client, which can display it in the input box for the user to review and edit before sending.
+
+```
+POST /api/method/huf.ai.agent_chat.upload_audio_and_transcribe_web
+{
+  "filename": "recording.webm",
+  "b64data": "...",
+  "agent": "My Agent",
+  "transcribe_only": true
+}
+→ {
+  "success": true,
+  "conversation_id": "CONV-00001",
+  "transcript": "What is the status of my order?",
+  "message_id": "AGM-00099"
+}
+```

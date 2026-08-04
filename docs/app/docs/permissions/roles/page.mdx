@@ -1,0 +1,175 @@
+# Roles
+
+HUF's role system maps users to a set of capabilities via a **Huf Role**. Each user gets exactly one Huf Role, which determines what they can see and do within the HUF interface.
+
+## Huf User Role DocType
+
+The **Huf User Role** record links a Frappe user to a Huf Role:
+
+| Field | Description |
+|---|---|
+| `user` | Frappe user email (foreign key) |
+| `huf_role` | Link to a Huf Role |
+| `enabled` | Whether HUF access is active for this user |
+| `invited_by` | User who created this assignment |
+| `invited_on` | Timestamp of assignment |
+
+When `enabled = 0`, the user's Frappe Role assignment is removed immediately (via the controller's `after_insert`/`on_update` hooks), revoking all HUF DocType access.
+
+## Huf Role DocType
+
+The **Huf Role** document defines a named role with a child table of capabilities:
+
+| Field | Description |
+|---|---|
+| `role_name` | Unique name |
+| `description` | Human description |
+| `is_system_role` | If `1`, this is a built-in role (protected) |
+| `frappe_role` | The underlying Frappe Role that grants DocType access |
+
+The child table **Huf Role Permission** has one field per row:
+- `capability` — A capability key from the catalogue (e.g. `agent.create`)
+
+## Built-in Roles
+
+| Huf Role | Frappe Role | Summary |
+|---|---|---|
+| `Huf Admin` | `System Manager` | All capabilities |
+| `Huf Manager` | `Huf Manager` | Full feature management |
+| `Huf User` | `Huf User` | Feature usage (no create/delete) |
+| `Huf Viewer` | `Huf Viewer` | View-only access |
+
+Built-in roles cannot be deleted. Their capability sets can be updated via `update_huf_role` (requires `roles.manage`).
+
+## Managing Users via API
+
+### List All HUF Users
+
+```
+GET /api/method/huf.ai.permissions_api.get_users
+```
+
+Requires: `users.manage`
+
+Returns:
+```json
+[
+  {
+    "user": "alice@example.com",
+    "full_name": "Alice Smith",
+    "email": "alice@example.com",
+    "huf_role": "Huf Manager",
+    "enabled": 1,
+    "invited_by": "admin@example.com",
+    "invited_on": "2026-01-15 09:00:00"
+  }
+]
+```
+
+### Invite a User
+
+Creates a Frappe User record (if needed) and assigns a Huf Role in one step:
+
+```
+POST /api/method/huf.ai.permissions_api.invite_user
+{ "email": "bob@example.com", "full_name": "Bob Jones", "huf_role": "Huf User" }
+```
+
+Requires: `users.invite`
+
+### Change a User's Role
+
+```
+POST /api/method/huf.ai.permissions_api.update_user_role
+{ "user": "bob@example.com", "huf_role": "Huf Manager" }
+```
+
+Requires: `users.manage`
+
+This updates the Huf User Role record and syncs the underlying Frappe Role. The user's capability cache is busted immediately.
+
+### Enable / Disable a User
+
+```
+POST /api/method/huf.ai.permissions_api.set_user_enabled
+{ "user": "bob@example.com", "enabled": 0 }
+```
+
+Requires: `users.manage`
+
+Setting `enabled = 0` removes the user's Frappe Role assignment, revoking DocType access. Setting it back to `1` re-grants access.
+
+---
+
+## Managing Roles via API
+
+### List All Huf Roles
+
+```
+GET /api/method/huf.ai.permissions_api.get_huf_roles
+```
+
+Requires: `users.manage` or `roles.manage`
+
+Returns each role with its `capabilities` list.
+
+### View Capability Catalogue
+
+```
+GET /api/method/huf.ai.permissions_api.get_capabilities_catalogue
+```
+
+Requires: `roles.manage`
+
+Returns the full `{ capability_key: "Human Label" }` dictionary.
+
+### Create a Custom Role
+
+```
+POST /api/method/huf.ai.permissions_api.create_huf_role
+{
+  "role_name": "Support Agent",
+  "description": "Can use chat and agents; cannot create",
+  "capabilities": ["agent.use", "chat.use", "chat.view_own"]
+}
+```
+
+Requires: `roles.manage`
+
+### Update a Role's Capabilities
+
+Replaces the capability set completely:
+
+```
+POST /api/method/huf.ai.permissions_api.update_huf_role
+{
+  "role_name": "Support Agent",
+  "capabilities": ["agent.use", "chat.use", "chat.view_own", "knowledge.use"],
+  "description": "Updated description"
+}
+```
+
+Requires: `roles.manage`
+
+> [!WARNING]
+> `update_huf_role` replaces the entire capability set. Include all capabilities you want the role to retain, not just the new ones.
+
+---
+
+## Custom Roles Example
+
+Create a role for a specific team that can use agents and chat but cannot access knowledge or flows:
+
+```json
+{
+  "role_name": "Sales Team",
+  "description": "Sales reps using chat agents",
+  "capabilities": [
+    "agent.use",
+    "chat.use",
+    "chat.view_own"
+  ]
+}
+```
+
+After creating the role, assign it via `invite_user` or `update_user_role`.

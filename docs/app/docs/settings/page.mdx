@@ -1,0 +1,106 @@
+# Settings Overview
+
+HUF settings are split across several singleton DocTypes in the Frappe desk. This page gives an overview of where to find each setting and what it controls.
+
+## Agent Settings
+
+**Agent Settings** is a global singleton (`huf/huf/doctype/agent_settings`) accessible from the HUF Settings menu:
+
+| Field | Description |
+|---|---|
+| `default_provider` | Link to an AI Provider used as the site-wide default when no agent-specific provider is configured |
+| `default_model` | Link to an AI Model used as the site-wide default |
+
+This is also used internally to cache app-scan timestamps for the tool registry.
+
+## AI Provider
+
+**AI Provider** stores credentials for each LLM service. HUF routes all LLM calls through LiteLLM, so a single `AI Provider` record covers all models from that provider.
+
+| Field | Description |
+|---|---|
+| `provider_name` | Unique name (e.g. `OpenAI`, `Anthropic`, `Google`) |
+| `api_key` | API key stored as an encrypted Password field |
+
+Supported providers include: OpenAI, Anthropic, Google (Gemini), OpenRouter, xAI (Grok), Mistral, and 100+ others via LiteLLM.
+
+Create an AI Provider from **HUF → AI Provider → New**.
+
+## AI Model
+
+**AI Model** defines a specific model from a provider.
+
+| Field | Description |
+|---|---|
+| `model_name` | Model identifier (e.g. `gpt-4o`, `claude-3-5-sonnet`) |
+| `provider` | Link to the AI Provider |
+
+Model names are normalized to LiteLLM format automatically. You can use friendly names (`gpt-4-turbo`) or explicit LiteLLM format (`openai/gpt-4-turbo`).
+
+Create models from **HUF → AI Model → New**.
+
+## Prompt Caching
+
+Per-channel prompt cache behavior can be set in `site_config.json`:
+
+```json
+{
+  "huf_prompt_cache_defaults": {
+    "default": {
+      "openai_prompt_cache_retention": "24h"
+    },
+    "channels": {
+      "api": { "openai_prompt_cache_retention": "6h" },
+      "doc_event": { "openai_prompt_cache_retention": "24h" },
+      "sse_stream": { "openai_prompt_cache_retention": "24h" }
+    }
+  }
+}
+```
+
+These are non-UI settings applied globally. They can be overridden per-call by passing `prompt_cache_options` to `run_agent_sync`.
+
+## ElevenLabs Settings
+
+Singleton for ElevenLabs TTS and Conversational AI configuration:
+
+| Field | Description |
+|---|---|
+| `provider` | Link to the ElevenLabs AI Provider record |
+| `agent_id` | ElevenLabs Conversational AI agent ID |
+| `webhook_secret` | HMAC secret for validating incoming ElevenLabs webhooks |
+
+Navigate to **HUF Settings → ElevenLabs Settings**.
+
+## OpenAI Settings (STT)
+
+Singleton for configuring OpenAI as a speech-to-text provider:
+
+| Field | Description |
+|---|---|
+| `provider` | Link to the OpenAI AI Provider |
+| `api_url` | Transcription endpoint (e.g. `https://api.openai.com/v1/audio/transcriptions`) |
+| `model` | Model ID (e.g. `whisper-1`) |
+| `method` | HTTP method (`POST`) |
+| `auth_type` | `Bearer Token`, `API Key Header`, or `None` |
+| `file_param` | Multipart file parameter name (e.g. `file`) |
+| `response_path` | JSON path to the transcript in the response |
+| `enabled` | Must be checked (defaults to enabled) |
+
+## Groq Settings (STT)
+
+Identical structure to OpenAI Settings but for Groq's Whisper-compatible API:
+
+| Field | Description |
+|---|---|
+| `provider` | Link to the Groq AI Provider |
+| `api_url` | Groq transcription endpoint |
+| `model` | Model ID (e.g. `whisper-large-v3`) |
+| `enabled` | Must be checked to activate |
+
+Navigate to **HUF Settings → Groq Settings**.
+
+## See Also
+
+- [AI Providers & Models](./providers) — Detailed setup guide for each provider
+- [Voice Settings](./stt-tts) — Configuring STT and TTS providers
