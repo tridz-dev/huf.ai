@@ -5,8 +5,14 @@ import 'nextra-theme-docs/style.css'
 import './globals.css'
 
 export const metadata = {
-  title: 'HUF Documentation',
-  description: 'Documentation for HUF — the AI engine you actually control. Open-source agent infrastructure built on Frappe.'
+  title: {
+    default: 'Introduction',
+    template: '%s – HUF'
+  },
+  description: 'Documentation for HUF — the AI engine you actually control. Open-source agent infrastructure built on Frappe.',
+  icons: {
+    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }]
+  }
 }
 
 const navbar = (
@@ -16,7 +22,7 @@ const navbar = (
         <span style={{ fontFamily: "'Big Shoulders', sans-serif" }}>HUF</span>
       </>
     }
-    projectLink="https://github.com/tridz-dev/agent_flo"
+    projectLink="https://github.com/tridz-dev/huf"
   />
 )
 
@@ -84,12 +90,14 @@ export default async function RootLayout({ children }) {
   
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <Head />
+      <Head>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+      </Head>
       <body>
         <Layout
           navbar={navbar}
           pageMap={sortedPageMap}
-          docsRepositoryBase="https://github.com/tridz-dev/agent_flo/tree/main/docs"
+          docsRepositoryBase="https://github.com/tridz-dev/huf/tree/main/docs"
           footer={footer}
         >
           {children}

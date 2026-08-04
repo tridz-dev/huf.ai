@@ -240,6 +240,39 @@ aside.nextra-sidebar {
   border-right: 1px solid var(--color-border) !important;
 }
 
+/* Reduce Nextra's default x:p-4 left padding on the nav scroll area */
+aside.nextra-sidebar .nextra-scrollbar {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Theme switcher / sidebar toggle — no separate white container;
+   sidebar background is enough */
+aside.nextra-sidebar .nextra-sidebar-footer,
+aside.nextra-sidebar [class*="bg-nextra-bg"].nextra-sidebar-footer,
+aside.nextra-sidebar div[class*="sticky"][class*="bottom-0"] {
+  background-color: transparent !important;
+  background: transparent !important;
+  border-top-color: transparent !important;
+  margin-left: 0.5rem !important;
+  margin-right: 0.5rem !important;
+  box-shadow: none !important;
+}
+
+aside.nextra-sidebar .nextra-sidebar-footer button,
+aside.nextra-sidebar .nextra-sidebar-footer [role="listbox"],
+aside.nextra-sidebar .nextra-sidebar-footer [role="button"] {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+aside.nextra-sidebar .nextra-sidebar-footer button:hover,
+aside.nextra-sidebar .nextra-sidebar-footer button:focus,
+aside.nextra-sidebar .nextra-sidebar-footer [role="button"]:hover {
+  background-color: var(--color-bg) !important;
+}
+
 /* Sidebar nav links */
 .nextra-sidebar a,
 aside.nextra-sidebar a {
@@ -278,10 +311,9 @@ aside.nextra-sidebar li.active > button::before {
   background-color: var(--color-accent) !important;
 }
 
-/* Sidebar section/folder labels */
-.nextra-sidebar button,
-.nextra-sidebar [class*='folder'],
-aside.nextra-sidebar button {
+/* Sidebar section/folder labels (exclude theme switch / collapse footer) */
+aside.nextra-sidebar .nextra-scrollbar button,
+aside.nextra-sidebar .nextra-scrollbar [class*='folder'] {
   font-family: var(--font-mono) !important;
   font-size: 9.5px !important;
   letter-spacing: 0.12em !important;
@@ -1761,6 +1793,14 @@ nav[aria-label='breadcrumb'] {
 }
 
 /* --------------------------------------------------------------------------
+   Last updated date — hidden (Nextra timestamp disabled via _meta.json)
+   Fallback if a page re-enables theme.timestamp:
+   article > div.x\:mt-12.x\:mb-8.x\:text-xs.x\:text-end {
+     display: none !important;
+   }
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
    Mermaid diagrams
    -------------------------------------------------------------------------- */
 .huf-mermaid {
@@ -1770,13 +1810,30 @@ nav[aria-label='breadcrumb'] {
   padding: var(--space-5);
   margin: var(--space-6) 0;
   overflow-x: auto;
+  overflow-y: hidden;
+  min-height: 8rem;
 }
 
 .huf-mermaid svg {
-  max-width: 100%;
-  height: auto;
   display: block;
   margin: 0 auto;
+  min-width: min(100%, 32rem);
+  width: auto;
+  max-width: none;
+  height: auto;
+}
+
+.huf-mermaid--error {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.huf-mermaid--error pre {
+  margin: 0 0 var(--space-3);
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
 }
 
 .huf-mermaid .node rect,

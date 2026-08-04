@@ -2,9 +2,9 @@
 export default {
   logo: <span style={{ fontWeight: 800 }}>Huf</span>,
   project: {
-    link: 'https://github.com/tridz-dev/agent_flo'
+    link: 'https://github.com/tridz-dev/huf'
   },
-  docsRepositoryBase: 'https://github.com/tridz-dev/agent_flo/tree/main/docs',
+  docsRepositoryBase: 'https://github.com/tridz-dev/huf/tree/main/docs',
   search: {
     placeholder: 'Search documentation...'
   },

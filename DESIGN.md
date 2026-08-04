@@ -541,7 +541,7 @@ Use tabs to collapse long use-case cards or multi-section config into a compact 
 
 ```mdx
 <Button href="/docs/quick-start" variant="solid">Get started</Button>
-<Button href="https://github.com/tridz-dev/agent_flo" variant="ghost">View on GitHub</Button>
+<Button href="https://github.com/tridz-dev/huf" variant="ghost">View on GitHub</Button>
 ```
 
 Use `variant="solid"` or `variant="ghost"`. External URLs automatically render with `target="_blank"` and `rel="noreferrer"`.
