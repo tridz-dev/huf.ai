@@ -1,6 +1,6 @@
 // This file is kept for Nextra compatibility but configuration is in app/layout.jsx
 export default {
-  logo: <span style={{ fontWeight: 800 }}>Huf</span>,
+  logo: <span style={{ fontWeight: 590 }}>Huf</span>,
   project: {
     link: 'https://github.com/tridz-dev/huf'
   },

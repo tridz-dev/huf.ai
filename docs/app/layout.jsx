@@ -26,7 +26,8 @@ const navbar = (
   <Navbar
     logo={
       <>
-        <span style={{ fontFamily: "'Big Shoulders', sans-serif" }}>HUF</span>
+        <img src="/huf.svg" alt="" aria-hidden="true" />
+        <span>Huf</span>
       </>
     }
     projectLink="https://github.com/tridz-dev/huf"

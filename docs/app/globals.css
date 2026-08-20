@@ -1,73 +1,84 @@
 /* ==========================================================================
    HUF Documentation — Design System
-   Aesthetic: Instrument / Control-Room
-   Fonts: Big Shoulders (display) + Archivo (body) + Martian Mono (data)
+   HUF DESIGN.md v3.0
+   System type stack, hairline structure, one accent. Uppercase lives only
+   in mono; accent marks state, never commit actions.
    ========================================================================== */
-
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500;10..72,600;10..72,700&family=Archivo:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap');
 
 /* --------------------------------------------------------------------------
    Design Tokens — Light Mode
    -------------------------------------------------------------------------- */
 :root {
-  /* Surfaces */
-  --color-bg:             #F2F3EF;   /* paper */
-  --color-bg-secondary:   #E9EBE4;   /* paper-deep */
-  --color-surface:        #FBFCFA;   /* panel */
-  --color-border:         #D7DACF;   /* line (product) */
-  --color-border-subtle:  #E3E5DD;
+  /* Neutrals */
+  --color-bg:             #FBFBFD;   /* canvas */
+  --color-bg-secondary:   #F4F4F7;   /* sunken */
+  --color-surface:        #FFFFFF;   /* surface */
+  --color-border:         #ECECF0;   /* hairline */
+  --color-border-subtle:  #F4F4F7;
+  --color-border-strong:  #E4E4E8;   /* control edge */
 
   /* Text hierarchy */
-  --color-text-primary:   #15181C;   /* ink */
-  --color-text-secondary: #5A636F;   /* steel */
-  --color-text-muted:     #8A929C;   /* steel-soft */
+  --color-text-primary:   #1D1D1F;
+  --color-text-secondary: #6E6E73;
+  --color-text-muted:     #98989D;
+  --color-text-disabled:  #B8B8BD;
 
-  /* Signal — the only accent */
-  --color-accent:         #E8531F;   /* signal */
-  --color-accent-subtle:  #F2F3EF;
-  --color-accent-hover:   #BC3E0F;   /* signal-ink */
+  /* Accent — marks state only: active nav, selected tile, focus ring */
+  --color-accent:         #6D4AFF;
+  --color-accent-subtle:  #F1EDFF;
+  --color-accent-hover:   #5A38E8;
+
+  /* Semantic — tints behind text, never fills larger than a badge */
+  --color-success:        #1C7C54;
+  --color-success-tint:   #E8F5EE;
+  --color-warning:        #8A5A00;
+  --color-warning-tint:   #FDF3E0;
+  --color-danger:         #B3261E;
+  --color-danger-tint:    #FDECEA;
 
   /* Links */
-  --color-link:           #BC3E0F;   /* signal-ink */
-  --color-link-hover:     #E8531F;   /* signal */
+  --color-link:           #0A6DD9;
+  --color-link-hover:     #084F9E;
 
   /* Code */
-  --color-code-bg:        #E9EBE4;
-  --color-code-text:      #15181C;
+  --color-code-bg:        #F4F4F7;
+  --color-code-text:      #1D1D1F;
 
   /* Sidebar */
-  --color-sidebar-bg:     #E9EBE4;
-  --color-toc-active:     #E8531F;
+  --color-sidebar-bg:     #FBFBFD;
+  --color-toc-active:     #6D4AFF;
 
-  /* Typography */
-  --font-display:  'Big Shoulders', sans-serif;
-  --font-body:     'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono:     'Martian Mono', 'Fira Code', 'Cascadia Code', monospace;
+  /* Typography — system stack; mono for machine values only */
+  --font-body:     -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+                   'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display:  var(--font-body);
+  --font-mono:     ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Type scale */
-  --text-xs:    0.6875rem;   /* 11px */
-  --text-sm:    0.8125rem;   /* 13px */
-  --text-base:  0.9375rem;   /* 15px */
+  --text-xs:    0.6875rem;   /* 11px — mono meta */
+  --text-sm:    0.8125rem;   /* 13px — UI */
+  --text-base:  0.9375rem;   /* 15px — body */
   --text-lg:    1.0625rem;   /* 17px */
-  --text-xl:    1.25rem;     /* 20px */
-  --text-2xl:   1.5625rem;   /* 25px */
+  --text-xl:    1.25rem;     /* 20px — page title */
+  --text-2xl:   1.5rem;      /* 24px — section title */
   --text-3xl:   2rem;        /* 32px */
-  --text-4xl:   2.5rem;      /* 40px */
+  --text-4xl:   2.5rem;      /* 40px — display */
   --text-5xl:   3.25rem;     /* 52px */
 
   /* Line heights */
-  --leading-tight:   0.92;
-  --leading-snug:    1.18;
+  --leading-tight:   1.08;
+  --leading-snug:    1.2;
   --leading-normal:  1.55;
-  --leading-relaxed: 1.7;
+  --leading-relaxed: 1.65;
 
   /* Letter spacing */
-  --tracking-tight:   -0.01em;
+  --tracking-display: -0.022em;
+  --tracking-tight:   -0.015em;
   --tracking-normal:  0em;
   --tracking-wide:    0.05em;
-  --tracking-widest:  0.14em;
+  --tracking-widest:  0.07em;
 
-  /* Spacing scale */
+  /* Spacing scale — 4 · 8 · 12 · 16 · 24 · 32 · 48 */
   --space-1:  0.25rem;
   --space-2:  0.5rem;
   --space-3:  0.75rem;
@@ -79,16 +90,16 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Border radius */
-  --radius-sm: 2px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
+  /* Border radius — controls 8, cards 14 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
 
   /* Shadows */
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: none;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px -8px rgba(0, 0, 0, 0.16);
 
   /* Motion */
   --duration-fast:   120ms;
@@ -97,41 +108,50 @@
   --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Wire into Nextra's primary hue — signal orange */
-  --nextra-primary-hue: 17;
-  --nextra-primary-saturation: 82%;
+  /* Wire into Nextra's primary hue — accent violet */
+  --nextra-primary-hue: 253;
+  --nextra-primary-saturation: 100%;
 }
 
 /* --------------------------------------------------------------------------
    Design Tokens — Dark Mode (control plane)
    -------------------------------------------------------------------------- */
 .dark {
-  --color-bg:             #15181C;   /* ink */
-  --color-bg-secondary:   #1E2228;
-  --color-surface:        #1E2228;
-  --color-border:         #343A42;   /* line-dark */
-  --color-border-subtle:  #2A2F36;
+  --color-bg:             #101012;
+  --color-bg-secondary:   #1C1C20;
+  --color-surface:        #17171A;
+  --color-border:         #2A2A2F;
+  --color-border-subtle:  #232327;
+  --color-border-strong:  #34343A;
 
-  --color-text-primary:   #F2F3EF;   /* paper */
-  --color-text-secondary: #9AA3AE;
-  --color-text-muted:     #6A737E;
+  --color-text-primary:   #F5F5F7;
+  --color-text-secondary: #A1A1A8;
+  --color-text-muted:     #7C7C85;
+  --color-text-disabled:  #5A5A62;
 
-  --color-accent:         #E8531F;   /* signal */
-  --color-accent-subtle:  #2A1A14;
-  --color-accent-hover:   #F26A36;
+  --color-accent:         #8B6DFF;
+  --color-accent-subtle:  #221B3D;
+  --color-accent-hover:   #A48CFF;
 
-  --color-link:           #F26A36;
-  --color-link-hover:     #FF8A5C;
+  --color-success:        #4BB07A;
+  --color-success-tint:   #14261D;
+  --color-warning:        #D9A343;
+  --color-warning-tint:   #2A2113;
+  --color-danger:         #E5776E;
+  --color-danger-tint:    #2E1917;
 
-  --color-code-bg:        #1E2228;
-  --color-code-text:      #F2F3EF;
+  --color-link:           #6BA5F5;
+  --color-link-hover:     #93BEF8;
 
-  --color-sidebar-bg:     #15181C;
-  --color-toc-active:     #E8531F;
+  --color-code-bg:        #1C1C20;
+  --color-code-text:      #F5F5F7;
 
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: none;
+  --color-sidebar-bg:     #101012;
+  --color-toc-active:     #8B6DFF;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
 }
 
 /* --------------------------------------------------------------------------
@@ -169,8 +189,8 @@ body {
 
 /* Selection */
 ::selection {
-  background-color: var(--color-accent);
-  color: var(--color-bg);
+  background-color: color-mix(in srgb, var(--color-accent) 24%, transparent);
+  color: var(--color-text-primary);
 }
 
 /* --------------------------------------------------------------------------
@@ -185,44 +205,38 @@ nav[class*='nextra-nav'] {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Navbar logo — HUF wordmark + signal square */
+/* Navbar logo — mark + wordmark */
 header a[href='/'],
 .nextra-navbar a[href='/'],
 nav a[href='/'] {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 header a[href='/'] span,
 .nextra-navbar a[href='/'] span,
 nav a[href='/'] span {
-  font-family: var(--font-display) !important;
-  font-weight: 700 !important;
-  font-size: 1.4rem !important;
-  letter-spacing: 0.02em !important;
-  text-transform: uppercase !important;
+  font-family: var(--font-body) !important;
+  font-weight: 590 !important;
+  font-size: 0.9375rem !important;
+  letter-spacing: -0.012em !important;
   color: var(--color-text-primary) !important;
 }
 
-/* Signal square mark before logo text */
-header a[href='/']::before,
-.nextra-navbar a[href='/']::before {
-  content: "" !important;
-  width: 10px !important;
-  height: 10px !important;
-  background-color: var(--color-accent) !important;
-  display: inline-block !important;
+header a[href='/'] img,
+.nextra-navbar a[href='/'] img {
+  height: 20px !important;
+  width: auto !important;
   flex: none !important;
 }
 
 /* Nav links */
 header nav a,
 .nextra-navbar nav a {
-  font-family: var(--font-mono) !important;
-  font-size: 11px !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
+  font-family: var(--font-body) !important;
+  font-size: var(--text-sm) !important;
+  letter-spacing: var(--tracking-normal) !important;
   color: var(--color-text-secondary) !important;
   transition: color var(--duration-fast) var(--ease-out);
 }
@@ -280,7 +294,7 @@ aside.nextra-sidebar a {
   font-size: var(--text-sm) !important;
   font-weight: 400 !important;
   color: var(--color-text-secondary) !important;
-  border-radius: 0 !important;
+  border-radius: var(--radius-md) !important;
   transition: color var(--duration-fast) var(--ease-out),
               background-color var(--duration-fast) var(--ease-out) !important;
 }
@@ -288,35 +302,25 @@ aside.nextra-sidebar a {
 .nextra-sidebar a:hover,
 aside.nextra-sidebar a:hover {
   color: var(--color-text-primary) !important;
-  background-color: var(--color-bg) !important;
+  background-color: var(--color-bg-secondary) !important;
 }
 
-/* Active sidebar link — signal left rail */
+/* Active sidebar link — a filled pill, not a left bar. The softer shape
+   reads calmer at rest, and the accent marks state rather than filling. */
 aside.nextra-sidebar li.active > a,
 aside.nextra-sidebar li.active > button {
   color: var(--color-text-primary) !important;
   font-weight: 500 !important;
-  background-color: var(--color-surface) !important;
-  position: relative !important;
-}
-
-aside.nextra-sidebar li.active > a::before,
-aside.nextra-sidebar li.active > button::before {
-  content: "" !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  width: 2px !important;
-  background-color: var(--color-accent) !important;
+  background-color: var(--color-accent-subtle) !important;
+  border-radius: var(--radius-md) !important;
 }
 
 /* Sidebar section/folder labels (exclude theme switch / collapse footer) */
 aside.nextra-sidebar .nextra-scrollbar button,
 aside.nextra-sidebar .nextra-scrollbar [class*='folder'] {
   font-family: var(--font-mono) !important;
-  font-size: 9.5px !important;
-  letter-spacing: 0.12em !important;
+  font-size: 10px !important;
+  letter-spacing: var(--tracking-widest) !important;
   text-transform: uppercase !important;
   color: var(--color-text-muted) !important;
   font-weight: 400 !important;
@@ -368,25 +372,24 @@ nav.nextra-toc a[aria-selected='true'] {
    Article Content — Typography
    -------------------------------------------------------------------------- */
 
-/* H1 — Big Shoulders, the one display moment */
+/* H1 — the one display moment; sentence case, tight tracking */
 article h1 {
-  font-family: var(--font-display) !important;
+  font-family: var(--font-body) !important;
   font-size: var(--text-4xl) !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.005em !important;
+  font-weight: 600 !important;
+  letter-spacing: var(--tracking-display) !important;
   line-height: var(--leading-tight) !important;
-  text-transform: uppercase !important;
   color: var(--color-text-primary) !important;
   margin-top: 0 !important;
   margin-bottom: var(--space-6) !important;
 }
 
-/* H2 — Archivo semibold, chapter break */
+/* H2 — chapter break */
 article h2 {
   font-family: var(--font-body) !important;
   font-size: var(--text-2xl) !important;
   font-weight: 600 !important;
-  letter-spacing: var(--tracking-normal) !important;
+  letter-spacing: var(--tracking-tight) !important;
   line-height: var(--leading-snug) !important;
   color: var(--color-text-primary) !important;
   margin-top: var(--space-16) !important;
@@ -405,8 +408,8 @@ article > h1 + p + h2 {
 article h3 {
   font-family: var(--font-body) !important;
   font-size: var(--text-xl) !important;
-  font-weight: 600 !important;
-  letter-spacing: var(--tracking-normal) !important;
+  font-weight: 590 !important;
+  letter-spacing: var(--tracking-tight) !important;
   line-height: var(--leading-snug) !important;
   color: var(--color-text-primary) !important;
   margin-top: var(--space-10) !important;
@@ -604,10 +607,9 @@ article table td:nth-child(3) strong {
    -------------------------------------------------------------------------- */
 article blockquote {
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
   background-color: var(--color-bg-secondary);
   padding: var(--space-4) var(--space-5);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-xl);
   margin: var(--space-6) 0;
   color: var(--color-text-secondary);
   font-style: normal;
@@ -622,17 +624,18 @@ article blockquote strong:first-child {
   color: var(--color-text-primary);
 }
 
-/* Nextra callout boxes */
+/* Nextra callout boxes — a tint behind text, not a coloured rail */
 [class*='callout'],
 [data-nextra-icon] {
-  border-radius: var(--radius-md) !important;
+  border-radius: var(--radius-xl) !important;
   border: 1px solid var(--color-border) !important;
-  border-left: 3px solid var(--color-accent) !important;
-  background-color: var(--color-bg-secondary) !important;
+  background-color: var(--color-accent-subtle) !important;
   color: var(--color-text-secondary) !important;
+  padding: var(--space-4) var(--space-5) !important;
+  margin: var(--space-6) 0 !important;
 }
 
-/* Hide default emoji icon to keep industrial/mono aesthetic */
+/* Hide the default emoji icon; the tint already sets the box apart */
 [class*='callout'] > div:first-child {
   display: none !important;
 }
@@ -640,12 +643,18 @@ article blockquote strong:first-child {
 /* Callout text */
 [class*='callout'] p {
   color: var(--color-text-secondary) !important;
+  margin: 0 !important;
 }
 
 /* Variant callout types */
 [class*='callout'][data-type='warning'],
 [class*='callout'][data-callout='warning'] {
-  border-left-color: var(--color-accent) !important;
+  background-color: var(--color-warning-tint) !important;
+}
+
+[class*='callout'][data-type='error'],
+[class*='callout'][data-callout='error'] {
+  background-color: var(--color-danger-tint) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -654,12 +663,11 @@ article blockquote strong:first-child {
 .nextra-search input,
 [class*='SearchInput'] input,
 [role='searchbox'] {
-  font-family: var(--font-mono) !important;
-  font-size: 11px !important;
-  letter-spacing: 0.06em !important;
-  text-transform: uppercase !important;
+  font-family: var(--font-body) !important;
+  font-size: var(--text-sm) !important;
+  letter-spacing: var(--tracking-normal) !important;
   background-color: var(--color-surface) !important;
-  border: 1px solid var(--color-border) !important;
+  border: 1px solid var(--color-border-strong) !important;
   border-radius: var(--radius-md) !important;
   color: var(--color-text-primary) !important;
   transition: border-color var(--duration-fast) var(--ease-out) !important;
@@ -669,7 +677,7 @@ article blockquote strong:first-child {
 [role='searchbox']:focus {
   border-color: var(--color-accent) !important;
   outline: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent) !important;
 }
 
 /* Search results dropdown */
@@ -778,43 +786,33 @@ kbd,
 }
 
 /* --------------------------------------------------------------------------
-   Eyebrow utility (signal-square marker + mono uppercase label)
+   Eyebrow utility — mono uppercase label. Uppercase lives only in mono.
    -------------------------------------------------------------------------- */
 .huf-eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-widest);
   text-transform: uppercase;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-}
-
-.huf-eyebrow::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  background-color: var(--color-accent);
-  display: inline-block;
-  flex: none;
 }
 
 /* --------------------------------------------------------------------------
    Button utilities
    -------------------------------------------------------------------------- */
 .huf-btn {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 14px 24px;
-  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: var(--tracking-normal);
+  padding: 9px 16px;
+  border-radius: 9px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid var(--color-text-primary);
+  gap: 7px;
+  border: 1px solid transparent;
   transition: background-color var(--duration-fast) var(--ease-out),
               color var(--duration-fast) var(--ease-out),
               border-color var(--duration-fast) var(--ease-out);
@@ -823,24 +821,22 @@ kbd,
 
 .huf-btn-solid {
   background-color: var(--color-text-primary);
-  color: var(--color-bg);
-  border-color: var(--color-text-primary);
+  color: var(--color-surface);
 }
 
 .huf-btn-solid:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-bg);
+  opacity: 0.88;
 }
 
 .huf-btn-ghost {
   color: var(--color-text-primary);
-  background-color: transparent;
+  background-color: var(--color-surface);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-sm);
 }
 
 .huf-btn-ghost:hover {
-  background-color: var(--color-text-primary);
-  color: var(--color-bg);
+  background-color: var(--color-bg-secondary);
 }
 
 /* --------------------------------------------------------------------------
@@ -939,8 +935,7 @@ kbd,
    -------------------------------------------------------------------------- */
 .huf-use-case {
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-xl);
   background-color: var(--color-surface);
   padding: var(--space-6);
   margin: var(--space-8) 0;
@@ -976,7 +971,7 @@ kbd,
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   margin-bottom: var(--space-2);
 }
 
@@ -1061,7 +1056,7 @@ kbd,
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   background-color: var(--color-bg);
   margin-top: var(--space-3);
 }
@@ -1142,7 +1137,7 @@ kbd,
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   margin-bottom: var(--space-2);
 }
 
@@ -1175,12 +1170,12 @@ kbd,
 }
 
 .huf-step-counter {
-  font-family: var(--font-display);
-  font-size: 2.25rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 2rem;
+  font-weight: 600;
   line-height: 1;
-  color: var(--color-accent);
-  border-top: 2px solid var(--color-accent);
+  color: var(--color-text-primary);
+  border-top: 1px solid var(--color-border);
   padding-top: var(--space-2);
   text-align: right;
 }
@@ -1243,8 +1238,7 @@ kbd,
    -------------------------------------------------------------------------- */
 .huf-cli-note {
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-text-muted);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
@@ -1327,8 +1321,7 @@ kbd,
 
 .huf-chat-bubble--system .huf-chat-body {
   background-color: var(--color-bg);
-  border-left: 3px solid var(--color-text-muted);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-lg);
 }
 
 .huf-chat-bubble--tool-call .huf-chat-body,
@@ -1336,8 +1329,7 @@ kbd,
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   background-color: var(--color-bg);
-  border-left: 3px solid var(--color-accent);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-xl);
   white-space: pre-wrap;
 }
 
@@ -1350,8 +1342,7 @@ kbd,
    -------------------------------------------------------------------------- */
 .huf-prompt {
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-xl);
   background-color: var(--color-bg-secondary);
   margin: var(--space-6) 0;
   overflow: hidden;
@@ -1372,7 +1363,7 @@ kbd,
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
 }
 
 .huf-prompt-title {
@@ -1442,7 +1433,7 @@ kbd,
 }
 
 .huf-token-total {
-  color: var(--color-accent);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -1483,7 +1474,7 @@ kbd,
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   margin-bottom: var(--space-3);
 }
 
@@ -1600,11 +1591,11 @@ kbd,
 
 .huf-dodont-col--do {
   border-right: 1px solid var(--color-border);
-  background-color: color-mix(in srgb, var(--color-bg) 97%, #22c55e);
+  background-color: var(--color-success-tint);
 }
 
 .huf-dodont-col--dont {
-  background-color: color-mix(in srgb, var(--color-bg) 97%, #ef4444);
+  background-color: var(--color-danger-tint);
 }
 
 .huf-dodont-title {
@@ -1617,11 +1608,11 @@ kbd,
 }
 
 .huf-dodont-col--do .huf-dodont-title {
-  color: #15803d;
+  color: var(--color-success);
 }
 
 .huf-dodont-col--dont .huf-dodont-title {
-  color: #b91c1c;
+  color: var(--color-danger);
 }
 
 .huf-dodont-col ul {

@@ -1,78 +1,93 @@
 # HUF Design System
 
-> Instrument / Control-Room aesthetic for the HUF documentation site.
-> Built on Next.js 15 + Nextra 4. Source of truth: `docs/app/globals.css`.
+> Documentation site styling for HUF. Built on Next.js 15 + Nextra 4.
+> **Source of truth:** `docs/app/globals.css`. **Status:** v3.0.
 
 ---
 
 ## 1. Design Philosophy
 
-The HUF docs are styled like a **control-room interface**: readable under pressure, high information density, and restrained. There is one accent color (signal orange) used sparingly to mark state, links, and active elements. Everything else is near-black ink, warm paper, and cool steel.
+**v3.0 change:** this replaces the v2 "instrument / control-room" language (warm paper, condensed uppercase display type, orange signal, 2px corners) with a quieter system — near-white canvas, the platform UI type stack, hairline structure, soft radii, and a single violet accent reserved for *state*.
+
+The docs are something people read for a long time. v3 optimizes for that: structure comes from surface steps and hairlines, not from borders and caps, and color is spent almost nowhere so that when it appears it means something.
 
 Principles:
 
-- **One accent only.** Orange is the signal. Everything else is neutral.
-- **Flat surfaces.** No drop shadows; depth is created with borders and background tiers.
-- **Sharp corners.** Radius is `2px` everywhere.
-- **Mono labels, sans body, display headings.** Information hierarchy is conveyed through typeface, size, and letter-spacing, not color.
-- **Borders as structure.** Grids and panels are separated with 1px hairlines.
+- **One accent, and it marks state.** Violet appears on the active sidebar row, the active TOC entry, and focus rings. Never on labels, figures, icons, or commit buttons.
+- **Sentence case everywhere.** Uppercase lives only in mono — eyebrows, column heads, group labels.
+- **Hairlines as structure.** `#ECECF0` dividers, never doubled where two surfaces meet.
+- **Soft corners.** Controls at 8px, cards at 14px. No square corners, no hard black borders.
+- **Mono is a voice, not a decoration.** It marks machine values: ids, model names, timestamps, paths, counts.
+- **Two shadow steps.** A 1px raise and an overlay. Nothing else.
 
 ---
 
 ## 2. Design Tokens
 
-Tokens are defined as CSS custom properties in `docs/app/globals.css` under `:root` (light) and `.dark` (dark mode).
+Tokens are CSS custom properties in `docs/app/globals.css` under `:root` (light) and `.dark`.
 
 ### 2.1 Surfaces
 
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
-| `--color-bg` | `#F2F3EF` | `#15181C` | Page background |
-| `--color-bg-secondary` | `#E9EBE4` | `#1E2228` | Sidebar, code backgrounds, secondary panels |
-| `--color-surface` | `#FBFCFA` | `#1E2228` | Cards, popovers, active sidebar rows |
-| `--color-border` | `#D7DACF` | `#343A42` | Primary borders, dividers |
-| `--color-border-subtle` | `#E3E5DD` | `#2A2F36` | Table row separators, subtle dividers |
+| `--color-bg` | `#FBFBFD` | `#101012` | Page background (canvas) |
+| `--color-bg-secondary` | `#F4F4F7` | `#1C1C20` | Sunken fills — table heads, code wells, hover |
+| `--color-surface` | `#FFFFFF` | `#17171A` | Cards, panels, elevated content |
+| `--color-border` | `#ECECF0` | `#2A2A2F` | Hairlines — every divider and card edge |
+| `--color-border-subtle` | `#F4F4F7` | `#232327` | Internal rules inside a panel |
+| `--color-border-strong` | `#E4E4E8` | `#34343A` | Control borders — inputs, secondary buttons |
 
 ### 2.2 Text
 
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
-| `--color-text-primary` | `#15181C` | `#F2F3EF` | Headings, strong text, primary body |
-| `--color-text-secondary` | `#5A636F` | `#9AA3AE` | Body paragraphs, captions, descriptions |
-| `--color-text-muted` | `#8A929C` | `#6A737E` | Labels, folder names, disabled/meta text |
+| `--color-text-primary` | `#1D1D1F` | `#F5F5F7` | Headings, body emphasis, commit fills |
+| `--color-text-secondary` | `#6E6E73` | `#A1A1A8` | Reading text, descriptions |
+| `--color-text-muted` | `#98989D` | `#7C7C85` | Eyebrows, metadata, mono labels |
+| `--color-text-disabled` | `#B8B8BD` | `#5A5A62` | Disabled labels |
 
-### 2.3 Signal / Accent
+### 2.3 Accent
 
 | Token | Light | Dark | Usage |
 |-------|-------|------|-------|
-| `--color-accent` | `#E8531F` | `#E8531F` | Active states, links hover, markers, primary CTA |
-| `--color-accent-hover` | `#BC3E0F` | `#F26A36` | Link color, hover states |
-| `--color-accent-subtle` | `#F2F3EF` | `#2A1A14` | Tinted backgrounds (rare) |
+| `--color-accent` | `#6D4AFF` | `#8B6DFF` | **State only:** active sidebar row, active TOC link, focus ring |
+| `--color-accent-subtle` | `#F1EDFF` | `#221B3D` | Active-row fill, note callouts |
+| `--color-accent-hover` | `#5A38E8` | `#A48CFF` | Accent hover |
 
-### 2.4 Links
+Accent never fills a commit button — those are `--color-text-primary` (ink). Accent never colors a figure, a label, or an icon.
+
+### 2.4 Semantic
+
+| Token | Light | Dark | Tint token |
+|-------|-------|------|-----------|
+| `--color-success` | `#1C7C54` | `#4BB07A` | `--color-success-tint` |
+| `--color-warning` | `#8A5A00` | `#D9A343` | `--color-warning-tint` |
+| `--color-danger` | `#B3261E` | `#E5776E` | `--color-danger-tint` |
+
+Semantic colors appear as 10–12% tints behind text — never as fills larger than a badge.
+
+### 2.5 Links
 
 | Token | Light | Dark |
 |-------|-------|------|
-| `--color-link` | `#BC3E0F` | `#F26A36` |
-| `--color-link-hover` | `#E8531F` | `#FF8A5C` |
+| `--color-link` | `#0A6DD9` | `#6BA5F5` |
+| `--color-link-hover` | `#084F9E` | `#93BEF8` |
 
-Links use a 1px bottom border at 40% opacity instead of underlines.
-
-### 2.5 Code
+### 2.6 Code
 
 | Token | Light | Dark |
 |-------|-------|------|
-| `--color-code-bg` | `#E9EBE4` | `#1E2228` |
-| `--color-code-text` | `#15181C` | `#F2F3EF` |
+| `--color-code-bg` | `#F4F4F7` | `#1C1C20` |
+| `--color-code-text` | `#1D1D1F` | `#F5F5F7` |
 
-### 2.6 Nextra Theme Overrides
+### 2.7 Nextra theme overrides
 
 ```css
---nextra-primary-hue: 17;
---nextra-primary-saturation: 82%;
+--nextra-primary-hue: 253;
+--nextra-primary-saturation: 100%;
 ```
 
-This wires Nextra's active-link / search highlight into the signal orange.
+These drive Nextra's own primary-colored chrome so it matches the accent.
 
 ---
 
@@ -80,360 +95,171 @@ This wires Nextra's active-link / search highlight into the signal orange.
 
 ### 3.1 Typefaces
 
-| Role | Font | Fallback |
-|------|------|----------|
-| Display | Big Shoulders | `sans-serif` |
-| Body | Archivo | system sans stack |
-| Mono / Data | Martian Mono | `Fira Code`, `Cascadia Code`, monospace |
-
-Loaded via Google Fonts:
+No webfonts are loaded — the platform UI stack renders natively everywhere and is calmer at reading sizes than any condensed display face.
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,500;10..72,600;10..72,700&family=Archivo:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap');
+--font-body:    -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+                'Helvetica Neue', Helvetica, Arial, sans-serif;
+--font-display: var(--font-body);   /* kept as an alias; there is no second face */
+--font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 ```
 
-### 3.2 Type Scale
+Mono is for **machine values only**: ids, model names, timestamps, paths, counts, and the uppercase eyebrow/column-head voice.
+
+### 3.2 Type scale
 
 | Token | Size | Usage |
 |-------|------|-------|
-| `--text-xs` | 11px | Captions, labels, TOC |
-| `--text-sm` | 13px | Tables, navigation, small UI |
-| `--text-base` | 15px | Body paragraphs, lists |
-| `--text-lg` | 17px | Lead paragraphs |
-| `--text-xl` | 20px | H3 |
-| `--text-2xl` | 25px | H2 |
+| `--text-xs` | 11px | Mono meta, eyebrows, column heads |
+| `--text-sm` | 13px | UI — nav links, sidebar rows, buttons, table cells |
+| `--text-base` | 15px | Body copy |
+| `--text-lg` | 17px | Lede paragraphs |
+| `--text-xl` | 20px | `h3` |
+| `--text-2xl` | 24px | `h2` |
 | `--text-3xl` | 32px | — |
-| `--text-4xl` | 40px | Article H1 |
+| `--text-4xl` | 40px | `h1` |
 | `--text-5xl` | 52px | — |
 
-### 3.3 Line Heights
+### 3.3 Line heights
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--leading-tight` | 0.92 | Display H1 |
-| `--leading-snug` | 1.18 | H2, H3 |
-| `--leading-normal` | 1.55 | Body, tables |
-| `--leading-relaxed` | 1.7 | Long-form paragraphs, lists |
+| `--leading-tight` | 1.08 | `h1` |
+| `--leading-snug` | 1.2 | `h2`, `h3` |
+| `--leading-normal` | 1.55 | Body |
+| `--leading-relaxed` | 1.65 | Long-form article text, code output |
 
-### 3.4 Letter Spacing
+### 3.4 Letter spacing
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `--tracking-tight` | -0.01em | — |
-| `--tracking-normal` | 0 | Body, headings |
-| `--tracking-wide` | 0.05em | Breadcrumbs |
-| `--tracking-widest` | 0.14em | Uppercase mono labels, TOC heading |
+| `--tracking-display` | `-0.022em` | `h1` |
+| `--tracking-tight` | `-0.015em` | `h2`, `h3` |
+| `--tracking-normal` | `0` | Body, UI, nav |
+| `--tracking-wide` | `0.05em` | Mono meta |
+| `--tracking-widest` | `0.07em` | Mono uppercase labels |
 
-### 3.5 Heading Styles
+### 3.5 Heading styles
 
-| Element | Font | Size | Weight | Case | Notes |
-|---------|------|------|--------|------|-------|
-| H1 | Big Shoulders | `--text-4xl` | 700 | uppercase | One display moment per page |
-| H2 | Archivo | `--text-2xl` | 600 | normal | Border-bottom separator |
-| H3 | Archivo | `--text-xl` | 600 | normal | — |
-| H4–H6 | Martian Mono | `--text-xs` | 500 | uppercase | Widest tracking |
+| Element | Spec |
+|---------|------|
+| `h1` | 40px / 600 / `-0.022em` / 1.08 — **sentence case**, the one display moment |
+| `h2` | 24px / 600 / `-0.015em`, hairline bottom rule, chapter break |
+| `h3` | 20px / 590 / `-0.015em` |
+| `h4`–`h6` | 11px mono, uppercase, `0.07em`, secondary — label-weight headings |
 
 ---
 
 ## 4. Spacing
 
-Base unit is **4px**. All spacing tokens are defined in rems assuming 16px root.
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--space-1` | 0.25rem / 4px | Tight inline gaps |
-| `--space-2` | 0.5rem / 8px | Small gaps, pill padding |
-| `--space-3` | 0.75rem / 12px | Cell padding, TOC margins |
-| `--space-4` | 1rem / 16px | Standard padding |
-| `--space-5` | 1.25rem / 20px | List indentation, code padding |
-| `--space-6` | 1.5rem / 24px | Section gaps, card padding |
-| `--space-8` | 2rem / 32px | Major block margins |
-| `--space-10` | 2.5rem / 40px | H3 top margin |
-| `--space-12` | 3rem / 48px | First H2 after intro |
-| `--space-16` | 4rem / 64px | H2 chapter breaks |
+Steps: 4 · 8 · 12 · 16 · 24 · 32 · 48. Tokens `--space-1` … `--space-16` map onto this scale; nothing falls between steps.
 
 ---
 
-## 5. Borders, Radius & Elevation
+## 5. Borders, radius & elevation
 
 ### 5.1 Radius
 
-Everything is **2px**. All radius tokens point to the same value intentionally.
-
-```css
---radius-sm: 2px;
---radius-md: 2px;
---radius-lg: 2px;
---radius-xl: 2px;
-```
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--radius-sm` | 6px | Machine-identifier chips — so they never read as interactive |
+| `--radius-md` | 8px | Controls: inputs, buttons, sidebar rows |
+| `--radius-lg` | 10px | Tiles, icon wells |
+| `--radius-xl` | 14px | Cards, callouts, panels |
+| — | 999px | Status badges only |
 
 ### 5.2 Borders
 
-- Default border: `1px solid var(--color-border)`
-- Accent left rail: `border-left: 3px solid var(--color-accent)`
-- Muted left rail: `border-left: 3px solid var(--color-text-muted)`
-- Active sidebar marker: `2px` left border
+All structural dividers are 1px `--color-border`. Control edges use `--color-border-strong`. Never double a rule where two surfaces already meet.
 
 ### 5.3 Elevation
 
-**No shadows.** Elevation is achieved through:
-
-1. Background tier changes (`--color-bg` → `--color-bg-secondary` → `--color-surface`)
-2. Borders
-3. Accent markers
-
-```css
---shadow-sm: none;
---shadow-md: none;
---shadow-lg: none;
-```
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--shadow-sm` | `0 1px 2px rgba(0,0,0,.04)` | Secondary buttons, hovered cards |
+| `--shadow-md` | `0 1px 2px rgba(0,0,0,.12)` | Selected segment of a control |
+| `--shadow-lg` | `0 8px 24px -8px rgba(0,0,0,.16)` | Popovers, search results, modals |
 
 ---
 
 ## 6. Motion
 
-Fast, utilitarian transitions.
+| Token | Value |
+|-------|-------|
+| `--duration-fast` | 120ms |
+| `--duration-normal` | 180ms |
+| `--duration-slow` | 260ms |
+| `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` |
+| `--ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` |
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--duration-fast` | 120ms | Hover, focus, color changes |
-| `--duration-normal` | 180ms | Slightly larger transitions |
-| `--duration-slow` | 260ms | Expand/collapse |
-| `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Hover in |
-| `--ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` | State toggles |
+### 6.1 Focus rings
 
-### 6.1 Focus Rings
-
-```css
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-```
-
-No browser default shadows.
+Accent border plus `0 0 0 3px` of the accent at 14% opacity. Never remove focus affordances outright.
 
 ---
 
 ## 7. Components
 
-These are CSS utility classes defined in `docs/app/globals.css`. Use them directly in MDX with `className="..."`.
-
 ### 7.1 Eyebrow
 
-A mono uppercase label with a signal-square marker.
-
-```jsx
-<div className="huf-eyebrow">Open source · AI agent infrastructure</div>
-```
+`.huf-eyebrow` — mono, 11px, `0.07em`, uppercase, muted. The v2 signal square is gone; uppercase mono is enough to set it apart.
 
 ### 7.2 Buttons
 
-```jsx
-<a href="#" className="huf-btn huf-btn-solid">Primary →</a>
-<a href="#" className="huf-btn huf-btn-ghost">Secondary →</a>
-```
+`.huf-btn` — 13px / 500, sentence case, `9px 16px`, 9px radius.
 
-- Solid: ink background, paper text, signal hover
-- Ghost: transparent, ink border, ink hover
+| Variant | Spec |
+|---------|------|
+| `.huf-btn-solid` | Ink fill (`--color-text-primary`), surface-colored text; 88% opacity on hover |
+| `.huf-btn-ghost` | Surface fill, `--color-border-strong` edge, `--shadow-sm`; sunken on hover |
 
-### 7.3 Tick Rule
+One primary action per view.
 
-A chart-recorder strip divider.
+### 7.3 Callouts & blockquotes
 
-```jsx
-<div className="huf-tickrule"></div>
-```
+A tint behind text, not a colored rail: 14px radius, hairline border, `--color-accent-subtle` for notes, `--color-warning-tint` and `--color-danger-tint` for the warning and error variants. The default emoji icon is hidden — the tint already sets the box apart.
 
-### 7.4 Use-Case Card
+### 7.4 Cards & grids
 
-Wraps a complete use-case section.
+Surface fill, hairline border, 14px radius. The capability, feature, benefit, and next-steps grids all share this shell; their labels are mono 10–11px uppercase in `--color-text-muted`.
 
-```jsx
-<div className="huf-use-case">
-  <div className="huf-eyebrow">Use Case</div>
-  ## Customer Support Automation
-  ...
-</div>
-```
+### 7.5 Machine values
 
-### 7.5 Problem / Solution Grid
-
-```jsx
-<div className="huf-ps-grid">
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Problem</span>
-    Support team spends too much time...
-  </div>
-  <div className="huf-ps-cell">
-    <span className="huf-ps-label">Solution</span>
-    AI agent handles common inquiries...
-  </div>
-</div>
-```
-
-### 7.6 Capability Grid
-
-Term/definition cells in a bordered grid.
-
-```jsx
-<div className="huf-cap-grid">
-  <div className="huf-cap-cell">
-    <span className="huf-cap-term">Answer FAQs</span>
-    Common questions about products...
-  </div>
-</div>
-```
-
-### 7.7 Feature Grid
-
-Lighter version of capability grid, used for next steps and feature lists.
-
-```jsx
-<div className="huf-feature-grid">
-  <div className="huf-feature-cell">
-    <span className="huf-feature-label">FAQ automation</span>
-    Low risk, high value, easy to test
-  </div>
-</div>
-```
-
-### 7.8 Agent Configuration Box
-
-```jsx
-<div className="huf-agent-config">
-  <div className="huf-agent-config-header">Agent Configuration</div>
-  <div className="huf-agent-config-body">
-    ...
-  </div>
-</div>
-```
-
-### 7.9 Tool Tags
-
-Mono tool names row.
-
-```jsx
-<div className="huf-tool-tags">
-  <strong>Get Document</strong> (Customer) · <strong>Get List</strong> (...)
-</div>
-```
-
-### 7.10 Trigger Badge
-
-```jsx
-<div className="huf-trigger-badge">After Insert on Support Ticket</div>
-```
-
-### 7.11 Benefit Strip
-
-A row of benefit cells.
-
-```jsx
-<div className="huf-benefit-strip">
-  <div className="huf-benefit-cell">
-    <span className="huf-benefit-label">24/7 Availability</span>
-    Instant responses anytime
-  </div>
-</div>
-```
-
-### 7.12 Pipeline Stepper
-
-Numbered horizontal process steps.
-
-```jsx
-<div className="huf-pipeline">
-  <div className="huf-pipeline-step">
-    <span className="huf-pipeline-label">Build</span>
-    <span className="huf-pipeline-desc">Create your tool package</span>
-  </div>
-</div>
-```
-
-### 7.13 Procedure Step
-
-Large numbered vertical steps.
-
-```jsx
-<div className="huf-procedure-step">
-  <span className="huf-step-counter">1</span>
-  <div className="huf-step-body">
-    <div className="huf-step-title">Start with One Use Case</div>
-    <p>...</p>
-  </div>
-</div>
-```
-
-### 7.14 State Row
-
-Agent lifecycle pills.
-
-```jsx
-<div className="huf-state-row">
-  <span className="huf-state-pill">Idle</span>
-  <span className="huf-state-arrow">→</span>
-  <span className="huf-state-pill">Triggered</span>
-</div>
-```
-
-### 7.15 Next Steps Grid
-
-Card grid with linked next actions.
-
-```jsx
-<div className="huf-next-steps">
-  - [Quick Start](/docs/quick-start)
-    Short description
-  - [Concepts](/docs/concepts/agents)
-    Short description
-</div>
-```
-
-> Requires an unordered list with links as direct children.
-
-### 7.16 CLI Note
-
-```jsx
-<div className="huf-cli-note">
-  Run <code>bench --site mysite install-app agent_flo</code>...
-</div>
-```
+Mono at 11px for ids, model names, timestamps, and paths. Code output sits on a sunken well at 11px with 1.65 line-height and its own copy control.
 
 ---
 
-## 8. Nextra Integration
+## 8. Nextra integration
 
 The design system overrides default Nextra chrome:
 
 | Element | Override |
 |---------|----------|
-| Navbar | `--color-bg` background, `--color-border` bottom border |
-| Logo | HUF wordmark + signal square via `::before` |
-| Nav links | Martian Mono, 11px, uppercase, wide tracking |
-| Sidebar | `--color-sidebar-bg` background, signal left rail on active. **Muted Density**: Tighter vertical rhythm, inactive text subdued (`--color-text-muted`) to mirror product UI. |
-| Sidebar folders | Martian Mono, 9.5px, uppercase, muted color |
-| TOC heading | Martian Mono, widest tracking, muted |
-| TOC active link | `--color-accent` |
-| Search input | Mono, uppercase, 2px radius, accent focus border |
-| Search results | No shadow, bordered panel |
-| Footer | Mono, uppercase, muted |
+| Navbar | Canvas background, hairline bottom border |
+| Logo | `huf.svg` mark (20px) + "Huf" wordmark at 15px / 590 |
+| Nav links | System font, 13px, sentence case |
+| Sidebar | Canvas background; **active row is a filled accent-tint pill at 8px radius**, not a left rail |
+| Sidebar folders | Mono, 10px, uppercase, muted |
+| TOC heading | Mono, widest tracking, muted |
+| TOC active link | `--color-accent` — state, as intended |
+| Search input | System font, 13px, sentence case, 8px radius, accent focus ring |
+| Search results | Bordered panel with `--shadow-lg` |
+| Footer | Mono, muted |
 | Breadcrumbs | Mono, uppercase |
-| Pagination | Top border, accent hover |
+| Pagination | Top border, accent on hover |
 
 ---
 
-## 9. Article Content Defaults
+## 9. Article content defaults
 
-Default styles applied inside `article`:
+Styles applied inside `article`:
 
 - Body text: `--text-base` / `--leading-relaxed` / `--color-text-secondary`
 - Lists: indented `--space-5`, relaxed line-height
-- Tables: full-width, `--text-sm`, header in `--color-bg-secondary`
-- Code blocks: `--color-surface` background, bordered, no shadow
-- Inline code: `--color-code-bg`, bordered, `--font-mono`
-- Blockquotes: left accent border, `--color-bg-secondary` background
-- Callouts: Same blockquote styling; default emoji icon hidden
+- Tables: full-width, `--text-sm`, header row in `--color-bg-secondary` with mono uppercase column heads
+- Code blocks: `--color-surface` background, hairline border, 8px radius
+- Inline code: `--color-code-bg`, `--font-mono`, 6px radius
+- Blockquotes and callouts: tinted card, 14px radius, no accent rail
 
 ---
 
@@ -603,7 +429,7 @@ Most grids use `auto-fill` / `auto-fit` with `minmax()` and adapt naturally.
 
 ## 12. Dark Mode
 
-Dark mode is supported via the `.dark` class. Tokens invert the background/text scale while keeping the signal accent and sharp-radius language.
+Dark mode is supported via the `.dark` class. The `.dark` block redefines every `--color-*` token — surfaces darken, text inverts, and the accent lifts to `#8B6DFF` so it keeps its contrast against a dark canvas. Semantic colors get their own dark pairs and much darker tints. Radius, spacing, type, and motion tokens are shared; only color changes.
 
 The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Nextra's theme toggle.
 
@@ -612,10 +438,11 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
 ## 13. How to Extend
 
 1. **Add a new component:** define a new `.huf-*` class in `docs/app/globals.css` using existing tokens, or add a new React component in `docs/app/components/` and register it in `docs/mdx-components.js`.
-2. **Add a new color:** prefer `color-mix()` or a new semantic token; avoid adding new accent colors.
-3. **Add a new spacing value:** keep to the 4px grid.
-4. **Keep radius at 2px.** If you need to change it globally, update all `--radius-*` tokens.
-5. **Document new utilities and components in this file.**
+2. **Add a new color:** prefer `color-mix()` or an existing semantic token; never add a second accent.
+3. **Add a new spacing value:** keep to 4 / 8 / 12 / 16 / 24 / 32 / 48.
+4. **Keep controls at 8px radius and cards at 14px.** If that needs to change, change the `--radius-*` tokens rather than a call site.
+5. **Define both themes.** Any new color token needs a `.dark` counterpart.
+6. **Document new utilities and components in this file.**
 
 ---
 
@@ -623,20 +450,32 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
 
 ```css
 :root {
-  /* Core brand */
-  --color-bg: #F2F3EF;
-  --color-text-primary: #15181C;
-  --color-text-secondary: #5A636F;
-  --color-accent: #E8531F;
-  --color-accent-hover: #BC3E0F;
+  /* Neutrals */
+  --color-bg: #FBFBFD;            /* canvas */
+  --color-bg-secondary: #F4F4F7;  /* sunken */
+  --color-surface: #FFFFFF;
+  --color-border: #ECECF0;        /* hairline */
+  --color-border-strong: #E4E4E8; /* control edge */
 
-  /* Typography */
-  --font-display: 'Big Shoulders', sans-serif;
-  --font-body: 'Archivo', sans-serif;
-  --font-mono: 'Martian Mono', monospace;
+  /* Text */
+  --color-text-primary: #1D1D1F;
+  --color-text-secondary: #6E6E73;
+  --color-text-muted: #98989D;
 
-  /* Radius & motion */
-  --radius-sm: 2px;
+  /* Accent — state only */
+  --color-accent: #6D4AFF;
+  --color-accent-subtle: #F1EDFF;
+
+  /* Typography — system stack, no webfonts */
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+               'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Radius, depth & motion */
+  --radius-md: 8px;               /* controls */
+  --radius-xl: 14px;              /* cards */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px -8px rgba(0, 0, 0, 0.16);
   --duration-fast: 120ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -644,4 +483,4 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
 
 ---
 
-*Last updated: 2026-07-28 · Branch: `docs/update-huf-readme-architecture`*
+*HUF DESIGN.md v3.0*
