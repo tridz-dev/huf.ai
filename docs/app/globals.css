@@ -37,15 +37,15 @@
   --color-danger-tint:    #FDECEA;
 
   /* Links */
-  --color-link:           #0A6DD9;
-  --color-link-hover:     #084F9E;
+  --color-link:           #6D4AFF;
+  --color-link-hover:     #5A38E8;
 
   /* Code */
   --color-code-bg:        #F4F4F7;
   --color-code-text:      #1D1D1F;
 
   /* Sidebar */
-  --color-sidebar-bg:     #FBFBFD;
+  --color-sidebar-bg:     #F4F4F7;
   --color-toc-active:     #6D4AFF;
 
   /* Typography — system stack; mono for machine values only */
@@ -140,13 +140,13 @@
   --color-danger:         #E5776E;
   --color-danger-tint:    #2E1917;
 
-  --color-link:           #6BA5F5;
-  --color-link-hover:     #93BEF8;
+  --color-link:           #8B6DFF;
+  --color-link-hover:     #A48CFF;
 
   --color-code-bg:        #1C1C20;
   --color-code-text:      #F5F5F7;
 
-  --color-sidebar-bg:     #101012;
+  --color-sidebar-bg:     #17171A;
   --color-toc-active:     #8B6DFF;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -214,19 +214,10 @@ nav a[href='/'] {
   gap: 8px !important;
 }
 
-header a[href='/'] span,
-.nextra-navbar a[href='/'] span,
-nav a[href='/'] span {
-  font-family: var(--font-body) !important;
-  font-weight: 590 !important;
-  font-size: 0.9375rem !important;
-  letter-spacing: -0.012em !important;
-  color: var(--color-text-primary) !important;
-}
-
 header a[href='/'] img,
-.nextra-navbar a[href='/'] img {
-  height: 20px !important;
+.nextra-navbar a[href='/'] img,
+nav a[href='/'] img {
+  height: 22px !important;
   width: auto !important;
   flex: none !important;
 }
@@ -289,7 +280,8 @@ aside.nextra-sidebar .nextra-sidebar-footer [role="button"]:hover {
 
 /* Sidebar nav links */
 .nextra-sidebar a,
-aside.nextra-sidebar a {
+aside.nextra-sidebar a,
+aside.nextra-mobile-nav a {
   font-family: var(--font-body) !important;
   font-size: var(--text-sm) !important;
   font-weight: 400 !important;
@@ -300,19 +292,29 @@ aside.nextra-sidebar a {
 }
 
 .nextra-sidebar a:hover,
-aside.nextra-sidebar a:hover {
+aside.nextra-sidebar a:hover,
+aside.nextra-mobile-nav a:hover {
   color: var(--color-text-primary) !important;
-  background-color: var(--color-bg-secondary) !important;
+  background-color: var(--color-border) !important;
 }
 
-/* Active sidebar link — a filled pill, not a left bar. The softer shape
-   reads calmer at rest, and the accent marks state rather than filling. */
+/* Active sidebar link — a white pill lifted off the sunken panel, per
+   Components 2.1. Not a left bar, and not a coloured fill: the surface
+   step carries the state, so the accent is not spent here. */
 aside.nextra-sidebar li.active > a,
-aside.nextra-sidebar li.active > button {
+aside.nextra-sidebar li.active > button,
+aside.nextra-mobile-nav li.active > a,
+aside.nextra-mobile-nav li.active > button {
   color: var(--color-text-primary) !important;
-  font-weight: 500 !important;
-  background-color: var(--color-accent-subtle) !important;
+  font-weight: 590 !important;
+  background-color: var(--color-surface) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
   border-radius: var(--radius-md) !important;
+}
+
+aside.nextra-sidebar li.active > a:hover,
+aside.nextra-mobile-nav li.active > a:hover {
+  background-color: var(--color-surface) !important;
 }
 
 /* Sidebar section/folder labels (exclude theme switch / collapse footer) */
@@ -710,16 +712,19 @@ nav[aria-label='breadcrumb'] {
   padding-top: var(--space-8);
 }
 
-[class*='pagination'] a {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-text-secondary);
+[class*='pagination'] a,
+article a[title] {
+  font-family: var(--font-body) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--color-text-secondary) !important;
+  border-bottom: none !important;
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-[class*='pagination'] a:hover {
-  color: var(--color-accent);
+[class*='pagination'] a:hover,
+article a[title]:hover {
+  color: var(--color-text-primary) !important;
 }
 
 /* --------------------------------------------------------------------------

@@ -12,7 +12,11 @@ export const metadata = {
   },
   description: 'Documentation for HUF — the AI engine you actually control. Open-source agent infrastructure built on Frappe.',
   icons: {
-    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }]
+    icon: [
+      { url: '/huf.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [{ url: '/apple-touch-icon.png' }]
   }
 }
 
@@ -24,12 +28,7 @@ const enableClarity =
 
 const navbar = (
   <Navbar
-    logo={
-      <>
-        <img src="/huf.svg" alt="" aria-hidden="true" />
-        <span>Huf</span>
-      </>
-    }
+    logo={<img src="/huf.svg" alt="HUF" />}
     projectLink="https://github.com/tridz-dev/huf"
   />
 )
@@ -99,7 +98,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
-        <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="any" />
+        <link rel="icon" href="/huf.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </Head>
       <body>
         {enableGa && (

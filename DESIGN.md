@@ -70,8 +70,12 @@ Semantic colors appear as 10–12% tints behind text — never as fills larger t
 
 | Token | Light | Dark |
 |-------|-------|------|
-| `--color-link` | `#0A6DD9` | `#6BA5F5` |
-| `--color-link-hover` | `#084F9E` | `#93BEF8` |
+| `--color-link` | `#6D4AFF` | `#8B6DFF` |
+| `--color-link-hover` | `#5A38E8` | `#A48CFF` |
+
+Links take the accent so the palette never carries a second hue. Prev/next
+page navigation is **not** a content link — it is secondary text that darkens
+to ink on hover.
 
 ### 2.6 Code
 
@@ -236,9 +240,9 @@ The design system overrides default Nextra chrome:
 | Element | Override |
 |---------|----------|
 | Navbar | Canvas background, hairline bottom border |
-| Logo | `huf.svg` mark (20px) + "Huf" wordmark at 15px / 590 |
+| Logo | `huf.svg` mark alone at 22px — no wordmark beside it |
 | Nav links | System font, 13px, sentence case |
-| Sidebar | Canvas background; **active row is a filled accent-tint pill at 8px radius**, not a left rail |
+| Sidebar | **Sunken** (`--color-bg-secondary`) panel; the **active row is a white pill at 8px radius with a `0 1px 2px rgba(0,0,0,.05)` raise**, per Components 2.1 — the surface step carries the state, so the accent is not spent here. Hover is `--color-border`. Rules cover `aside.nextra-sidebar` and `aside.nextra-mobile-nav`. |
 | Sidebar folders | Mono, 10px, uppercase, muted |
 | TOC heading | Mono, widest tracking, muted |
 | TOC active link | `--color-accent` — state, as intended |
@@ -247,6 +251,15 @@ The design system overrides default Nextra chrome:
 | Footer | Mono, muted |
 | Breadcrumbs | Mono, uppercase |
 | Pagination | Top border, accent on hover |
+
+---
+
+### 7.6 Favicons
+
+Rendered from the brand mark: `public/favicon.ico` (16/32/48/64/128,
+PNG-compressed), `public/apple-touch-icon.png` (180), and
+`public/huf-192.png` / `huf-512.png`. `huf.svg` is declared first so modern
+browsers use the vector; the `.ico` is the fallback.
 
 ---
 
@@ -465,6 +478,7 @@ The docs site uses `suppressHydrationWarning` on `<html>` to play nicely with Ne
   /* Accent — state only */
   --color-accent: #6D4AFF;
   --color-accent-subtle: #F1EDFF;
+  --color-link: #6D4AFF;          /* the same accent — one hue only */
 
   /* Typography — system stack, no webfonts */
   --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
